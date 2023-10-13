@@ -3,21 +3,25 @@
 #include "Core.h"
 #include "Events/Event.h"
 #include "Window.h"
+#include "L3gion/Events/ApplicationEvent.h"
+#include "L3gion/Events/KeyEvent.h"
+#include "L3gion/Events/MouseEvent.h"
 
 namespace L3gion
 {
 	class L3GION_API Application
 	{
 	public:
-	public:
 		Application();
 		virtual ~Application();
 
 		void run();
-	private:
 		
-	
+		void onEvent(Event& e);
+
 	private:
+		bool onWindowClose(WindowCloseEvent& e);
+
 		std::unique_ptr<Window> m_Window;
 		bool m_Running;
 	};

@@ -83,3 +83,6 @@ namespace L3gion
 		Event& m_Event;
 	};
 }
+FORMAT_TOSTR_IMPL(L3gion::Event);
+
+#define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
