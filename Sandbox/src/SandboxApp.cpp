@@ -15,5 +15,7 @@ public:
 
 L3gion::Application* L3gion::createApplication()
 {
-	return new Sandbox();
+	Application* app = new Sandbox();
+	app->setVsync(false);
+	return app;
 }

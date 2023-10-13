@@ -35,7 +35,7 @@ namespace L3gion
 		{
 			std::string title;
 			unsigned int width, height;
-			bool VSync;
+			bool VSync = true;
 
 			EventCallbackFn EventCallback;
 		};

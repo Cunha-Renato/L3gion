@@ -19,6 +19,7 @@ namespace L3gion
 		
 		void onEvent(Event& e);
 
+		inline void setVsync(bool option) { m_Window->setVSync(option); }
 	private:
 		bool onWindowClose(WindowCloseEvent& e);
 
