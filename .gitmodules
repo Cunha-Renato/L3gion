@@ -1,0 +1,3 @@
+[submodule "L3gion/vendor/spdlog"]
+	path = L3gion/vendor/spdlog
+	url = https://github.com/gabime/spdlog
