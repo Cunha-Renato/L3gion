@@ -1,16 +1,25 @@
 #pragma once
 
 #include "Core.h"
+#include "Events/Event.h"
+#include "Window.h"
 
 namespace L3gion
 {
 	class L3GION_API Application
 	{
-		public:
-			Application();
-			virtual ~Application();
+	public:
+	public:
+		Application();
+		virtual ~Application();
 
-			void run();
+		void run();
+	private:
+		
+	
+	private:
+		std::unique_ptr<Window> m_Window;
+		bool m_Running;
 	};
 
 	// To be defined in CLIENT

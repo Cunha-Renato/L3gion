@@ -10,6 +10,16 @@ workspace "L3gion"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- Include directiories relative to root folder (Solution)
+IncludeDir = {}
+IncludeDir["GLFW"] = "L3gion/vendor/GLFW/include"
+
+LinkDir = {}
+LinkDir["GLFW"] = ("L3gion/vendor/GLFW/bin/" .. outputdir .."/GLFW/GLFW.lib")
+
+-- Including the premake file
+include "L3gion/vendor/GLFW"
+
 project "L3gion"
 	location "L3gion"
 	kind "SharedLib"
@@ -17,6 +27,9 @@ project "L3gion"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	pchheader "lgpch.h"
+	pchsource "L3gion/src/lgpch.cpp"
 
 	files
 	{
@@ -27,7 +40,15 @@ project "L3gion"
 	includedirs 
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include"
+		"%{prj.name}/vendor/spdlog/include",
+		"%{IncludeDir.GLFW}"
+	}
+
+	links
+	{
+		"GLFW",
+		"opengl32.lib",
+		"L3gion/vendor/GLFW/bin/" .. outputdir .."/GLFW/GLFW.lib"
 	}
 
 	filter "system:windows"

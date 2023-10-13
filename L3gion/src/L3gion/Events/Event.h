@@ -3,9 +3,6 @@
 #include "L3gion/Core.h"
 #include "L3gion/Log.h"
 
-#include <string>
-#include <functional>
-
 namespace L3gion
 {
 	//TODO: Events are currently blocking. Implement a buffer sistem

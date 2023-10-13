@@ -1,4 +1,5 @@
-#include "Log.h"
+#include "lgpch.h"
+
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace L3gion

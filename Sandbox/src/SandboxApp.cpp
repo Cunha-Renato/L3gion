@@ -5,8 +5,8 @@ class Sandbox : public L3gion::Application
 public:
 	Sandbox()
 	{
-
 	}
+
 	~Sandbox()
 	{
 

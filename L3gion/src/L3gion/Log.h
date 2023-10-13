@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "Core.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/bundled/ostream.h"
@@ -47,6 +45,7 @@ struct fmt::formatter<Type> : fmt::formatter<std::string> \
         return fmt::format_to(ctx.out(), "{}", e.toString()); \
     } \
 };
+
 // Core log macros
 #define LG_CORE_TRACE(...)      ::L3gion::Log::getCoreLogger()->trace(__VA_ARGS__)
 #define LG_CORE_INFO(...)       ::L3gion::Log::getCoreLogger()->info(__VA_ARGS__)

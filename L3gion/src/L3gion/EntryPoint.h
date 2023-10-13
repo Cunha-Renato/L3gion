@@ -6,9 +6,9 @@ extern L3gion::Application* L3gion::createApplication();
 
 int main(int argc, char** argv)
 {
+	L3gion::Log::init();
 	auto a = L3gion::createApplication();
 	a->run();
-	delete a;
 }
 
 #endif

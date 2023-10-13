@@ -2,8 +2,6 @@
 
 #include "Event.h"
 
-#include <sstream>
-
 namespace L3gion
 {
 	class L3GION_API MouseMovedEvent : public Event
