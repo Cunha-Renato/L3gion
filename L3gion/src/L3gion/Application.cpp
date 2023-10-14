@@ -7,8 +7,13 @@
 
 namespace L3gion
 {
+	Application* Application::s_Instance = nullptr;
+
 	Application::Application()
 	{
+		LG_CORE_ASSERT(!s_Instance, "Application already exists!");
+		s_Instance = this;
+
 		m_Window = std::unique_ptr<Window>(Window::create());
 		m_Window->setEventCallback(BIND_EVENT_FN(Application::onEvent));
 		m_Running = true;
@@ -22,11 +27,13 @@ namespace L3gion
 	void Application::pushLayer(Layer* layer)
 	{
 		m_LayerStack.pushLayer(layer);
+		layer->onAttach();
 	}
 
 	void Application::pushOverlay(Layer* overlay)
 	{
 		m_LayerStack.pushOverlay(overlay);
+		overlay->onAttach();
 	}
 
 	void Application::onEvent(Event& e)
@@ -59,7 +66,7 @@ namespace L3gion
 	bool Application::onWindowClose(WindowCloseEvent& e)
 	{
 		m_Running = false;
-		e.setHandled();
+
 		return true;
 	}
 }

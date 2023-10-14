@@ -1,6 +1,8 @@
 workspace "L3gion"
 	architecture "x64"
 
+	startproject "Sandbox"
+
 	configurations
 	{
 		"Debug",
@@ -14,11 +16,13 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["GLFW"] = "L3gion/vendor/GLFW/include"
 IncludeDir["Glad"] = "L3gion/vendor/Glad/include"
+IncludeDir["ImGui"] = "L3gion/vendor/ImGui"
 
 
 -- Including the premake file
-include "L3gion/vendor/GLFW"
-include "L3gion/vendor/Glad"
+include "L3gion/vendor/GLFW/premake5.lua"
+include "L3gion/vendor/Glad/premake5.lua"
+include "L3gion/vendor/ImGui/premake5.lua"
 
 project "L3gion"
 	location "L3gion"
@@ -26,7 +30,7 @@ project "L3gion"
 	language "C++"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin_int/" .. outputdir .. "/%{prj.name}")
 
 	pchheader "lgpch.h"
 	pchsource "L3gion/src/lgpch.cpp"
@@ -42,16 +46,19 @@ project "L3gion"
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.Glad}"
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.ImGui}"
 	}
 
 	links
 	{
 		"GLFW",
 		"Glad",
-		"opengl32.lib",
-		"L3gion/vendor/GLFW/bin/" .. outputdir .."/GLFW/GLFW.lib",
-		"L3gion/vendor/Glad/bin/" .. outputdir .."/Glad/Glad.lib"
+		"ImGui",
+		"opengl32.lib"
+		-- "L3gion/vendor/GLFW/bin/" .. outputdir .."/GLFW/GLFW.lib",
+		-- "L3gion/vendor/Glad/bin/" .. outputdir .."/Glad/Glad.lib",
+		-- "L3gion/vendor/ImGui/bin/" .. outputdir .."/ImGui/ImGui.lib"
 	}
 
 	filter "system:windows"
@@ -68,7 +75,7 @@ project "L3gion"
 
 		postbuildcommands
 		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
 		}
 
 	filter "configurations:Debug"
@@ -95,7 +102,7 @@ project "Sandbox"
 	language "C++"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin_int/" .. outputdir .. "/%{prj.name}")
 
 	files
 	{

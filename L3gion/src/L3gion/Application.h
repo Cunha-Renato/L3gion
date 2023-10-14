@@ -24,12 +24,18 @@ namespace L3gion
 		void pushLayer(Layer* layer);
 		void pushOverlay(Layer* overlay);
 
+		inline Window& getWindow() { return *m_Window; }
+		inline static Application& get() { return *s_Instance; }
+
 	private:
 		bool onWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;
 		bool m_Running;
 		LayerStack m_LayerStack;
+
+	private:
+		static Application* s_Instance;
 	};
 
 	// To be defined in CLIENT

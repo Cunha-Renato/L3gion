@@ -31,7 +31,7 @@ namespace L3gion
 		std::string toString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyPressedEvent" << m_KeyCode << " (" << m_RepeatCount << " repeats)";
+			ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
 			return ss.str();
 		}
 
@@ -56,6 +56,25 @@ namespace L3gion
 		}
 
 		EVENT_CLASS_TYPE(KeyReleased)
+	};
+
+//----------------- KEY_TYPED -------------------------
+
+	class L3GION_API KeyTypedEvent : public KeyEvent
+	{
+	public:
+		KeyTypedEvent(int keyCode)
+			: KeyEvent(keyCode) {}
+
+		std::string toString() const override
+		{
+			std::stringstream ss;
+			ss << "KeyTypedEvent: " << m_KeyCode;
+
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(KeyTyped)
 	};
 }
 

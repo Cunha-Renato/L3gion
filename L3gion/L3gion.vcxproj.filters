@@ -7,11 +7,17 @@
     <Filter Include="L3gion\Events">
       <UniqueIdentifier>{755904E0-E119-8016-AA54-C99316D4C4F2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="L3gion\Platform">
-      <UniqueIdentifier>{25929E0E-911D-0CD3-9A2E-8FC7063968D3}</UniqueIdentifier>
+    <Filter Include="L3gion\ImGui">
+      <UniqueIdentifier>{9B34BFD0-8797-4E75-301D-872B1C5F1AF8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="L3gion\Platform\Windows">
-      <UniqueIdentifier>{5F911A21-CBC8-62B8-D4D2-C6DB408989B1}</UniqueIdentifier>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\OpenGL">
+      <UniqueIdentifier>{1E7D2C1D-8A08-9AE1-9319-1DD6FF23F6E1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows">
+      <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -37,6 +43,9 @@
     <ClInclude Include="src\L3gion\Events\MouseEvent.h">
       <Filter>L3gion\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\ImGui\ImGuiLayer.h">
+      <Filter>L3gion\ImGui</Filter>
+    </ClInclude>
     <ClInclude Include="src\L3gion\Layer.h">
       <Filter>L3gion</Filter>
     </ClInclude>
@@ -46,17 +55,26 @@
     <ClInclude Include="src\L3gion\Log.h">
       <Filter>L3gion</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Platform\Windows\WindowsWindow.h">
-      <Filter>L3gion\Platform\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="src\L3gion\Window.h">
       <Filter>L3gion</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\imgui_impl_opengl3_loader.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
+      <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\lgpch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Application.cpp">
       <Filter>L3gion</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\ImGui\ImGuiLayer.cpp">
+      <Filter>L3gion\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Layer.cpp">
       <Filter>L3gion</Filter>
@@ -67,8 +85,11 @@
     <ClCompile Include="src\L3gion\Log.cpp">
       <Filter>L3gion</Filter>
     </ClCompile>
-    <ClCompile Include="src\L3gion\Platform\Windows\WindowsWindow.cpp">
-      <Filter>L3gion\Platform\Windows</Filter>
+    <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\lgpch.cpp" />
   </ItemGroup>

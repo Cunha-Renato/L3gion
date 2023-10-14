@@ -12,7 +12,7 @@ namespace L3gion
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowMoved,
 		AppTick, AppUpdate, AppRender, //TODO: Maybe not necessary
-		KeyPressed, KeyReleased,
+		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 
@@ -48,7 +48,6 @@ namespace L3gion
 		virtual std::string toString() const { return getName(); }
 		
 		inline bool isHandled() const { return m_Handled; }
-		inline void setHandled() { m_Handled = true; }
 
 		inline bool isInCategory(EventCategory category)
 		{
@@ -87,5 +86,3 @@ namespace L3gion
 	};
 }
 FORMAT_TOSTR_IMPL(L3gion::Event);
-
-#define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)

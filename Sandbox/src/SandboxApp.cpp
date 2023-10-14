@@ -5,6 +5,7 @@ class Sandbox : public L3gion::Application
 public:
 	Sandbox()
 	{
+		pushOverlay(new L3gion::ImGuiLayer());
 	}
 
 	~Sandbox()
