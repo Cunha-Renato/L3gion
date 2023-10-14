@@ -2,6 +2,7 @@
 #include "Application.h"
 
 #include "L3gion/Events/MouseEvent.h"
+#include "Input.h"
 
 #include <glad/glad.h>
 
@@ -58,6 +59,9 @@ namespace L3gion
 
 			for (Layer* layer : m_LayerStack)
 				layer->onUpdate();
+
+			auto[x, y] = Input::getMousePos();
+			LG_CORE_TRACE("{0}, {1}", x, y);
 
 			m_Window->onUpdate();
 		}

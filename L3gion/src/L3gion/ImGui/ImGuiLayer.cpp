@@ -77,8 +77,6 @@ namespace L3gion
 		ImGuiIO& io = ImGui::GetIO();
 		io.AddMouseButtonEvent(e.getMouseButton(), true);
 
-		LG_CORE_TRACE(e);
-
 		return false;
 	}
 
@@ -86,8 +84,6 @@ namespace L3gion
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.AddMouseButtonEvent(e.getMouseButton(), false);
-
-		LG_CORE_TRACE(e);
 
 		return false;
 	}
@@ -105,8 +101,6 @@ namespace L3gion
 		ImGuiIO& io = ImGui::GetIO();
 		io.AddMouseWheelEvent(e.getXOffset(), e.getYOffset());
 
-		LG_CORE_TRACE(e);
-
 		return false;
 	}
 
@@ -120,8 +114,6 @@ namespace L3gion
 		io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
 		io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
 
-		LG_CORE_TRACE(e);
-
 		return false;
 	}
 
@@ -129,8 +121,6 @@ namespace L3gion
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.KeysDown[e.getKeyCode()] = false;
-
-		LG_CORE_TRACE(e);
 
 		return false;
 	}
@@ -141,8 +131,6 @@ namespace L3gion
 		int keyCode = e.getKeyCode();
 		if( keyCode > 0 && keyCode < 0x10000)
 			io.AddInputCharacter((unsigned short)keyCode);
-
-		LG_CORE_TRACE(e);
 
 		return false;
 	}

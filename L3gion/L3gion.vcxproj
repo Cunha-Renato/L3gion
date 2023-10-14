@@ -161,12 +161,14 @@
     <ClInclude Include="src\L3gion\Events\KeyEvent.h" />
     <ClInclude Include="src\L3gion\Events\MouseEvent.h" />
     <ClInclude Include="src\L3gion\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\L3gion\Input.h" />
     <ClInclude Include="src\L3gion\Layer.h" />
     <ClInclude Include="src\L3gion\LayerStack.h" />
     <ClInclude Include="src\L3gion\Log.h" />
     <ClInclude Include="src\L3gion\Window.h" />
     <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h" />
     <ClInclude Include="src\Platform\OpenGL\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\lgpch.h" />
   </ItemGroup>
@@ -177,6 +179,7 @@
     <ClCompile Include="src\L3gion\LayerStack.cpp" />
     <ClCompile Include="src\L3gion\Log.cpp" />
     <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\lgpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

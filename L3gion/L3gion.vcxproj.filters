@@ -68,6 +68,8 @@
       <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\lgpch.h" />
+    <ClInclude Include="src\L3gion\Input.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Application.cpp">
@@ -92,5 +94,6 @@
       <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\lgpch.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
   </ItemGroup>
 </Project>
