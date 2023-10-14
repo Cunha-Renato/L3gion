@@ -13,12 +13,12 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directiories relative to root folder (Solution)
 IncludeDir = {}
 IncludeDir["GLFW"] = "L3gion/vendor/GLFW/include"
+IncludeDir["Glad"] = "L3gion/vendor/Glad/include"
 
-LinkDir = {}
-LinkDir["GLFW"] = ("L3gion/vendor/GLFW/bin/" .. outputdir .."/GLFW/GLFW.lib")
 
 -- Including the premake file
 include "L3gion/vendor/GLFW"
+include "L3gion/vendor/Glad"
 
 project "L3gion"
 	location "L3gion"
@@ -41,14 +41,17 @@ project "L3gion"
 	{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}"
 	}
 
 	links
 	{
 		"GLFW",
+		"Glad",
 		"opengl32.lib",
-		"L3gion/vendor/GLFW/bin/" .. outputdir .."/GLFW/GLFW.lib"
+		"L3gion/vendor/GLFW/bin/" .. outputdir .."/GLFW/GLFW.lib",
+		"L3gion/vendor/Glad/bin/" .. outputdir .."/Glad/Glad.lib"
 	}
 
 	filter "system:windows"
@@ -59,7 +62,8 @@ project "L3gion"
 		defines
 		{
 			"LG_PLATFORM_WINDOWS",
-			"LG_BUILD_DLL"
+			"LG_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands

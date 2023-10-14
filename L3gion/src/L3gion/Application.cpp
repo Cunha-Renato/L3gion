@@ -3,7 +3,7 @@
 
 #include "L3gion/Events/MouseEvent.h"
 
-#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace L3gion
 {

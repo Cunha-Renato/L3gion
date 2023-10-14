@@ -1,8 +1,11 @@
 #include "lgpch.h"
 #include "WindowsWindow.h"
+
 #include "L3gion/Events/ApplicationEvent.h"
 #include "L3gion/Events/KeyEvent.h"
 #include "L3gion/Events/MouseEvent.h"
+
+#include <glad/glad.h>
 
 namespace L3gion
 {
@@ -31,6 +34,7 @@ namespace L3gion
 		m_Data.width = props.width;
 		m_Data.height = props.height;
 
+		// Initializing GLFW
 		if (!s_GLFWInitialized)
 		{
 			// TODO: glfwTerminate on system shutdown
@@ -44,6 +48,11 @@ namespace L3gion
 
 		m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Data.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+
+		// Initializing GLAD
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		LG_CORE_ASSERT(status, "Failed to initialize GLAD!");
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		setVSync(true);
 

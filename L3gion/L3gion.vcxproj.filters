@@ -37,6 +37,12 @@
     <ClInclude Include="src\L3gion\Events\MouseEvent.h">
       <Filter>L3gion\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\Layer.h">
+      <Filter>L3gion</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\LayerStack.h">
+      <Filter>L3gion</Filter>
+    </ClInclude>
     <ClInclude Include="src\L3gion\Log.h">
       <Filter>L3gion</Filter>
     </ClInclude>
@@ -47,11 +53,15 @@
       <Filter>L3gion</Filter>
     </ClInclude>
     <ClInclude Include="src\lgpch.h" />
-    <ClInclude Include="src\L3gion\Layer.h" />
-    <ClInclude Include="src\L3gion\LayerStack.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Application.cpp">
+      <Filter>L3gion</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Layer.cpp">
+      <Filter>L3gion</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\LayerStack.cpp">
       <Filter>L3gion</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Log.cpp">
@@ -61,7 +71,5 @@
       <Filter>L3gion\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\lgpch.cpp" />
-    <ClCompile Include="src\L3gion\Layer.cpp" />
-    <ClCompile Include="src\L3gion\LayerStack.cpp" />
   </ItemGroup>
 </Project>
