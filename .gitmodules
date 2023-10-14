@@ -1,3 +1,9 @@
 [submodule "L3gion/vendor/spdlog"]
 	path = L3gion/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "L3gion/vendor/GLFW"]
+	path = L3gion/vendor/GLFW
+	url = https://github.com/Cunha-Renato/glfw
+[submodule "L3gion/vendor/ImGui"]
+	path = L3gion/vendor/ImGui
+	url = https://github.com/Cunha-Renato/imgui
