@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Core.h"
-#include "Events/Event.h"
+
 #include "Window.h"
+#include "L3gion/LayerStack.h"
+#include "Events/Event.h"
 #include "L3gion/Events/ApplicationEvent.h"
-#include "L3gion/Events/KeyEvent.h"
-#include "L3gion/Events/MouseEvent.h"
 
 namespace L3gion
 {
@@ -20,11 +20,16 @@ namespace L3gion
 		void onEvent(Event& e);
 
 		inline void setVsync(bool option) { m_Window->setVSync(option); }
+
+		void pushLayer(Layer* layer);
+		void pushOverlay(Layer* overlay);
+
 	private:
 		bool onWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;
 		bool m_Running;
+		LayerStack m_LayerStack;
 	};
 
 	// To be defined in CLIENT

@@ -45,7 +45,7 @@ namespace L3gion
 		m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Data.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, &m_Data);
-		setVSync();
+		setVSync(true);
 
 		// Set GLFW callbacks
 		// RESIZE

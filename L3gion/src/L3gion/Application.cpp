@@ -19,24 +19,39 @@ namespace L3gion
 
 	}
 
+	void Application::pushLayer(Layer* layer)
+	{
+		m_LayerStack.pushLayer(layer);
+	}
+
+	void Application::pushOverlay(Layer* overlay)
+	{
+		m_LayerStack.pushOverlay(overlay);
+	}
+
 	void Application::onEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::onWindowClose));
 
-		LG_CORE_TRACE("{0}", e);
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+		{
+			(*--it)->onEvent(e);
+			if (e.isHandled())
+				break;
+		}
 	}
 
 	void Application::run()
 	{
-		MouseButtonPressedEvent e(15);
-		("alow");
-
-
 		while (m_Running)
 		{
 			glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			for (Layer* layer : m_LayerStack)
+				layer->onUpdate();
+
 			m_Window->onUpdate();
 		}
 	}
@@ -44,6 +59,7 @@ namespace L3gion
 	bool Application::onWindowClose(WindowCloseEvent& e)
 	{
 		m_Running = false;
+		e.setHandled();
 		return true;
 	}
 }

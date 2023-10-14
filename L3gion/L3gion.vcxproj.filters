@@ -47,6 +47,8 @@
       <Filter>L3gion</Filter>
     </ClInclude>
     <ClInclude Include="src\lgpch.h" />
+    <ClInclude Include="src\L3gion\Layer.h" />
+    <ClInclude Include="src\L3gion\LayerStack.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Application.cpp">
@@ -59,5 +61,7 @@
       <Filter>L3gion\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\lgpch.cpp" />
+    <ClCompile Include="src\L3gion\Layer.cpp" />
+    <ClCompile Include="src\L3gion\LayerStack.cpp" />
   </ItemGroup>
 </Project>

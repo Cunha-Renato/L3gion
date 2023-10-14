@@ -46,6 +46,9 @@ namespace L3gion
 		virtual const char* getName() const = 0;
 		virtual int getCategoryFlags() const = 0;
 		virtual std::string toString() const { return getName(); }
+		
+		inline bool isHandled() const { return m_Handled; }
+		inline void setHandled() { m_Handled = true; }
 
 		inline bool isInCategory(EventCategory category)
 		{
