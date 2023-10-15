@@ -17,6 +17,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "L3gion/vendor/GLFW/include"
 IncludeDir["Glad"] = "L3gion/vendor/Glad/include"
 IncludeDir["ImGui"] = "L3gion/vendor/ImGui"
+IncludeDir["glm"] = "L3gion/vendor/glm"
 
 
 -- Including the premake file
@@ -47,7 +48,8 @@ project "L3gion"
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
-		"%{IncludeDir.ImGui}"
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glm}"
 	}
 
 	links
@@ -112,8 +114,9 @@ project "Sandbox"
 
 	includedirs
 	{
-		"L3gion/vendor/spdlog/include",
-		"L3gion/src"
+		"L3gion/src",
+		"%{IncludeDir.glm}",
+		"L3gion/vendor/spdlog/include"
 	}
 
 	links

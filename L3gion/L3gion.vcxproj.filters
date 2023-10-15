@@ -46,6 +46,12 @@
     <ClInclude Include="src\L3gion\ImGui\ImGuiLayer.h">
       <Filter>L3gion\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\Input.h">
+      <Filter>L3gion</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\KeyCodes.h">
+      <Filter>L3gion</Filter>
+    </ClInclude>
     <ClInclude Include="src\L3gion\Layer.h">
       <Filter>L3gion</Filter>
     </ClInclude>
@@ -53,6 +59,9 @@
       <Filter>L3gion</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Log.h">
+      <Filter>L3gion</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\MouseButtonCodes.h">
       <Filter>L3gion</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Window.h">
@@ -64,12 +73,13 @@
     <ClInclude Include="src\Platform\OpenGL\imgui_impl_opengl3_loader.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsInput.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\lgpch.h" />
-    <ClInclude Include="src\L3gion\Input.h" />
-    <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Application.cpp">
@@ -77,6 +87,9 @@
     </ClCompile>
     <ClCompile Include="src\L3gion\ImGui\ImGuiLayer.cpp">
       <Filter>L3gion\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\KeyCodes.cpp">
+      <Filter>L3gion</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Layer.cpp">
       <Filter>L3gion</Filter>
@@ -90,10 +103,12 @@
     <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp">
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
+      <Filter>Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\lgpch.cpp" />
-    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
   </ItemGroup>
 </Project>

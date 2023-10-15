@@ -4,6 +4,7 @@
 #include "L3gion/Events/ApplicationEvent.h"
 #include "L3gion/Events/KeyEvent.h"
 #include "L3gion/Events/MouseEvent.h"
+#include "L3gion/KeyCodes.h"
 
 #include <glad/glad.h>
 
@@ -79,29 +80,30 @@ namespace L3gion
 		});
 
 		// KEY
+		// Keys need to be converted from GLFW_KEY to LG_KEY
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-
+			
 			switch (action)
 			{
 				case GLFW_PRESS:
 				{
-					KeyPressedEvent event(key, 0);
+					KeyPressedEvent event(GlfwKeyToLG(key), 0);
 					data.EventCallback(event);
 
 					break;
 				}
 				case GLFW_REPEAT:
 				{
-					KeyPressedEvent event(key, 1);
+					KeyPressedEvent event(GlfwKeyToLG(key), 1);
 					data.EventCallback(event);
 
 					break;
 				}
 				case GLFW_RELEASE:
 				{
-					KeyReleasedEvent event(key);
+					KeyReleasedEvent event(GlfwKeyToLG(key));
 					data.EventCallback(event);
 
 					break;
@@ -111,6 +113,8 @@ namespace L3gion
 			}
 		});
 	
+		// KEY_TYPED
+		// Keys need to be converted from GLFW_KEY to LG_KEY
 		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keyCode)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);

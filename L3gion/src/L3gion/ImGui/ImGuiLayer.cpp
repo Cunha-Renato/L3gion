@@ -2,6 +2,7 @@
 #include "ImGuiLayer.h"
 
 #include "L3gion/Application.h"
+#include "L3gion/KeyCodes.h"
 #include "imgui.h"
 #include "Platform/OpenGL/ImGuiOpenGLRenderer.h"
 
@@ -24,12 +25,12 @@ namespace L3gion
 	{
 		ImGui::CreateContext();
 		ImGui::StyleColorsDark();
+		ImGui_ImplOpenGL3_Init("#version 410");
 
 		ImGuiIO& io = ImGui::GetIO();
-		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 
-		ImGui_ImplOpenGL3_Init("#version 410");
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 	}
 
 	void ImGuiLayer::onDetach()
@@ -107,12 +108,16 @@ namespace L3gion
 	bool ImGuiLayer::onKeyPressedEvent(KeyPressedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		io.KeysDown[e.getKeyCode()] = true;
-
-		io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
-		io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
-		io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
-		io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+		ImGuiKey key = static_cast<ImGuiKey>(LgKeyToImGui(e.getKeyCode()));
+		io.AddKeyEvent(key, true);
+		
+		// Error Here
+		io.KeyCtrl = ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl);
+		io.KeyShift = ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift);
+		io.KeyAlt = ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt);
+		io.KeySuper = ImGui::IsKeyDown(ImGuiKey_LeftSuper) || ImGui::IsKeyDown(ImGuiKey_RightSuper);
+		
+		LG_CORE_TRACE(ImGui::IsKeyDown(key));
 
 		return false;
 	}
@@ -120,11 +125,21 @@ namespace L3gion
 	bool ImGuiLayer::onKeyReleasedEvent(KeyReleasedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		io.KeysDown[e.getKeyCode()] = false;
+		ImGuiKey key = static_cast<ImGuiKey>(LgKeyToImGui(e.getKeyCode()));
+		io.AddKeyEvent(key, false);
+
+		// Error Here
+		io.KeyCtrl = ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl);
+		io.KeyShift = ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift);
+		io.KeyAlt = ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt);
+		io.KeySuper = ImGui::IsKeyDown(ImGuiKey_LeftSuper) || ImGui::IsKeyDown(ImGuiKey_RightSuper);
+
+		LG_CORE_TRACE(io.KeyCtrl);
 
 		return false;
 	}
 
+	// For typing the codes are universal
 	bool ImGuiLayer::onKeyTypedEvent(KeyTypedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();

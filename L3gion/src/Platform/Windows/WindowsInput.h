@@ -1,6 +1,7 @@
 #pragma once
 
 #include "L3gion/Input.h"
+#include "L3gion/KeyCodes.h"
 
 namespace L3gion
 {

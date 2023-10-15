@@ -8,6 +8,7 @@ namespace L3gion
 	class L3GION_API Input
 	{
 	public:
+		// Keycodes will be send as LG_KEY
 		inline static bool isKeyPressed(int keycode) 
 		{ 
 			return s_Instance->isKeyPressedImpl(keycode); 

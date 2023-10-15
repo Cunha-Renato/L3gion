@@ -80,7 +80,7 @@
       <PrecompiledHeaderFile>lgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LG_PLATFORM_WINDOWS;LG_BUILD_DLL;GLFW_INCLUDE_NONE;LG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\ImGui;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -103,7 +103,7 @@
       <PrecompiledHeaderFile>lgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LG_PLATFORM_WINDOWS;LG_BUILD_DLL;GLFW_INCLUDE_NONE;LG_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\ImGui;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -130,7 +130,7 @@
       <PrecompiledHeaderFile>lgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>LG_PLATFORM_WINDOWS;LG_BUILD_DLL;GLFW_INCLUDE_NONE;LG_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\ImGui;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -162,9 +162,11 @@
     <ClInclude Include="src\L3gion\Events\MouseEvent.h" />
     <ClInclude Include="src\L3gion\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\L3gion\Input.h" />
+    <ClInclude Include="src\L3gion\KeyCodes.h" />
     <ClInclude Include="src\L3gion\Layer.h" />
     <ClInclude Include="src\L3gion\LayerStack.h" />
     <ClInclude Include="src\L3gion\Log.h" />
+    <ClInclude Include="src\L3gion\MouseButtonCodes.h" />
     <ClInclude Include="src\L3gion\Window.h" />
     <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h" />
     <ClInclude Include="src\Platform\OpenGL\imgui_impl_opengl3_loader.h" />
@@ -175,6 +177,9 @@
   <ItemGroup>
     <ClCompile Include="src\L3gion\Application.cpp" />
     <ClCompile Include="src\L3gion\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\L3gion\KeyCodes.cpp">
+      <ObjectFileName>$(IntDir)\KeyCodes1.obj</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="src\L3gion\Layer.cpp" />
     <ClCompile Include="src\L3gion\LayerStack.cpp" />
     <ClCompile Include="src\L3gion\Log.cpp" />
