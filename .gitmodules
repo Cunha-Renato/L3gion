@@ -7,3 +7,6 @@
 [submodule "L3gion/vendor/glm"]
 	path = L3gion/vendor/glm
 	url = https://github.com/Cunha-Renato/glm
+[submodule "L3gion/vendor/ImGui"]
+	path = L3gion/vendor/ImGui
+	url = https://github.com/Cunha-Renato/imgui
