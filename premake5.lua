@@ -1,6 +1,5 @@
 workspace "L3gion"
 	architecture "x64"
-
 	startproject "Sandbox"
 
 	configurations
@@ -12,23 +11,23 @@ workspace "L3gion"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
--- Include directiories relative to root folder (Solution)
+-- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["GLFW"] = "L3gion/vendor/GLFW/include"
 IncludeDir["Glad"] = "L3gion/vendor/Glad/include"
-IncludeDir["ImGui"] = "L3gion/vendor/ImGui"
+IncludeDir["ImGui"] = "L3gion/vendor/imgui"
 IncludeDir["glm"] = "L3gion/vendor/glm"
 
-
--- Including the premake file
-include "L3gion/vendor/GLFW/premake5.lua"
-include "L3gion/vendor/Glad/premake5.lua"
-include "L3gion/vendor/ImGui/premake5.lua"
+include "L3gion/vendor/GLFW"
+include "L3gion/vendor/Glad"
+include "L3gion/vendor/imgui"
 
 project "L3gion"
 	location "L3gion"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin_int/" .. outputdir .. "/%{prj.name}")
@@ -39,10 +38,17 @@ project "L3gion"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl",
 	}
 
-	includedirs 
+	defines
+	{
+		"_CRT_SECURE_NO_WARNINGS"
+	}
+
+	includedirs
 	{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
@@ -52,20 +58,15 @@ project "L3gion"
 		"%{IncludeDir.glm}"
 	}
 
-	links
-	{
+	links 
+	{ 
 		"GLFW",
 		"Glad",
 		"ImGui",
 		"opengl32.lib"
-		-- "L3gion/vendor/GLFW/bin/" .. outputdir .."/GLFW/GLFW.lib",
-		-- "L3gion/vendor/Glad/bin/" .. outputdir .."/Glad/Glad.lib",
-		-- "L3gion/vendor/ImGui/bin/" .. outputdir .."/ImGui/ImGui.lib"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
-		staticruntime "on"
 		systemversion "latest"
 
 		defines
@@ -75,33 +76,27 @@ project "L3gion"
 			"GLFW_INCLUDE_NONE"
 		}
 
-		postbuildcommands
-		{
-			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
-		}
-
 	filter "configurations:Debug"
 		defines "LG_DEBUG"
-		staticruntime "off"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "LG_RELEASE"
-		staticruntime "off"
 		runtime "Release"
-		optimize"On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "LG_DIST"
-		staticruntime "off"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin_int/" .. outputdir .. "/%{prj.name}")
@@ -114,21 +109,18 @@ project "Sandbox"
 
 	includedirs
 	{
+		"L3gion/vendor/spdlog/include",
 		"L3gion/src",
-		"%{IncludeDir.glm}",
-		"%{IncludeDir.ImGui}",
-		"L3gion/vendor/spdlog/include"
+		"L3gion/vendor",
+		"%{IncludeDir.glm}"
 	}
 
 	links
 	{
-		"L3gion",
-		("bin/" .. outputdir .. "/L3gion/L3gion.lib")
+		"L3gion"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
-		staticruntime "on"
 		systemversion "latest"
 
 		defines
@@ -138,18 +130,15 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "LG_DEBUG"
-		staticruntime "off"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "LG_RELEASE"
-		staticruntime "off"
 		runtime "Release"
-		optimize"On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "LG_DIST"
-		staticruntime "off"
 		runtime "Release"
-		optimize "On"
+		optimize "on"

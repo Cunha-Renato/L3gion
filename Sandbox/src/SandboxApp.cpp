@@ -1,5 +1,5 @@
 #include <L3gion.h>
-#include "imgui.h"
+
 
 class ExampleLayer : public L3gion::Layer
 {
@@ -9,23 +9,25 @@ class ExampleLayer : public L3gion::Layer
 		virtual void onImGuiRender() override
 		{
 			// Not Working, possible problems IMGUI functions and etc, are not being exported/imported
-			static bool show = true;
-			ImGui::ShowDemoWindow(&show);
+			//static bool show = true;
+			//ImGui::ShowDemoWindow(&show);
 		}
 };
 
 class Sandbox : public L3gion::Application
 {
+private: 
+		ExampleLayer* m_Layer; 
 public:
 	Sandbox()
 	{
-		ExampleLayer a("alow");
-		pushOverlay(&a);
+		m_Layer = new ExampleLayer("Example Layer");
+		pushLayer(m_Layer);
 	}
 
 	~Sandbox()
 	{
-
+		delete m_Layer;
 	}
 };
 
