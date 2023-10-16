@@ -5,6 +5,7 @@
 #include "L3gion/KeyCodes.h"
 #include "imgui.h"
 #include "Platform/OpenGL/ImGuiOpenGLRenderer.h"
+#include "Platform/OpenGL/imgui_impl_glfw.h"
 
 // TEMPORARY
 #include <GLFW/glfw3.h>
@@ -19,23 +20,29 @@ namespace L3gion
 
 	ImGuiLayer::~ImGuiLayer()
 	{
-
+		
 	}
 	void ImGuiLayer::onAttach()
 	{
 		ImGui::CreateContext();
-		ImGui::StyleColorsDark();
-		ImGui_ImplOpenGL3_Init("#version 410");
 
 		ImGuiIO& io = ImGui::GetIO();
 
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+		ImGui::StyleColorsDark();
+
+		auto nativeWindow = Application::get().getWindow().getNativeWindow();
+		ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow*>(nativeWindow), true);
+		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 
 	void ImGuiLayer::onDetach()
 	{
-
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 	}
 	void ImGuiLayer::onUpdate()
 	{
@@ -48,6 +55,7 @@ namespace L3gion
 		m_Time = time;
 		
 		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
 		static bool show = true;
@@ -116,8 +124,6 @@ namespace L3gion
 		io.KeyShift = ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift);
 		io.KeyAlt = ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt);
 		io.KeySuper = ImGui::IsKeyDown(ImGuiKey_LeftSuper) || ImGui::IsKeyDown(ImGuiKey_RightSuper);
-		
-		LG_CORE_TRACE(ImGui::IsKeyDown(key));
 
 		return false;
 	}
@@ -134,18 +140,16 @@ namespace L3gion
 		io.KeyAlt = ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt);
 		io.KeySuper = ImGui::IsKeyDown(ImGuiKey_LeftSuper) || ImGui::IsKeyDown(ImGuiKey_RightSuper);
 
-		LG_CORE_TRACE(io.KeyCtrl);
-
 		return false;
 	}
 
 	// For typing the codes are universal
 	bool ImGuiLayer::onKeyTypedEvent(KeyTypedEvent& e)
 	{
-		ImGuiIO& io = ImGui::GetIO();
-		int keyCode = e.getKeyCode();
-		if( keyCode > 0 && keyCode < 0x10000)
-			io.AddInputCharacter((unsigned short)keyCode);
+		//ImGuiIO& io = ImGui::GetIO();
+		//int keyCode = e.getKeyCode();
+		//if( keyCode > 0 && keyCode < 0x10000)
+		//	io.AddInputCharacter((unsigned short)keyCode);
 
 		return false;
 	}

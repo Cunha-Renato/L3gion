@@ -1,22 +1,28 @@
 #pragma once
 
 #include "Event.h"
+#include "glm/glm.hpp"
 
 namespace L3gion
 {
 	class L3GION_API MouseMovedEvent : public Event
 	{
 	public:
+		MouseMovedEvent(glm::vec2 position)
+			: m_Position(position) {}
 		MouseMovedEvent(float x, float y)
-			: m_MouseX(x), m_MouseY(y) {}
+		{
+			m_Position = glm::vec2(x, y);
+		}
 
-		inline float getX() const { return m_MouseX; }
-		inline float getY() const { return m_MouseY; }
+		inline float getX() const { return m_Position.x; }
+		inline float getY() const { return m_Position.y; }
+		inline glm::vec2 getPosition() const { return m_Position; }
 
 		std::string toString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseMovedEvent: " << m_MouseX << ", " << m_MouseY;
+			ss << "MouseMovedEvent: " << m_Position.x << ", " << m_Position.y;
 			return ss.str();
 		}
 
@@ -24,7 +30,7 @@ namespace L3gion
 		EVENT_CLASS_CATEGORY(EC_Mouse | EC_Input);
 
 	private:
-		float m_MouseX, m_MouseY;
+		glm::vec2 m_Position;
 	};
 
 //---------------------- SCROLL_EVENT ------------------------

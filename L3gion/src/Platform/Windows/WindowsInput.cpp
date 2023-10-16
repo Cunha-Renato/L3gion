@@ -26,12 +26,12 @@ namespace L3gion
 		return state == GLFW_PRESS;
 	}
 
-	std::pair<float, float> WindowsInput::getMousePosImpl()
+	glm::vec2 WindowsInput::getMousePosImpl()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
 		double xPos, yPos;
 		glfwGetCursorPos(window, &xPos, &yPos);
 
-		return { (float)xPos, (float)yPos };
+		return glm::vec2(xPos, yPos);
 	}
 }

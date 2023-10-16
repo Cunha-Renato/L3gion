@@ -11,6 +11,6 @@ namespace L3gion
 		virtual bool isKeyPressedImpl(int keycode) override;
 
 		virtual bool isMouseButtonPressedImpl(int button) override;
-		virtual std::pair<float, float> getMousePosImpl() override;
+		virtual glm::vec2 getMousePosImpl() override;
 	};
 }
