@@ -168,24 +168,18 @@
     <ClInclude Include="src\L3gion\Log.h" />
     <ClInclude Include="src\L3gion\MouseButtonCodes.h" />
     <ClInclude Include="src\L3gion\Window.h" />
-    <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h" />
-    <ClInclude Include="src\Platform\OpenGL\imgui_impl_glfw.h" />
-    <ClInclude Include="src\Platform\OpenGL\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\lgpch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Application.cpp" />
+    <ClCompile Include="src\L3gion\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\L3gion\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\L3gion\KeyCodes.cpp">
-      <ObjectFileName>$(IntDir)\KeyCodes1.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="src\L3gion\KeyCodes.cpp" />
     <ClCompile Include="src\L3gion\Layer.cpp" />
     <ClCompile Include="src\L3gion\LayerStack.cpp" />
     <ClCompile Include="src\L3gion\Log.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\imgui_impl_glfw.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\lgpch.cpp">

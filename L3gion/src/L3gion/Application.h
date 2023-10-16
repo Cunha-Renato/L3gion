@@ -7,6 +7,8 @@
 #include "Events/Event.h"
 #include "L3gion/Events/ApplicationEvent.h"
 
+#include "L3gion/ImGui/ImGuiLayer.h"
+
 namespace L3gion
 {
 	class L3GION_API Application
@@ -32,6 +34,7 @@ namespace L3gion
 
 		std::unique_ptr<Window> m_Window;
 		bool m_Running;
+		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
 
 	private:

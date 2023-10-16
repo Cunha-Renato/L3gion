@@ -5,7 +5,6 @@ namespace L3gion
 {
 	LayerStack::LayerStack()
 	{
-		m_LayerInsert = m_Layers.begin();
 	}
 
 	LayerStack::~LayerStack()
@@ -16,8 +15,8 @@ namespace L3gion
 
 	void LayerStack::pushLayer(Layer* layer)
 	{
-		m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer);
-		m_LayerInsert++;
+		m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
+		m_LayerInsertIndex++;
 	}
 
 	void LayerStack::pushOverlay(Layer* overlay)
@@ -36,7 +35,7 @@ namespace L3gion
 			m_Layers.erase(iterator);
 
 			// Subtract one from te insert iterator
-			m_LayerInsert--;
+			m_LayerInsertIndex++;
 		}
 	}
 

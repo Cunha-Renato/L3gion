@@ -1,10 +1,6 @@
 #pragma once
 
 #include "L3gion/Layer.h"
-#include "L3gion/Events/ApplicationEvent.h"
-#include "L3gion/Events/KeyEvent.h"
-#include "L3gion/Events/MouseEvent.h"
-
 
 namespace L3gion
 {
@@ -14,23 +10,14 @@ namespace L3gion
 		ImGuiLayer();
 		~ImGuiLayer();
 
-		void onAttach();
-		void onDetach();
-		void onUpdate();
-		void onEvent(Event& event);
+		virtual void onAttach() override;
+		virtual void onDetach() override;
+		virtual void onImGuiRender() override;
 
+		void begin();
+		void end();
 	private:
-		bool onMouseButtonPresedEvent(MouseButtonPressedEvent& e);
-		bool onMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
-		bool onMouseMoveEvent(MouseMovedEvent& e);
-		bool onMouseScrollEvent(MouseScrollEvent& e);
-		bool onKeyPressedEvent(KeyPressedEvent& e);
-		bool onKeyReleasedEvent(KeyReleasedEvent& e);
-		bool onKeyTypedEvent(KeyTypedEvent& e);
-		bool onWindowResizeEvent(WindowResizeEvent& e);
-
-	private:
-		float m_Time = 0;
+		float m_Time = 0.0f;
 	};
 }
 

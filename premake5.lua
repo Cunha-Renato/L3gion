@@ -116,6 +116,7 @@ project "Sandbox"
 	{
 		"L3gion/src",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.ImGui}",
 		"L3gion/vendor/spdlog/include"
 	}
 

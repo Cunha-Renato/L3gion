@@ -17,12 +17,16 @@ namespace L3gion
 
 		m_Window = std::unique_ptr<Window>(Window::create());
 		m_Window->setEventCallback(BIND_EVENT_FN(Application::onEvent));
+
+		m_ImGuiLayer = new ImGuiLayer;
+		pushOverlay(m_ImGuiLayer);
+
 		m_Running = true;
 	}
 
 	Application::~Application()
 	{
-
+		delete m_ImGuiLayer;
 	}
 
 	void Application::pushLayer(Layer* layer)
@@ -59,6 +63,12 @@ namespace L3gion
 
 			for (Layer* layer : m_LayerStack)
 				layer->onUpdate();
+
+			// ImGui rendering
+			m_ImGuiLayer->begin();
+			for (Layer* layer : m_LayerStack)
+				layer->onImGuiRender();
+			m_ImGuiLayer->end();
 
 			m_Window->onUpdate();
 		}
