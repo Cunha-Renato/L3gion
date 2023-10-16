@@ -6,8 +6,6 @@
 #include "L3gion/Events/MouseEvent.h"
 #include "L3gion/KeyCodes.h"
 
-#include <glad/glad.h>
-
 namespace L3gion
 {
 	static bool s_GLFWInitialized = false;
@@ -35,6 +33,8 @@ namespace L3gion
 		m_Data.width = props.width;
 		m_Data.height = props.height;
 
+		LG_CORE_INFO("Initializing WindowsWindow!");
+
 		// Initializing GLFW
 		if (!s_GLFWInitialized)
 		{
@@ -48,11 +48,9 @@ namespace L3gion
 		}
 
 		m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Data.title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
 
-		// Initializing GLAD
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		LG_CORE_ASSERT(status, "Failed to initialize GLAD!");
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->init();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		setVSync(true);
@@ -172,8 +170,7 @@ namespace L3gion
 
 	void WindowsWindow::onUpdate()
 	{
-		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->swapBuffers();
 	}
 
 	void WindowsWindow::setVSync(bool enable = true)

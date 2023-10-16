@@ -1,4 +1,5 @@
 #include <L3gion.h>
+#include "ImGui/imgui.h"
 
 
 class ExampleLayer : public L3gion::Layer
@@ -8,9 +9,8 @@ class ExampleLayer : public L3gion::Layer
 			: Layer(name){}
 		virtual void onImGuiRender() override
 		{
-			// Not Working, possible problems IMGUI functions and etc, are not being exported/imported
-			//static bool show = true;
-			//ImGui::ShowDemoWindow(&show);
+			static bool show = true;
+			ImGui::ShowDemoWindow(&show);
 		}
 };
 

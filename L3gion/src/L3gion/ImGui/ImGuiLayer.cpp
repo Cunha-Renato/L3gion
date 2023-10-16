@@ -90,7 +90,5 @@ namespace L3gion
 	
 	void ImGuiLayer::onImGuiRender()
 	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
 	}
 }
