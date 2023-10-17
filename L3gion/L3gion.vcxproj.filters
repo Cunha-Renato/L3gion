@@ -13,8 +13,14 @@
     <Filter Include="src\L3gion\ImGui">
       <UniqueIdentifier>{12DBDFE3-FED3-FE35-2706-E4BA135EDE41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\L3gion\Renderer">
+      <UniqueIdentifier>{8EC0E303-FA21-C111-838F-07C4EFEFF7D0}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\OpenGL">
+      <UniqueIdentifier>{35A49437-A105-7245-2A73-B8F796D3A804}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Platform\Windows">
       <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
@@ -87,8 +93,14 @@
     <ClInclude Include="src\L3gion\MouseButtonCodes.h">
       <Filter>src\L3gion</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\Renderer\GraphicsContext.h">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\L3gion\Window.h">
       <Filter>src\L3gion</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsInput.h">
       <Filter>src\Platform\Windows</Filter>
@@ -1347,8 +1359,7 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Renderer\GraphicsContext.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\L3gion\Renderer\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Application.cpp">
@@ -1372,6 +1383,9 @@
     <ClCompile Include="src\L3gion\Log.cpp">
       <Filter>src\L3gion</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
@@ -1381,6 +1395,6 @@
     <ClCompile Include="src\lgpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\Shader.cpp" />
   </ItemGroup>
 </Project>

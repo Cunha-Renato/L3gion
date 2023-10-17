@@ -9,6 +9,8 @@
 
 #include "L3gion/ImGui/ImGuiLayer.h"
 
+#include "L3gion/Renderer/Shader.h"
+
 namespace L3gion
 {
 	class L3GION_API Application
@@ -38,6 +40,7 @@ namespace L3gion
 		LayerStack m_LayerStack;
 
 		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+		std::unique_ptr<Shader> m_Shader;
 	private:
 		static Application* s_Instance;
 	};
