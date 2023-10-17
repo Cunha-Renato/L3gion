@@ -10,6 +10,28 @@ namespace L3gion
 {
 	Application* Application::s_Instance = nullptr;
 
+	static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
+	{
+		switch (type)
+		{
+			case L3gion::ShaderDataType::Float:		return GL_FLOAT;
+			case L3gion::ShaderDataType::Float2:	return GL_FLOAT;
+			case L3gion::ShaderDataType::Float3:	return GL_FLOAT;
+			case L3gion::ShaderDataType::Float4:	return GL_FLOAT;
+			case L3gion::ShaderDataType::Mat3:		return GL_FLOAT;
+			case L3gion::ShaderDataType::Mat4:		return GL_FLOAT;
+			case L3gion::ShaderDataType::Int:		return GL_INT;
+			case L3gion::ShaderDataType::Int2:		return GL_INT;
+			case L3gion::ShaderDataType::Int3:		return GL_INT;
+			case L3gion::ShaderDataType::Int4:		return GL_INT;
+			case L3gion::ShaderDataType::Bool:		return GL_BOOL;
+		}
+
+		LG_CORE_ASSERT(false, "In ShaderDataTypeToOpenGLBaseType(): Unknown ShaderDataType!");
+			
+		return 0;
+	}
+
 	Application::Application()
 	{
 		LG_CORE_ASSERT(!s_Instance, "Application already exists!");
@@ -25,41 +47,56 @@ namespace L3gion
 		glGenVertexArrays(1, &m_VertexArray);
 		glBindVertexArray(m_VertexArray);
 
-		glGenBuffers(1, &m_VertexBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-
 		float vertices[] =
 		{
-			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.0f, 0.5f, 0.0f
+			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			 0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
 		};
 
-		// Send data to OpenGL
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		m_VertexBuffer.reset(VertexBuffer::create(vertices, sizeof(vertices)));
 
-		// Structure of the data
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), nullptr);
+		BufferLayout layout = 
+		{
+			{ShaderDataType::Float3, "a_Position"},
+			{ShaderDataType::Float4, "a_Color"}
+		};
 
-		glGenBuffers(1, &m_IndexBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
+		m_VertexBuffer->setLayout(layout);
 
-		unsigned int indices[] = {0, 1, 2};
+		uint32_t index = 0;
+		for (const auto& element : m_VertexBuffer->getLayout())
+		{
+			// Structure of the data
+			glEnableVertexAttribArray(index);
+			
+			glVertexAttribPointer(index, 
+				element.getComponentCount(), 
+				ShaderDataTypeToOpenGLBaseType(element.type), 
+				element.normalized ? GL_TRUE : GL_FALSE, 
+				layout.getStride(), 
+				(const void*)element.offset
+			);
 
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+			index++;
+		}
+
+		uint32_t indices[] = {0, 1, 2};
+
+		m_IndexBuffer.reset(IndexBuffer::create(indices, sizeof(indices) / sizeof(uint32_t)));
 
 		// Shaders
 		std::string vertexSrc = R"(
 			#version 330 core
 
 			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec4 a_Color;
 
-			out vec3 v_Position;
+			out vec4 v_Color;
 
 			void main()
 			{
-				v_Position = a_Position;
+				v_Color = a_Color;
 				gl_Position = vec4(a_Position, 1.0);
 			}
 		)";
@@ -69,11 +106,11 @@ namespace L3gion
 
 			layout(location = 0) out vec4 color;
 
-			in vec3 v_Position;
+			in vec4 v_Color;
 
 			void main()
 			{
-				color = vec4(v_Position * 0.5 + 0.5, 1.0);
+				color = v_Color;
 			}
 		)";
 
@@ -122,7 +159,7 @@ namespace L3gion
 			m_Shader->bind();
 
 			glBindVertexArray(m_VertexArray);
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+			glDrawElements(GL_TRIANGLES, m_IndexBuffer->getCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack)
 				layer->onUpdate();

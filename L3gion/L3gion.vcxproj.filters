@@ -1360,6 +1360,9 @@
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\Shader.h" />
+    <ClInclude Include="src\L3gion\Renderer\Buffer.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
+    <ClInclude Include="src\L3gion\Renderer\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Application.cpp">
@@ -1396,5 +1399,8 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\Shader.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\Renderer.cpp" />
   </ItemGroup>
 </Project>
