@@ -143,6 +143,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\L3gion\Renderer\Buffer.h" />
     <ClInclude Include="src\L3gion\Renderer\Renderer.h" />
     <ClInclude Include="src\L3gion\Renderer\Shader.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="src\L3gion\Log.h" />
     <ClInclude Include="src\L3gion\MouseButtonCodes.h" />
     <ClInclude Include="src\L3gion\Renderer\GraphicsContext.h" />
+    <ClInclude Include="src\L3gion\Renderer\VertexArray.h" />
     <ClInclude Include="src\L3gion\Window.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
@@ -586,6 +588,7 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\L3gion\Renderer\Buffer.cpp" />
     <ClCompile Include="src\L3gion\Renderer\Renderer.cpp" />
     <ClCompile Include="src\L3gion\Renderer\Shader.cpp" />
@@ -596,6 +599,7 @@
     <ClCompile Include="src\L3gion\Layer.cpp" />
     <ClCompile Include="src\L3gion\LayerStack.cpp" />
     <ClCompile Include="src\L3gion\Log.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />

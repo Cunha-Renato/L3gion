@@ -26,7 +26,7 @@ namespace L3gion
 		return nullptr;
 	}
 	
-	IndexBuffer* IndexBuffer::create(uint32_t* indices, uint32_t size)
+	IndexBuffer* IndexBuffer::create(uint32_t* indices, uint32_t count)
 	{
 		switch (Renderer::getAPI())
 		{
@@ -37,7 +37,7 @@ namespace L3gion
 			}
 			case RendererAPI::OpenGL:
 			{
-				return new OpenGLIndexBuffer(indices, size);
+				return new OpenGLIndexBuffer(indices, count);
 			}
 		}
 

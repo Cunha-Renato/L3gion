@@ -52,7 +52,6 @@ namespace L3gion
 		BufferElement(const ShaderDataType type, const std::string& name, bool normalized = false)
 			: name(name), type(type), size(ShaderDataTypeSize(type)), offset(0), normalized(normalized)
 		{
-
 		}
 
 		uint32_t getComponentCount() const 
