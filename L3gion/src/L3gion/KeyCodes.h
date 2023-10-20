@@ -630,13 +630,15 @@ namespace L3gion
 	};
 
 	inline int LgKeyToGlfw(int keycode)
-	{
-		return glfwKeysBuffer[keycode];
+	{	
+		int index = keycode - 1;
+		return glfwKeysBuffer[index];
 	}
 
 	inline int LgKeyToImGui(int keycode)
 	{
-		return imGuiKeysBuffer[keycode];
+		int index = keycode - 1;
+		return imGuiKeysBuffer[index];
 	}
 
 	int GlfwKeyToLG(int keycode);

@@ -10,7 +10,7 @@ namespace L3gion
 	LayerStack::~LayerStack()
 	{
 		for(Layer* layer : m_Layers)
-			delete layer;
+				delete layer;
 	}
 
 	void LayerStack::pushLayer(Layer* layer)

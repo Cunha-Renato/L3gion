@@ -3,17 +3,28 @@
 
 namespace L3gion
 {
-	void Renderer::beginScene()
-	{
+	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
 
+	Renderer::~Renderer()
+	{
+		if (m_SceneData)
+			delete m_SceneData;
+	}
+
+	void Renderer::beginScene(OrthoCamera& camera)
+	{
+		m_SceneData->viewProjectionMatrix = camera.getViewProjectionMatrix();
 	}
 	void Renderer::endScene()
 	{
 
 	}
 
-	void Renderer::submit(const std::shared_ptr<VertexArray>& vertexArray)
+	void Renderer::submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray)
 	{
+		shader->setMat4("u_ViewProjection", m_SceneData->viewProjectionMatrix);
+		shader->bind();
+
 		vertexArray->bind();
 		RenderCommand::drawIndexed(vertexArray);
 	}

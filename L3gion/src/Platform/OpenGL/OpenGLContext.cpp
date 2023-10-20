@@ -21,7 +21,7 @@ namespace L3gion
 		// Initializing GLAD
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		LG_CORE_ASSERT(status, "Failed to initialize GLAD!")
+		LG_CORE_ASSERT(status, "In OpenGLContext init(): Failed to initialize GLAD!")
 
 		LG_CORE_INFO("OpenGL INFO:");
 		LG_CORE_INFO("Vendor:   {0}", (const char*)glGetString(GL_VENDOR));

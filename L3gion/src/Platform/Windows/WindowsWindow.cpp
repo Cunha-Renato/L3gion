@@ -1,10 +1,13 @@
 #include "lgpch.h"
 #include "WindowsWindow.h"
+#include <glad/glad.h>
 
 #include "L3gion/Events/ApplicationEvent.h"
 #include "L3gion/Events/KeyEvent.h"
 #include "L3gion/Events/MouseEvent.h"
 #include "L3gion/KeyCodes.h"
+
+#include <GLFW/glfw3native.h>
 
 namespace L3gion
 {
@@ -38,21 +41,32 @@ namespace L3gion
 		// Initializing GLFW
 		if (!s_GLFWInitialized)
 		{
-			// TODO: glfwTerminate on system shutdown
 			int success = glfwInit();
 			LG_CORE_ASSERT(success, "Could not initialize GLFW!");
-			
+
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+			glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
+
 			glfwSetErrorCallback(GLFWErrorCallback);
 
 			s_GLFWInitialized = true;
 		}
+		else
+		{
+			shutdown();
+			return;
+		}
 
-		m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Data.title.c_str(), nullptr, nullptr);
+		m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Data.title.c_str(), NULL, NULL);
+		LG_CORE_ASSERT(m_Window, "In WindowsWindow Init(): Failed to create a window!");
 
 		m_Context = new OpenGLContext(m_Window);
 		m_Context->init();
-
 		glfwSetWindowUserPointer(m_Window, &m_Data);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		setVSync(true);
 
 		// Set GLFW callbacks
@@ -166,7 +180,11 @@ namespace L3gion
 		});
 	}
 
-	void WindowsWindow::shutdown() { glfwDestroyWindow(m_Window); }
+	void WindowsWindow::shutdown() 
+	{ 
+		glfwDestroyWindow(m_Window); 
+		glfwTerminate();
+	}
 
 	void WindowsWindow::onUpdate()
 	{

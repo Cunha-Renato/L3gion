@@ -7,7 +7,7 @@ namespace L3gion
 {
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size)
 	{
-		glCreateBuffers(1, &m_BufferID);
+		glGenBuffers(1, &m_BufferID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_BufferID);
 		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 	}
@@ -30,7 +30,7 @@ namespace L3gion
 	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count)
 		: m_Count(count)
 	{
-		glCreateBuffers(1, &m_BufferID);
+		glGenBuffers(1, &m_BufferID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
 	}

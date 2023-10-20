@@ -3,6 +3,8 @@
 
 #include <glad/glad.h>
 
+#include <glm/gtc/type_ptr.hpp>
+
 namespace L3gion
 {
 	Shader::Shader(const std::string& vertexSrc, const std::string& fragmentSrc) : m_ShaderID(0)
@@ -123,5 +125,14 @@ namespace L3gion
 	void Shader::unbind() const
 	{
 		glUseProgram(0);
+	}
+
+	void Shader::setMat4(const std::string& name, glm::mat4 matrix)
+	{
+		int location = glGetUniformLocation(m_ShaderID, name.c_str());
+
+		LG_CORE_ASSERT(location != -1, "In setMat4: Uniform doesn't exist!");
+
+		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 }

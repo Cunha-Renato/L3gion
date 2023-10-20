@@ -146,6 +146,7 @@
     <ClInclude Include="src\L3gion.h" />
     <ClInclude Include="src\L3gion\Application.h" />
     <ClInclude Include="src\L3gion\Core.h" />
+    <ClInclude Include="src\L3gion\Core\Timestep.h" />
     <ClInclude Include="src\L3gion\EntryPoint.h" />
     <ClInclude Include="src\L3gion\Events\ApplicationEvent.h" />
     <ClInclude Include="src\L3gion\Events\Event.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="src\L3gion\Log.h" />
     <ClInclude Include="src\L3gion\MouseButtonCodes.h" />
     <ClInclude Include="src\L3gion\Renderer\Buffer.h" />
+    <ClInclude Include="src\L3gion\Renderer\Camera.h" />
     <ClInclude Include="src\L3gion\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\L3gion\Renderer\RenderCommand.h" />
     <ClInclude Include="src\L3gion\Renderer\Renderer.h" />
@@ -599,6 +601,7 @@
     <ClCompile Include="src\L3gion\LayerStack.cpp" />
     <ClCompile Include="src\L3gion\Log.cpp" />
     <ClCompile Include="src\L3gion\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\Camera.cpp" />
     <ClCompile Include="src\L3gion\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\L3gion\Renderer\Renderer.cpp" />
     <ClCompile Include="src\L3gion\Renderer\RendererAPI.cpp" />
