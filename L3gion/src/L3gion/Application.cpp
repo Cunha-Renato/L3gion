@@ -10,28 +10,6 @@ namespace L3gion
 {
 	Application* Application::s_Instance = nullptr;
 
-	static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
-	{
-		switch (type)
-		{
-			case L3gion::ShaderDataType::Float:		return GL_FLOAT;
-			case L3gion::ShaderDataType::Float2:	return GL_FLOAT;
-			case L3gion::ShaderDataType::Float3:	return GL_FLOAT;
-			case L3gion::ShaderDataType::Float4:	return GL_FLOAT;
-			case L3gion::ShaderDataType::Mat3:		return GL_FLOAT;
-			case L3gion::ShaderDataType::Mat4:		return GL_FLOAT;
-			case L3gion::ShaderDataType::Int:		return GL_INT;
-			case L3gion::ShaderDataType::Int2:		return GL_INT;
-			case L3gion::ShaderDataType::Int3:		return GL_INT;
-			case L3gion::ShaderDataType::Int4:		return GL_INT;
-			case L3gion::ShaderDataType::Bool:		return GL_BOOL;
-		}
-
-		LG_CORE_ASSERT(false, "In ShaderDataTypeToOpenGLBaseType(): Unknown ShaderDataType!");
-			
-		return 0;
-	}
-
 	Application::Application()
 	{
 		LG_CORE_ASSERT(!s_Instance, "Application already exists!");
@@ -44,8 +22,8 @@ namespace L3gion
 		pushOverlay(m_ImGuiLayer);
 
 		// OpenGL buffers
-		glGenVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);
+
+		m_VertexArray.reset(VertexArray::create());
 
 		float vertices[] =
 		{
@@ -54,36 +32,23 @@ namespace L3gion
 			 0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
 		};
 
-		m_VertexBuffer.reset(VertexBuffer::create(vertices, sizeof(vertices)));
+		std::shared_ptr<VertexBuffer> vertexBuffer;
+		vertexBuffer.reset(VertexBuffer::create(vertices, sizeof(vertices)));
 
-		BufferLayout layout = 
+		BufferLayout layout =
 		{
 			{ShaderDataType::Float3, "a_Position"},
 			{ShaderDataType::Float4, "a_Color"}
 		};
 
-		m_VertexBuffer->setLayout(layout);
-
-		uint32_t index = 0;
-		for (const auto& element : m_VertexBuffer->getLayout())
-		{
-			// Structure of the data
-			glEnableVertexAttribArray(index);
-			
-			glVertexAttribPointer(index, 
-				element.getComponentCount(), 
-				ShaderDataTypeToOpenGLBaseType(element.type), 
-				element.normalized ? GL_TRUE : GL_FALSE, 
-				layout.getStride(), 
-				(const void*)element.offset
-			);
-
-			index++;
-		}
+		vertexBuffer->setLayout(layout);
+		m_VertexArray->addVertexBuffer(vertexBuffer);
 
 		uint32_t indices[] = {0, 1, 2};
 
-		m_IndexBuffer.reset(IndexBuffer::create(indices, sizeof(indices) / sizeof(uint32_t)));
+		std::shared_ptr<IndexBuffer> indexBuffer;
+		indexBuffer.reset(IndexBuffer::create(indices, sizeof(indices) / sizeof(uint32_t)));
+		m_VertexArray->setIndexBuffer(indexBuffer);
 
 		// Shaders
 		std::string vertexSrc = R"(
@@ -157,9 +122,8 @@ namespace L3gion
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			m_Shader->bind();
-
-			glBindVertexArray(m_VertexArray);
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer->getCount(), GL_UNSIGNED_INT, nullptr);
+			m_VertexArray->bind();
+			glDrawElements(GL_TRIANGLES, m_VertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack)
 				layer->onUpdate();
