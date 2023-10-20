@@ -18,10 +18,6 @@ namespace L3gion
 	{
 	}
 
-	ImGuiLayer::~ImGuiLayer()
-	{
-		
-	}
 	void ImGuiLayer::onAttach()
 	{
 		// Setup Dear ImGui context

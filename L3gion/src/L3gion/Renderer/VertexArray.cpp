@@ -10,12 +10,12 @@ namespace L3gion
 	{
 		switch (Renderer::getAPI())
 		{
-			case RendererAPI::None:
+			case RendererAPI::API::None:
 			{
 				LG_CORE_ASSERT(false, "In VertexBuffer::create() RendererAPI::None is not supported!");
 				return nullptr;
 			}
-			case RendererAPI::OpenGL:
+			case RendererAPI::API::OpenGL:
 			{
 				return new OpenGLVertexArray();
 			}

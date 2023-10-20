@@ -143,10 +143,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
-    <ClInclude Include="src\L3gion\Renderer\Buffer.h" />
-    <ClInclude Include="src\L3gion\Renderer\Renderer.h" />
-    <ClInclude Include="src\L3gion\Renderer\Shader.h" />
     <ClInclude Include="src\L3gion.h" />
     <ClInclude Include="src\L3gion\Application.h" />
     <ClInclude Include="src\L3gion\Core.h" />
@@ -162,11 +158,18 @@
     <ClInclude Include="src\L3gion\LayerStack.h" />
     <ClInclude Include="src\L3gion\Log.h" />
     <ClInclude Include="src\L3gion\MouseButtonCodes.h" />
+    <ClInclude Include="src\L3gion\Renderer\Buffer.h" />
     <ClInclude Include="src\L3gion\Renderer\GraphicsContext.h" />
+    <ClInclude Include="src\L3gion\Renderer\RenderCommand.h" />
+    <ClInclude Include="src\L3gion\Renderer\Renderer.h" />
+    <ClInclude Include="src\L3gion\Renderer\RendererAPI.h" />
+    <ClInclude Include="src\L3gion\Renderer\Shader.h" />
     <ClInclude Include="src\L3gion\Renderer\VertexArray.h" />
     <ClInclude Include="src\L3gion\Window.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\lgpch.h" />
@@ -588,10 +591,6 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
-    <ClCompile Include="src\L3gion\Renderer\Buffer.cpp" />
-    <ClCompile Include="src\L3gion\Renderer\Renderer.cpp" />
-    <ClCompile Include="src\L3gion\Renderer\Shader.cpp" />
     <ClCompile Include="src\L3gion\Application.cpp" />
     <ClCompile Include="src\L3gion\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\L3gion\ImGui\ImGuiLayer.cpp" />
@@ -599,9 +598,16 @@
     <ClCompile Include="src\L3gion\Layer.cpp" />
     <ClCompile Include="src\L3gion\LayerStack.cpp" />
     <ClCompile Include="src\L3gion\Log.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\RenderCommand.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\Renderer.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\RendererAPI.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\Shader.cpp" />
     <ClCompile Include="src\L3gion\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\lgpch.cpp">

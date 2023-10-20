@@ -9,7 +9,7 @@ namespace L3gion
 	{
 	public:
 		Layer(const std::string& name = "Layer");
-		virtual ~Layer();
+		virtual ~Layer() = default;
 
 		virtual void onAttach() {}
 		virtual void onDetach() {}

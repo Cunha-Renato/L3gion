@@ -5,6 +5,7 @@
 #include "Input.h"
 
 #include <glad/glad.h>
+#include "L3gion/Renderer/Renderer.h"
 
 namespace L3gion
 {
@@ -92,13 +93,11 @@ namespace L3gion
 	void Application::pushLayer(Layer* layer)
 	{
 		m_LayerStack.pushLayer(layer);
-		layer->onAttach();
 	}
 
 	void Application::pushOverlay(Layer* overlay)
 	{
 		m_LayerStack.pushOverlay(overlay);
-		overlay->onAttach();
 	}
 
 	void Application::onEvent(Event& e)
@@ -118,12 +117,13 @@ namespace L3gion
 	{
 		while (m_Running)
 		{
-			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
+			RenderCommand::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+			RenderCommand::clear();
+
+			Renderer::beginScene();
 
 			m_Shader->bind();
-			m_VertexArray->bind();
-			glDrawElements(GL_TRIANGLES, m_VertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::submit(m_VertexArray);
 
 			for (Layer* layer : m_LayerStack)
 				layer->onUpdate();

@@ -17,10 +17,12 @@ namespace L3gion
 	{
 		m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
 		m_LayerInsertIndex++;
+		layer->onAttach();
 	}
 
 	void LayerStack::pushOverlay(Layer* overlay)
 	{
+		overlay->onAttach();
 		m_Layers.emplace_back(overlay);
 	}
 
@@ -31,11 +33,12 @@ namespace L3gion
 		
 		if (iterator != m_Layers.end())
 		{
+			layer->onDetach();
 			// Erases it from the list
 			m_Layers.erase(iterator);
 
 			// Subtract one from te insert iterator
-			m_LayerInsertIndex++;
+			m_LayerInsertIndex--;
 		}
 	}
 
@@ -45,8 +48,11 @@ namespace L3gion
 		auto iterator = std::find(m_Layers.begin(), m_Layers.end(), ovelay);
 
 		if (iterator != m_Layers.end())
+		{
+			ovelay->onDetach();
 			// Erases it from the list
 			m_Layers.erase(iterator);
+		}
 		
 	}
 }

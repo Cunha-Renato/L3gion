@@ -9,6 +9,4 @@ namespace L3gion
 	{
 
 	}
-
-	Layer::~Layer() {}
 }
