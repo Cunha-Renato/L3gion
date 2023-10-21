@@ -143,6 +143,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\L3gion.h" />
     <ClInclude Include="src\L3gion\Application.h" />
     <ClInclude Include="src\L3gion\Core.h" />
@@ -593,6 +594,7 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\L3gion\Application.cpp" />
     <ClCompile Include="src\L3gion\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\L3gion\ImGui\ImGuiLayer.cpp" />

@@ -1388,6 +1388,7 @@
     </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\Camera.h" />
     <ClInclude Include="src\L3gion\Core\Timestep.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Application.cpp">
@@ -1451,5 +1452,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\Camera.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
   </ItemGroup>
 </Project>

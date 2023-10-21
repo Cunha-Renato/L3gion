@@ -1,12 +1,14 @@
 #include <L3gion.h>
 #include "ImGui/imgui.h"
 
+#include "Platform/OpenGL/OpenGLShader.h"
+#include <glm/gtc/type_ptr.hpp>
 
 class ExampleLayer : public L3gion::Layer
 {
 public:
 	ExampleLayer(std::string name)
-		: Layer(name), m_OrthoCamera(-1.0f, 1.0f, -1.0f, 1.0f), m_CameraPosition(0.0f)
+		: Layer(name), m_OrthoCamera(-1.0f, 1.0f, -1.0f, 1.0f), m_CameraPosition(0.0f), m_Color(0.0f)
 	{
 		// OpenGL buffers
 		m_VertexArray.reset(L3gion::VertexArray::create());
@@ -44,13 +46,11 @@ public:
 			layout(location = 1) in vec4 a_Color;
 
 			uniform mat4 u_ViewProjection;
-
-			out vec4 v_Color;
+			uniform mat4 u_Transform;
 
 			void main()
 			{
-				v_Color = a_Color;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
 			}
 		)";
 
@@ -59,24 +59,21 @@ public:
 
 			layout(location = 0) out vec4 color;
 
-			in vec4 v_Color;
+			uniform vec3 u_Color;
 
 			void main()
 			{
-				color = v_Color;
+				color = vec4(u_Color, 1.0);
 			}
 		)";
 
-		m_Shader.reset(new L3gion::Shader(vertexSrc, fragmentSrc));
-	}
-	virtual void onImGuiRender() override
-	{
-			
+		m_Shader.reset(L3gion::Shader::create(vertexSrc, fragmentSrc));
 	}
 
 	virtual void onUpdate(L3gion::Timestep& ts) override
 	{
-		LG_TRACE("Delta time: {0}s, ({1}ms)", ts.getSeconds(), ts.getMiliSeconds());
+		L3gion::RenderCommand::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+		L3gion::RenderCommand::clear();
 		
 		if (L3gion::Input::isKeyPressed(LG_KEY_LEFT))
 			m_CameraPosition.x += m_CameraSpeed * ts;
@@ -90,20 +87,31 @@ public:
 		if (L3gion::Input::isKeyPressed(LG_KEY_DOWN))
 			m_CameraPosition.y += m_CameraSpeed * ts;
 
-		L3gion::RenderCommand::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
-		L3gion::RenderCommand::clear();
-
 		m_OrthoCamera.setPosition(m_CameraPosition);
 
 		L3gion::Renderer::beginScene(m_OrthoCamera);
 
-		m_Shader->bind();
+		std::dynamic_pointer_cast<L3gion::OpenGLShader>(m_Shader)->bind();
+		std::dynamic_pointer_cast<L3gion::OpenGLShader>(m_Shader)->setFloat3("u_Color", m_Color);
 		L3gion::Renderer::submit(m_Shader, m_VertexArray);
+
+		L3gion::Renderer::endScene();
+	}
+
+	virtual void onImGuiRender() override
+	{
+		ImGui::Begin("Settings");
+
+		ImGui::ColorEdit3("Color", glm::value_ptr(m_Color));
+
+		ImGui::End();
 	}
 
 private:
 	std::shared_ptr<L3gion::Shader> m_Shader;
 	std::shared_ptr<L3gion::VertexArray> m_VertexArray;
+
+	glm::vec4 m_Color;
 
 	L3gion::OrthoCamera m_OrthoCamera;
 	glm::vec3 m_CameraPosition;
