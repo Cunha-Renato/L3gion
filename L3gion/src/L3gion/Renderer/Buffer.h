@@ -70,6 +70,9 @@ namespace L3gion
 				case L3gion::ShaderDataType::Int4:		return 4;
 				case L3gion::ShaderDataType::Bool:		return 1;
 			}
+
+			LG_CORE_ASSERT(false, "In getComponentCount(): Unknown ShaderDataType!");
+			return 0;
 		}
 	};
 
@@ -124,7 +127,7 @@ namespace L3gion
 		virtual const BufferLayout& getLayout() const = 0;
 		virtual void setLayout(const BufferLayout& layout) = 0;
 
-		static VertexBuffer* create(float* vertices, uint32_t size);
+		static ref<VertexBuffer> create(float* vertices, uint32_t size);
 	};
 
 	class IndexBuffer
@@ -137,6 +140,6 @@ namespace L3gion
 
 		virtual uint32_t getCount() const = 0;
 
-		static IndexBuffer* create(uint32_t* vertices, uint32_t count);
+		static ref<IndexBuffer> create(uint32_t* vertices, uint32_t count);
 	};
 }

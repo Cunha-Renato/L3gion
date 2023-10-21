@@ -58,7 +58,7 @@ namespace L3gion
 	{
 		while (m_Running)
 		{
-			float time = glfwGetTime(); // Should be outside this class
+			double time = glfwGetTime(); // Should be outside this class
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 

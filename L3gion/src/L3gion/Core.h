@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #ifdef LG_PLATFORM_WINDOWS
 #if LG_DYNAMIC_LINK
 	#ifdef HZ_BUILD_DLL
@@ -30,3 +32,12 @@
 #define BIT(x) (1 << x)
 
 #define BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+
+namespace L3gion
+{
+	template<typename T>
+	using ref = std::shared_ptr<T>;
+
+	template<typename T>
+	using scope = std::unique_ptr<T>;
+}

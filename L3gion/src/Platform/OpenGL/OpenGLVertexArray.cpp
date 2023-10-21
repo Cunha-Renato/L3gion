@@ -47,7 +47,7 @@ namespace L3gion
 
 	}
 
-	void OpenGLVertexArray::addVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer)
+	void OpenGLVertexArray::addVertexBuffer(const ref<VertexBuffer>& vertexBuffer)
 	{
 		LG_CORE_ASSERT(vertexBuffer->getLayout().getElements().size(), "In addVertexBuffer: VertexBuffer has no layout!");
 
@@ -66,7 +66,7 @@ namespace L3gion
 				ShaderDataTypeToOpenGLBaseType(element.type),
 				element.normalized ? GL_TRUE : GL_FALSE,
 				layout.getStride(),
-				(const void*)element.offset
+				(const void*)(intptr_t)element.offset
 			);
 
 			index++;
@@ -74,7 +74,7 @@ namespace L3gion
 
 		m_VertexBuffers.push_back(vertexBuffer);
 	}
-	void OpenGLVertexArray::setIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer)
+	void OpenGLVertexArray::setIndexBuffer(const ref<IndexBuffer>& indexBuffer)
 	{
 		glBindVertexArray(m_RendererID);
 		indexBuffer->bind();

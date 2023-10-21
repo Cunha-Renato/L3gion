@@ -126,53 +126,99 @@ namespace L3gion
 		glUseProgram(0);
 	}
 
+	int OpenGLShader::getUniformLocation(const std::string& name) const
+	{
+		if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
+			return m_UniformLocationCache[name];
+
+		int location = glGetUniformLocation(m_ShaderID, name.c_str());
+		m_UniformLocationCache[name] = location;
+
+		return location;
+	}
+
+	void OpenGLShader::setInt(const std::string& name, int value)
+	{
+		int location = getUniformLocation(name);
+
+		if (location == -1)
+		{
+			LG_CORE_ERROR("In setFloat: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ASSERT(false, "Inexistant Uniform!");
+		}
+
+		glUniform1i(location, value);
+	}
 	void OpenGLShader::setFloat(const std::string& name, float value)
 	{
-		int location = glGetUniformLocation(m_ShaderID, name.c_str());
+		int location = getUniformLocation(name);
 
-		LG_CORE_ASSERT(location != -1, "In setFloat: Uniform doesn't exist!");
+		if (location == -1)
+		{
+			LG_CORE_ERROR("In setFloat: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ASSERT(false, "Inexistant Uniform!");
+		}
 
 		glUniform1f(location, value);
 	}
 	void OpenGLShader::setFloat2(const std::string& name, glm::vec2 values)
 	{
-		int location = glGetUniformLocation(m_ShaderID, name.c_str());
+		int location = getUniformLocation(name);
 
-		LG_CORE_ASSERT(location != -1, "In setFloat2: Uniform doesn't exist!");
+		if (location == -1)
+		{
+			LG_CORE_ERROR("In setFloat2: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ASSERT(false, "Inexistant Uniform!");
+		}
 
 		glUniform2f(location, values.x, values.y);
 	}
 	void OpenGLShader::setFloat3(const std::string& name, glm::vec3 values)
 	{
-		int location = glGetUniformLocation(m_ShaderID, name.c_str());
+		int location = getUniformLocation(name);
 
-		LG_CORE_ASSERT(location != -1, "In setFloat3: Uniform doesn't exist!");
+		if (location == -1)
+		{
+			LG_CORE_ERROR("In setFloat3: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ASSERT(false, "Inexistant Uniform!");
+		}
 
 		glUniform3f(location, values.x, values.y, values.z);
 	}
 	void OpenGLShader::setFloat4(const std::string& name, glm::vec4 values)
 	{
-		int location = glGetUniformLocation(m_ShaderID, name.c_str());
+		int location = getUniformLocation(name);
 
-		LG_CORE_ASSERT(location != -1, "In setFloat4: Uniform doesn't exist!");
+		if (location == -1)
+		{
+			LG_CORE_ERROR("In setFloat4: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ASSERT(false, "Inexistant Uniform!");
+		}
 
 		glUniform4f(location, values.x, values.y, values.z, values.w);
 	}
 
 	void OpenGLShader::setMat3(const std::string& name, glm::mat3 matrix)
 	{
-		int location = glGetUniformLocation(m_ShaderID, name.c_str());
+		int location = getUniformLocation(name);
 
-		LG_CORE_ASSERT(location != -1, "In setMat3: Uniform doesn't exist!");
+		if (location == -1)
+		{
+			LG_CORE_ERROR("In setMat3: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ASSERT(false, "Inexistant Uniform!");
+		}
 
 		glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
-
 	void OpenGLShader::setMat4(const std::string& name, glm::mat4 matrix)
 	{
-		int location = glGetUniformLocation(m_ShaderID, name.c_str());
+		int location = getUniformLocation(name);
 
-		LG_CORE_ASSERT(location != -1, "In setMat4: Uniform doesn't exist!");
+		if (location == -1)
+		{
+			LG_CORE_ERROR("In setMat4: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ASSERT(false, "Inexistant Uniform!");
+		}
 
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}

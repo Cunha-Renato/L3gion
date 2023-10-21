@@ -1,12 +1,12 @@
 #include "lgpch.h"
-#include "VertexArray.h"
+#include "Texture.h"
 
 #include "Renderer.h"
-#include "Platform/OpenGL/OpenGLVertexArray.h"
+#include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace L3gion
 {
-	ref<VertexArray> VertexArray::create()
+	ref<Texture2D> Texture2D::create(const std::string& path)
 	{
 		switch (Renderer::getAPI())
 		{
@@ -17,7 +17,7 @@ namespace L3gion
 			}
 			case RendererAPI::API::OpenGL:
 			{
-				return std::make_shared<OpenGLVertexArray>();
+				return std::make_shared<OpenGLTexture2D>(path);
 			}
 		}
 

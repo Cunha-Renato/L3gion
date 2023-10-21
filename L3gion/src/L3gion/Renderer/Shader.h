@@ -12,6 +12,6 @@ namespace L3gion
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;
 
-		static Shader* create(const std::string& vertexSrc, const std::string& fragmentSrc);
+		static ref<Shader> create(const std::string& vertexSrc, const std::string& fragmentSrc);
 	};
 }

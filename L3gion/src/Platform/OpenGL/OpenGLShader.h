@@ -3,6 +3,8 @@
 #include "L3gion/Renderer/Shader.h"
 #include <glm/glm.hpp>
 
+#include <unordered_map>
+
 namespace L3gion
 {
 	class OpenGLShader : public Shader
@@ -14,6 +16,7 @@ namespace L3gion
 		virtual void bind() const override;
 		virtual void unbind() const override;
 
+		void setInt(const std::string& name, int value);
 		void setFloat(const std::string& name, float value);
 		void setFloat2(const std::string& name, glm::vec2 values);
 		void setFloat3(const std::string& name, glm::vec3 values);
@@ -23,5 +26,10 @@ namespace L3gion
 		void setMat4(const std::string& name, glm::mat4 matrix);
 	public:
 		uint32_t m_ShaderID;
+
+	private:
+		int getUniformLocation(const std::string& name) const;
+	private:
+		mutable std::unordered_map<std::string, int> m_UniformLocationCache;
 	};
 }

@@ -6,7 +6,7 @@
 
 namespace L3gion
 {
-	Shader* Shader::create(const std::string& vertexSrc, const std::string& fragmentSrc)
+	ref<Shader> Shader::create(const std::string& vertexSrc, const std::string& fragmentSrc)
 	{
 		switch (Renderer::getAPI())
 		{
@@ -17,7 +17,7 @@ namespace L3gion
 			}
 			case RendererAPI::API::OpenGL:
 			{
-				return new OpenGLShader(vertexSrc, fragmentSrc);
+				return std::make_shared<OpenGLShader>(vertexSrc, fragmentSrc);
 			}
 		}
 

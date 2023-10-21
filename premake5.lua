@@ -17,6 +17,7 @@ IncludeDir["GLFW"] = "L3gion/vendor/GLFW/include"
 IncludeDir["Glad"] = "L3gion/vendor/Glad/include"
 IncludeDir["ImGui"] = "L3gion/vendor/imgui"
 IncludeDir["glm"] = "L3gion/vendor/glm"
+IncludeDir["stb_image"] = "L3gion/vendor/stb_image"
 
 group "Dependencies"
 	include "L3gion/vendor/GLFW"
@@ -44,6 +45,8 @@ project "L3gion"
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/stb_image/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h"
 	}
 
 	defines
@@ -58,7 +61,8 @@ project "L3gion"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 
 	links 
