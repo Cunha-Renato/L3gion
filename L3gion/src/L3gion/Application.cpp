@@ -21,6 +21,8 @@ namespace L3gion
 		m_Window = std::unique_ptr<Window>(Window::create());
 		m_Window->setEventCallback(BIND_EVENT_FN(Application::onEvent));
 
+		Renderer::init();
+
 		m_ImGuiLayer = new ImGuiLayer;
 		pushOverlay(m_ImGuiLayer);
 

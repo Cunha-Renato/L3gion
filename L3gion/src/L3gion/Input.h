@@ -7,7 +7,13 @@ namespace L3gion
 {	
 	class L3GION_API Input
 	{
+	protected:
+		Input() = default;
+
 	public:
+		Input(const Input&) = delete;
+		Input& operator=(const Input&) = delete;
+
 		// Keycodes will be send as LG_KEY
 		inline static bool isKeyPressed(int keycode) 
 		{ 

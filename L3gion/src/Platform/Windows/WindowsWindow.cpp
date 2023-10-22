@@ -65,8 +65,6 @@ namespace L3gion
 		m_Context = new OpenGLContext(m_Window);
 		m_Context->init();
 		glfwSetWindowUserPointer(m_Window, &m_Data);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		setVSync(true);
 
 		// Set GLFW callbacks

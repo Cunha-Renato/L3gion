@@ -11,6 +11,8 @@ namespace L3gion
 	{
 	public:
 		~Renderer();
+
+		static void init();
 		static void beginScene(OrthoCamera& camera);
 		static void endScene();
 

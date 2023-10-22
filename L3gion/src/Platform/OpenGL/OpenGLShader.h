@@ -5,11 +5,15 @@
 
 #include <unordered_map>
 
+//TODO: REMOVE!
+typedef unsigned int GLenum;
+
 namespace L3gion
 {
 	class OpenGLShader : public Shader
 	{
 	public:
+		OpenGLShader(const std::string& filePath);
 		OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc);
 		virtual ~OpenGLShader();
 
@@ -28,7 +32,11 @@ namespace L3gion
 		uint32_t m_ShaderID;
 
 	private:
+		std::string readFile(const std::string& filePath);
+		std::unordered_map<GLenum, std::string> preProcess(const std::string& source);
+		void compile(const std::unordered_map<GLenum, std::string>& shaderSrcs);
 		int getUniformLocation(const std::string& name) const;
+	
 	private:
 		mutable std::unordered_map<std::string, int> m_UniformLocationCache;
 	};

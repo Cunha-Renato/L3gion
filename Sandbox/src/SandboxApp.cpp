@@ -21,8 +21,7 @@ public:
 			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
 
-		L3gion::ref<L3gion::VertexBuffer> vertexBuffer;
-		vertexBuffer = L3gion::VertexBuffer::create(vertices, sizeof(vertices));
+		auto vertexBuffer = L3gion::VertexBuffer::create(vertices, sizeof(vertices));
 
 		L3gion::BufferLayout layout =
 		{
@@ -35,47 +34,13 @@ public:
 
 		uint32_t indices[] = { 0, 1, 2, 2, 3, 0 };
 
-		L3gion::ref<L3gion::IndexBuffer> indexBuffer;
-		indexBuffer = L3gion::IndexBuffer::create(indices, sizeof(indices) / sizeof(uint32_t));
+		auto indexBuffer = L3gion::IndexBuffer::create(indices, sizeof(indices) / sizeof(uint32_t));
 		m_VertexArray->setIndexBuffer(indexBuffer);
 
-		// Shaders
-		std::string vertexSrc = R"(
-			#version 330 core
-
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec2 a_TextCoord;
-
-			uniform mat4 u_ViewProjection;
-			uniform mat4 u_Transform;
-
-			out vec2 v_TextCoord;
-
-			void main()
-			{
-				v_TextCoord = a_TextCoord;
-				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
-			}
-		)";
-
-		std::string fragmentSrc = R"(
-			#version 330 core
-
-			layout(location = 0) out vec4 color;
-
-			in vec2 v_TextCoord;
-
-			uniform sampler2D u_Texture;
-
-			void main()
-			{
-				color = texture(u_Texture, v_TextCoord);
-			}
-		)";
-
-		m_Shader = L3gion::Shader::create(vertexSrc, fragmentSrc);
+		m_Shader = L3gion::Shader::create("assets/Shaders/Texture.glsl");
 
 		m_Texture = L3gion::Texture2D::create("assets/textures/checkerboard.png");
+		m_TextureTransparent = L3gion::Texture2D::create("assets/textures/ChernoLogo.png");
 
 		std::dynamic_pointer_cast<L3gion::OpenGLShader>(m_Shader)->bind();
 		std::dynamic_pointer_cast<L3gion::OpenGLShader>(m_Shader)->setInt("u_Texture", 0);
@@ -101,10 +66,12 @@ public:
 		m_OrthoCamera.setPosition(m_CameraPosition);
 
 		L3gion::Renderer::beginScene(m_OrthoCamera);
-
-		m_Texture->bind();
-		L3gion::Renderer::submit(m_Shader, m_VertexArray);
-
+		{
+			m_Texture->bind();
+			L3gion::Renderer::submit(m_Shader, m_VertexArray);
+			m_TextureTransparent->bind();
+			L3gion::Renderer::submit(m_Shader, m_VertexArray);
+		}
 		L3gion::Renderer::endScene();
 	}
 
@@ -121,7 +88,7 @@ private:
 	L3gion::ref<L3gion::Shader> m_Shader;
 	L3gion::ref<L3gion::VertexArray> m_VertexArray;
 
-	L3gion::ref<L3gion::Texture2D> m_Texture;
+	L3gion::ref<L3gion::Texture2D> m_Texture, m_TextureTransparent;
 
 	glm::vec4 m_Color;
 

@@ -13,6 +13,11 @@ namespace L3gion
 			delete m_SceneData;
 	}
 
+	void Renderer::init()
+	{
+		RenderCommand::init();
+	}
+
 	void Renderer::beginScene(OrthoCamera& camera)
 	{
 		m_SceneData->viewProjectionMatrix = camera.getViewProjectionMatrix();
