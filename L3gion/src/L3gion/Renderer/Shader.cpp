@@ -25,7 +25,7 @@ namespace L3gion
 		return nullptr;
 	}
 
-	ref<Shader> Shader::create(const std::string& vertexSrc, const std::string& fragmentSrc)
+	ref<Shader> Shader::create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
 	{
 		switch (Renderer::getAPI())
 		{
@@ -36,11 +36,46 @@ namespace L3gion
 			}
 			case RendererAPI::API::OpenGL:
 			{
-				return std::make_shared<OpenGLShader>(vertexSrc, fragmentSrc);
+				return std::make_shared<OpenGLShader>(name, vertexSrc, fragmentSrc);
 			}
 		}
 
 		LG_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
+	}
+
+//------------------------- SHADER_LIB ---------------------------
+
+	void ShaderLib::add(const ref<Shader>& shader)
+	{
+		auto& name = shader->getName();
+
+		add(name, shader);
+	}
+	void ShaderLib::add(const std::string& name, const ref<Shader>& shader)
+	{
+		LG_CORE_ASSERT(m_Shaders.find(name) == m_Shaders.end(), "In Shader add(): Shader already exists!");
+
+		m_Shaders[name] = shader;
+	}
+
+	ref<Shader> ShaderLib::load(const std::string& filePath)
+	{
+		auto shader = Shader::create(filePath);
+		add(shader);
+		return shader;
+	}
+	ref<Shader> ShaderLib::load(const std::string& name, const std::string& filePath)
+	{
+		auto shader = Shader::create(filePath);
+		add(name, shader);
+		return shader;
+	}
+
+	ref<Shader> ShaderLib::get(const std::string& name)
+	{
+		LG_CORE_ASSERT(m_Shaders.find(name) != m_Shaders.end(), "In Shader get(): Shader not found!");
+
+		return m_Shaders[name];
 	}
 }

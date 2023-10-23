@@ -3,8 +3,8 @@
 #include "Core.h"
 
 #include "Window.h"
-#include "L3gion/LayerStack.h"
-#include "Events/Event.h"
+#include "L3gion/Core/LayerStack.h"
+#include "L3gion/Events/Event.h"
 #include "L3gion/Events/ApplicationEvent.h"
 
 #include "L3gion/ImGui/ImGuiLayer.h"
@@ -38,10 +38,12 @@ namespace L3gion
 
 	private:
 		bool onWindowClose(WindowCloseEvent& e);
+		bool onWindowResize(WindowResizeEvent& e);
 
 	private:
 		std::unique_ptr<Window> m_Window;
-		bool m_Running;
+		bool m_Running = false;
+		bool m_Minimized = false;
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
 		double m_LastFrameTime = 0.0f;
@@ -51,5 +53,5 @@ namespace L3gion
 	};
 
 	// To be defined in CLIENT
-	Application* createApplication();
+	scope<Application> createApplication();
 }

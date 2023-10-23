@@ -8,9 +8,11 @@ namespace L3gion
 	{
 	public:
 		OrthoCamera(float left, float right, float botton, float top);
+		
+		void setProjetion(float left, float right, float botton, float top);
 
-		const glm::vec3& getPosition() { return m_Position; }
-		const float getRotation() { return m_Rotation; }
+		const glm::vec3& getPosition() const { return m_Position; }
+		float getRotation() const { return m_Rotation; }
 
 		void setPosition(const glm::vec3& position) 
 		{ 
@@ -22,6 +24,7 @@ namespace L3gion
 			m_Rotation = rotation; 
 			updateViewMatrix();
 		}
+
 
 		const glm::mat4& getProjectionMatrix() const { return m_ProjectionMatrix; }
 		const glm::mat4& getViewMatrix() const { return m_ViewMatrix; }

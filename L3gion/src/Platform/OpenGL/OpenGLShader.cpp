@@ -21,12 +21,19 @@ namespace L3gion
 	OpenGLShader::OpenGLShader(const std::string& filePath)
 	{
 		std::string source = readFile(filePath);
-
 		auto shaderSrcs = preProcess(source);
 		compile(shaderSrcs);
+	
+		auto lastSlash = filePath.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+
+		// Extract name from filePath
+		auto lastDot = filePath.rfind(".");
+		auto count = lastDot == std::string::npos ? filePath.size() - lastSlash : lastDot - lastSlash;
+		m_Name = filePath.substr(lastSlash, count);
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc) : m_ShaderID(0)
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) : m_ShaderID(0), m_Name(name)
 	{
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
@@ -41,9 +48,9 @@ namespace L3gion
 
 	std::string OpenGLShader::readFile(const std::string& filePath)
 	{
-		std::ifstream in(filePath, std::ios::binary);
-
 		std::string result;
+		std::ifstream in(filePath, std::ios::in | std::ios::binary);
+		
 		if (in)
 		{
 			in.seekg(0, std::ios::end);
@@ -87,9 +94,9 @@ namespace L3gion
 		// Now time to link them together into a program.
 		// Get a program object.
 		GLuint program = glCreateProgram();
-
-		std::vector<GLenum> glShaderIDs(shaderSrcs.size());
-
+		LG_CORE_ASSERT(shaderSrcs.size() <= 2, "In OpenGLShader compile(), only supports 2 shaders!");
+		std::array<GLenum, 2> glShaderIDs;
+		int glShaderIDIndex = 0;
 		for (auto& kv : shaderSrcs)
 		{
 			GLenum shaderType = kv.first;
@@ -128,7 +135,7 @@ namespace L3gion
 
 			// Attach our shaders to our program
 			glAttachShader(program, shader);
-			glShaderIDs.push_back(shader);
+			glShaderIDs[glShaderIDIndex++] = shader;
 		}
 
 		// Link our program
@@ -160,7 +167,10 @@ namespace L3gion
 
 		// Always detach shaders after a successful link.
 		for (auto id : glShaderIDs)
+		{
 			glDetachShader(program, id);
+			glDeleteShader(id);
+		}
 
 		m_ShaderID = program;
 	}
@@ -185,86 +195,99 @@ namespace L3gion
 		return location;
 	}
 
-	void OpenGLShader::setInt(const std::string& name, int value)
+	void OpenGLShader::setFloat3(const std::string& name, const glm::vec3& value)
+	{
+		uploadUniformFloat3(name, value);
+	}
+	void OpenGLShader::setFloat4(const std::string& name, const glm::vec4& value)
+	{
+		uploadUniformFloat4(name, value);
+	}
+	void OpenGLShader::setMat4(const std::string& name, const glm::mat4& value)
+	{
+		uploadUniformMat4(name, value);
+	}
+
+	void OpenGLShader::uploadUniformInt(const std::string& name, int value)
 	{
 		int location = getUniformLocation(name);
 
 		if (location == -1)
 		{
-			LG_CORE_ERROR("In setFloat: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ERROR("In uploadUniformFloat: Uniform {0} doesn't exist!", name.c_str());
 			LG_CORE_ASSERT(false, "Inexistant Uniform!");
 		}
 
 		glUniform1i(location, value);
 	}
-	void OpenGLShader::setFloat(const std::string& name, float value)
+	void OpenGLShader::uploadUniformFloat(const std::string& name, float value)
 	{
 		int location = getUniformLocation(name);
 
 		if (location == -1)
 		{
-			LG_CORE_ERROR("In setFloat: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ERROR("In uploadUniformFloat: Uniform {0} doesn't exist!", name.c_str());
 			LG_CORE_ASSERT(false, "Inexistant Uniform!");
 		}
 
 		glUniform1f(location, value);
 	}
-	void OpenGLShader::setFloat2(const std::string& name, glm::vec2 values)
+	void OpenGLShader::uploadUniformFloat2(const std::string& name, glm::vec2 values)
 	{
 		int location = getUniformLocation(name);
 
 		if (location == -1)
 		{
-			LG_CORE_ERROR("In setFloat2: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ERROR("In uploadUniformFloat2: Uniform {0} doesn't exist!", name.c_str());
 			LG_CORE_ASSERT(false, "Inexistant Uniform!");
 		}
 
 		glUniform2f(location, values.x, values.y);
 	}
-	void OpenGLShader::setFloat3(const std::string& name, glm::vec3 values)
+	void OpenGLShader::uploadUniformFloat3(const std::string& name, glm::vec3 values)
 	{
 		int location = getUniformLocation(name);
 
 		if (location == -1)
 		{
-			LG_CORE_ERROR("In setFloat3: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ERROR("In uploadUniformFloat3: Uniform {0} doesn't exist!", name.c_str());
 			LG_CORE_ASSERT(false, "Inexistant Uniform!");
 		}
 
 		glUniform3f(location, values.x, values.y, values.z);
 	}
-	void OpenGLShader::setFloat4(const std::string& name, glm::vec4 values)
+	void OpenGLShader::uploadUniformFloat4(const std::string& name, glm::vec4 values)
 	{
 		int location = getUniformLocation(name);
 
 		if (location == -1)
 		{
-			LG_CORE_ERROR("In setFloat4: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ERROR("In uploadUniformFloat4: Uniform {0} doesn't exist!", name.c_str());
 			LG_CORE_ASSERT(false, "Inexistant Uniform!");
 		}
 
 		glUniform4f(location, values.x, values.y, values.z, values.w);
 	}
 
-	void OpenGLShader::setMat3(const std::string& name, glm::mat3 matrix)
+	void OpenGLShader::uploadUniformMat3(const std::string& name, glm::mat3 matrix)
 	{
 		int location = getUniformLocation(name);
 
 		if (location == -1)
 		{
-			LG_CORE_ERROR("In setMat3: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ERROR("In uploadUniformMat3: Uniform {0} doesn't exist!", name.c_str());
 			LG_CORE_ASSERT(false, "Inexistant Uniform!");
 		}
 
 		glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
-	void OpenGLShader::setMat4(const std::string& name, glm::mat4 matrix)
+	void OpenGLShader::uploadUniformMat4(const std::string& name, glm::mat4 matrix)
 	{
 		int location = getUniformLocation(name);
 
 		if (location == -1)
 		{
-			LG_CORE_ERROR("In setMat4: Uniform {0} doesn't exist!", name.c_str());
+			LG_CORE_ERROR("In uploadUniformMat4: Uniform {0} doesn't exist!", name.c_str());
 			LG_CORE_ASSERT(false, "Inexistant Uniform!");
 		}
 

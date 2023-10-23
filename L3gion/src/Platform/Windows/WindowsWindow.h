@@ -1,6 +1,6 @@
 #pragma once
 
-#include "L3gion/Window.h"
+#include "L3gion/Core/Window.h"
 
 #include "L3gion/Renderer/GraphicsContext.h"
 #include "Platform/OpenGL/OpenGLContext.h"
@@ -35,7 +35,7 @@ namespace L3gion
 
 	private:
 		GLFWwindow* m_Window;
-		GraphicsContext* m_Context;
+		scope<GraphicsContext> m_Context;
 
 		struct WindowData
 		{

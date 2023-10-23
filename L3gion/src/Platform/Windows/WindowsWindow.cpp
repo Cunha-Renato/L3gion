@@ -5,7 +5,7 @@
 #include "L3gion/Events/ApplicationEvent.h"
 #include "L3gion/Events/KeyEvent.h"
 #include "L3gion/Events/MouseEvent.h"
-#include "L3gion/KeyCodes.h"
+#include "L3gion/Core/KeyCodes.h"
 
 #include <GLFW/glfw3native.h>
 
@@ -62,7 +62,7 @@ namespace L3gion
 		m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Data.title.c_str(), NULL, NULL);
 		LG_CORE_ASSERT(m_Window, "In WindowsWindow Init(): Failed to create a window!");
 
-		m_Context = new OpenGLContext(m_Window);
+		m_Context = createScope<OpenGLContext>(m_Window);
 		m_Context->init();
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		setVSync(true);

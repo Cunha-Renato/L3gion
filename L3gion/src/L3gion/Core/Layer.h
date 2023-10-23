@@ -1,6 +1,6 @@
 #pragma once
 
-#include "L3gion/Core.h"
+#include "L3gion/Core/Core.h"
 #include "L3gion/Events/Event.h"
 
 #include "L3gion/Core/Timestep.h"

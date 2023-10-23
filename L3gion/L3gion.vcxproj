@@ -147,24 +147,27 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\L3gion\Renderer\Renderer2D.h" />
     <ClInclude Include="src\L3gion.h" />
-    <ClInclude Include="src\L3gion\Application.h" />
-    <ClInclude Include="src\L3gion\Core.h" />
+    <ClInclude Include="src\L3gion\Core\Application.h" />
+    <ClInclude Include="src\L3gion\Core\Core.h" />
+    <ClInclude Include="src\L3gion\Core\EntryPoint.h" />
+    <ClInclude Include="src\L3gion\Core\Input.h" />
+    <ClInclude Include="src\L3gion\Core\KeyCodes.h" />
+    <ClInclude Include="src\L3gion\Core\Layer.h" />
+    <ClInclude Include="src\L3gion\Core\LayerStack.h" />
+    <ClInclude Include="src\L3gion\Core\Log.h" />
+    <ClInclude Include="src\L3gion\Core\MouseButtonCodes.h" />
     <ClInclude Include="src\L3gion\Core\Timestep.h" />
-    <ClInclude Include="src\L3gion\EntryPoint.h" />
+    <ClInclude Include="src\L3gion\Core\Window.h" />
     <ClInclude Include="src\L3gion\Events\ApplicationEvent.h" />
     <ClInclude Include="src\L3gion\Events\Event.h" />
     <ClInclude Include="src\L3gion\Events\KeyEvent.h" />
     <ClInclude Include="src\L3gion\Events\MouseEvent.h" />
     <ClInclude Include="src\L3gion\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="src\L3gion\Input.h" />
-    <ClInclude Include="src\L3gion\KeyCodes.h" />
-    <ClInclude Include="src\L3gion\Layer.h" />
-    <ClInclude Include="src\L3gion\LayerStack.h" />
-    <ClInclude Include="src\L3gion\Log.h" />
-    <ClInclude Include="src\L3gion\MouseButtonCodes.h" />
     <ClInclude Include="src\L3gion\Renderer\Buffer.h" />
     <ClInclude Include="src\L3gion\Renderer\Camera.h" />
+    <ClInclude Include="src\L3gion\Renderer\CameraController.h" />
     <ClInclude Include="src\L3gion\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\L3gion\Renderer\RenderCommand.h" />
     <ClInclude Include="src\L3gion\Renderer\Renderer.h" />
@@ -172,7 +175,6 @@
     <ClInclude Include="src\L3gion\Renderer\Shader.h" />
     <ClInclude Include="src\L3gion\Renderer\Texture.h" />
     <ClInclude Include="src\L3gion\Renderer\VertexArray.h" />
-    <ClInclude Include="src\L3gion\Window.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
@@ -601,15 +603,17 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\L3gion\Application.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\Renderer2D.cpp" />
+    <ClCompile Include="src\L3gion\Core\Application.cpp" />
+    <ClCompile Include="src\L3gion\Core\KeyCodes.cpp" />
+    <ClCompile Include="src\L3gion\Core\Layer.cpp" />
+    <ClCompile Include="src\L3gion\Core\LayerStack.cpp" />
+    <ClCompile Include="src\L3gion\Core\Log.cpp" />
     <ClCompile Include="src\L3gion\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\L3gion\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\L3gion\KeyCodes.cpp" />
-    <ClCompile Include="src\L3gion\Layer.cpp" />
-    <ClCompile Include="src\L3gion\LayerStack.cpp" />
-    <ClCompile Include="src\L3gion\Log.cpp" />
     <ClCompile Include="src\L3gion\Renderer\Buffer.cpp" />
     <ClCompile Include="src\L3gion\Renderer\Camera.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\CameraController.cpp" />
     <ClCompile Include="src\L3gion\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\L3gion\Renderer\Renderer.cpp" />
     <ClCompile Include="src\L3gion\Renderer\RendererAPI.cpp" />

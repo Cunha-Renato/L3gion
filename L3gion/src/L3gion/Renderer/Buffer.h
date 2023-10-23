@@ -47,7 +47,7 @@ namespace L3gion
 		uint32_t size;
 		bool normalized;
 
-		BufferElement() {}
+		BufferElement() : type(ShaderDataType::None), offset(0), size(0), normalized(0) {}
 
 		BufferElement(const ShaderDataType type, const std::string& name, bool normalized = false)
 			: name(name), type(type), size(ShaderDataTypeSize(type)), offset(0), normalized(normalized)
@@ -79,7 +79,7 @@ namespace L3gion
 	class BufferLayout
 	{
 	public:
-		BufferLayout() {}
+		BufferLayout() : m_Stride(0) {}
 
 		BufferLayout(const std::initializer_list<BufferElement>& elements) 
 			: m_Elements(elements)

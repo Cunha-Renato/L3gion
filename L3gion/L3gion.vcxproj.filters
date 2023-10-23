@@ -57,17 +57,38 @@
     <ClInclude Include="src\L3gion.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Application.h">
-      <Filter>src\L3gion</Filter>
+    <ClInclude Include="src\L3gion\Core\Application.h">
+      <Filter>src\L3gion\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Core.h">
-      <Filter>src\L3gion</Filter>
+    <ClInclude Include="src\L3gion\Core\Core.h">
+      <Filter>src\L3gion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Core\EntryPoint.h">
+      <Filter>src\L3gion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Core\Input.h">
+      <Filter>src\L3gion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Core\KeyCodes.h">
+      <Filter>src\L3gion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Core\Layer.h">
+      <Filter>src\L3gion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Core\LayerStack.h">
+      <Filter>src\L3gion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Core\Log.h">
+      <Filter>src\L3gion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Core\MouseButtonCodes.h">
+      <Filter>src\L3gion\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Core\Timestep.h">
       <Filter>src\L3gion\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\EntryPoint.h">
-      <Filter>src\L3gion</Filter>
+    <ClInclude Include="src\L3gion\Core\Window.h">
+      <Filter>src\L3gion\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Events\ApplicationEvent.h">
       <Filter>src\L3gion\Events</Filter>
@@ -84,28 +105,13 @@
     <ClInclude Include="src\L3gion\ImGui\ImGuiLayer.h">
       <Filter>src\L3gion\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Input.h">
-      <Filter>src\L3gion</Filter>
-    </ClInclude>
-    <ClInclude Include="src\L3gion\KeyCodes.h">
-      <Filter>src\L3gion</Filter>
-    </ClInclude>
-    <ClInclude Include="src\L3gion\Layer.h">
-      <Filter>src\L3gion</Filter>
-    </ClInclude>
-    <ClInclude Include="src\L3gion\LayerStack.h">
-      <Filter>src\L3gion</Filter>
-    </ClInclude>
-    <ClInclude Include="src\L3gion\Log.h">
-      <Filter>src\L3gion</Filter>
-    </ClInclude>
-    <ClInclude Include="src\L3gion\MouseButtonCodes.h">
-      <Filter>src\L3gion</Filter>
-    </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\Buffer.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\Camera.h">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Renderer\CameraController.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\GraphicsContext.h">
@@ -128,9 +134,6 @@
     </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\VertexArray.h">
       <Filter>src\L3gion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\L3gion\Window.h">
-      <Filter>src\L3gion</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
@@ -1410,10 +1413,23 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\Renderer\Renderer2D.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\L3gion\Application.cpp">
-      <Filter>src\L3gion</Filter>
+    <ClCompile Include="src\L3gion\Core\Application.cpp">
+      <Filter>src\L3gion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Core\KeyCodes.cpp">
+      <Filter>src\L3gion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Core\Layer.cpp">
+      <Filter>src\L3gion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Core\LayerStack.cpp">
+      <Filter>src\L3gion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Core\Log.cpp">
+      <Filter>src\L3gion\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\ImGui\ImGuiBuild.cpp">
       <Filter>src\L3gion\ImGui</Filter>
@@ -1421,22 +1437,13 @@
     <ClCompile Include="src\L3gion\ImGui\ImGuiLayer.cpp">
       <Filter>src\L3gion\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="src\L3gion\KeyCodes.cpp">
-      <Filter>src\L3gion</Filter>
-    </ClCompile>
-    <ClCompile Include="src\L3gion\Layer.cpp">
-      <Filter>src\L3gion</Filter>
-    </ClCompile>
-    <ClCompile Include="src\L3gion\LayerStack.cpp">
-      <Filter>src\L3gion</Filter>
-    </ClCompile>
-    <ClCompile Include="src\L3gion\Log.cpp">
-      <Filter>src\L3gion</Filter>
-    </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\Buffer.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\Camera.cpp">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Renderer\CameraController.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\RenderCommand.cpp">
@@ -1487,5 +1494,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\L3gion\Renderer\Renderer2D.cpp" />
   </ItemGroup>
 </Project>

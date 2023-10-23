@@ -1,6 +1,6 @@
 #pragma once
 
-#include "L3gion/Core.h"
+#include "L3gion/Core/Core.h"
 #include "Layer.h"
 
 namespace L3gion

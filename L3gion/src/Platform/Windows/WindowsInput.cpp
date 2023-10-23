@@ -1,12 +1,12 @@
 #include "lgpch.h"
 #include "WindowsInput.h"
 
-#include "L3gion/Application.h"
+#include "L3gion/Core/Application.h"
 #include <GLFW/glfw3.h>
 
 namespace L3gion
 {
-	Input* Input::s_Instance = new WindowsInput();
+	scope<Input> Input::s_Instance = createScope<WindowsInput>();
 
 	bool WindowsInput::isKeyPressedImpl(int keycode)
 	{

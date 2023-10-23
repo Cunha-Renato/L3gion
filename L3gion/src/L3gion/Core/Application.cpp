@@ -47,6 +47,7 @@ namespace L3gion
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::onWindowClose));
+		dispatcher.dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::onWindowResize));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
@@ -64,17 +65,33 @@ namespace L3gion
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
-			for (Layer* layer : m_LayerStack)
-				layer->onUpdate(timestep);
-
+			if (!m_Minimized)
+				for (Layer* layer : m_LayerStack)
+					layer->onUpdate(timestep);
+			
+			
 			// ImGui rendering
 			m_ImGuiLayer->begin();
 			for (Layer* layer : m_LayerStack)
 				layer->onImGuiRender();
 			m_ImGuiLayer->end();
-			
+
 			m_Window->onUpdate();
 		}
+	}
+
+	bool Application::onWindowResize(WindowResizeEvent& e)
+	{
+		if (e.getWidth() == 0 || e.getHeight() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+
+		m_Minimized = false;
+		Renderer::onWindowResize(e.getWidth(), e.getHeight());
+
+		return false;
 	}
 
 	bool Application::onWindowClose(WindowCloseEvent& e)

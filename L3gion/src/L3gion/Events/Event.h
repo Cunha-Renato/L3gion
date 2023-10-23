@@ -1,7 +1,9 @@
 #pragma once
 
-#include "L3gion/Core.h"
-#include "L3gion/Log.h"
+#include "L3gion/Core/Core.h"
+#include "L3gion/Core/Log.h"
+
+#define BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
 
 namespace L3gion
 {

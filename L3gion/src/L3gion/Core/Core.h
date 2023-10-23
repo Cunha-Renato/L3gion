@@ -31,13 +31,21 @@
 
 #define BIT(x) (1 << x)
 
-#define BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
-
 namespace L3gion
 {
 	template<typename T>
 	using ref = std::shared_ptr<T>;
+	template<typename T, typename ... Args>
+	constexpr ref<T> createRef(Args&& ... args)
+	{
+		return std::make_shared<T>(std::forward<Args>(args)...);
+	}
 
 	template<typename T>
 	using scope = std::unique_ptr<T>;
+	template<typename T, typename ... Args>
+	constexpr scope<T> createScope(Args&& ... args)
+	{
+		return std::make_unique<T>(std::forward<Args>(args)...);
+	}
 }

@@ -1,22 +1,29 @@
 #include "lgpch.h"
 #include "Renderer.h"
 
+#include "Renderer2D.h"
+
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace L3gion
 {
-	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
+	scope<Renderer::SceneData> Renderer::m_SceneData = createScope<Renderer::SceneData>();
 
 	Renderer::~Renderer()
 	{
-		if (m_SceneData)
-			delete m_SceneData;
 	}
 
 	void Renderer::init()
 	{
 		RenderCommand::init();
+		Renderer2D::init();
 	}
+	
+	void Renderer::onWindowResize(uint32_t width, uint32_t height)
+	{
+		RenderCommand::setViewPort(0, 0, width, height);
+	}
+
 
 	void Renderer::beginScene(OrthoCamera& camera)
 	{

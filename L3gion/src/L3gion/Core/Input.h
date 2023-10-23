@@ -1,6 +1,6 @@
 #pragma once
 
-#include "L3gion/Core.h"
+#include "L3gion/Core/Core.h"
 #include "glm/glm.hpp"
 
 namespace L3gion
@@ -36,6 +36,6 @@ namespace L3gion
 		virtual glm::vec2 getMousePosImpl() = 0;
 	
 	private:
-		static Input* s_Instance;
+		static scope<Input> s_Instance;
 	};
 }

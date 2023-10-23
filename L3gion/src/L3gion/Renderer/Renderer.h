@@ -13,6 +13,8 @@ namespace L3gion
 		~Renderer();
 
 		static void init();
+		static void onWindowResize(uint32_t width, uint32_t height);
+
 		static void beginScene(OrthoCamera& camera);
 		static void endScene();
 
@@ -25,6 +27,6 @@ namespace L3gion
 			glm::mat4 viewProjectionMatrix;
 		};
 
-		static SceneData* m_SceneData;
+		static scope<SceneData> m_SceneData;
 	};
 }

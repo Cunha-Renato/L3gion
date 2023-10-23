@@ -1,7 +1,7 @@
 #pragma once
 
 #include "lgpch.h"
-#include "L3gion/Core.h"
+#include "L3gion/Core/Core.h"
 #include "L3gion/Events/Event.h"
 
 namespace L3gion

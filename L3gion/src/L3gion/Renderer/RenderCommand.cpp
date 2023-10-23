@@ -5,5 +5,5 @@
 
 namespace L3gion
 {
-	RendererAPI* RenderCommand::s_RendererAPI = new OpenGLRendererAPI;
+	scope<RendererAPI> RenderCommand::s_RendererAPI = createScope<OpenGLRendererAPI>();
 }
