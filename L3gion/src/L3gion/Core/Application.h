@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core.h"
+#include "L3gion/Core/Core.h"
 
 #include "Window.h"
 #include "L3gion/Core/LayerStack.h"
@@ -18,7 +18,7 @@
 
 namespace L3gion
 {
-	class L3GION_API Application
+	class Application
 	{
 	public:
 		Application();

@@ -35,7 +35,7 @@ namespace L3gion
 
 #define EVENT_CLASS_CATEGORY(category) virtual int getCategoryFlags() const override { return category; }
 
-	class L3GION_API Event
+	class Event
 	{
 		friend class EventDispatcher;
 		inline friend std::ostream& operator<<(std::ostream& os, const Event& e)

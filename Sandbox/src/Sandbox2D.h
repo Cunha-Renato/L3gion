@@ -1,6 +1,7 @@
 #pragma once
 
 #include "L3gion.h"
+#include "L3gion/Renderer/Texture.h"
 
 class Sandbox2D : public L3gion::Layer
 {
@@ -19,9 +20,11 @@ private:
 	L3gion::OrthoCameraController m_CameraController;
 	
 	// Temporary
-	L3gion::ShaderLib m_ShaderLib;
+	L3gion::ref<L3gion::Shader> m_Shader;
 	L3gion::ref<L3gion::VertexArray> m_VertexArray;
 
-	glm::vec4 m_Color = { 0.2f, 0.3f, 0.8f, 1.0f };
+	L3gion::ref<L3gion::Texture2D> m_Texture;
+
+	glm::vec4 m_Color = { 0.8f, 0.2f, 0.3f, 1.0f };
 };
 
