@@ -54,11 +54,18 @@ namespace L3gion
 		
 		if (in)
 		{
-			in.seekg(0, std::ios::end);
-			result.resize(in.tellg());
-			in.seekg(0, std::ios::beg);
-			in.read(&result[0], result.size());
-			in.close();
+			size_t size = in.tellg();
+			if (size != -1)
+			{
+				in.seekg(0, std::ios::end);
+				result.resize(in.tellg());
+				in.seekg(0, std::ios::beg);
+				in.read(&result[0], result.size());
+				in.close();
+			}
+			else
+				LG_CORE_ASSERT(false, "In OpenGLShader readFile(): Could not read from File!");
+			
 		}
 		else
 			LG_CORE_WARN("In readFile(): Could not open shader file {0}", filePath.c_str());
