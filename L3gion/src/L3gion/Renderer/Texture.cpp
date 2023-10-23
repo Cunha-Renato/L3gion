@@ -1,7 +1,8 @@
 #include "lgpch.h"
-#include "Texture.h"
 
-#include "Renderer.h"
+#include "L3gion/Renderer/Texture.h"
+#include "L3gion/Renderer/Renderer.h"
+
 #include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace L3gion

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Event.h"
+#include "L3gion/Events/Event.h"
 
 namespace L3gion
 {
-	class L3GION_API KeyEvent : public Event
+	class KeyEvent : public Event
 	{
 	public:
 		inline int getKeyCode() { return m_KeyCode; }
@@ -20,7 +20,7 @@ namespace L3gion
 
 //----------------- KEY_PRESSED -------------------------
 
-	class L3GION_API KeyPressedEvent : public KeyEvent
+	class KeyPressedEvent : public KeyEvent
 	{
 	public:
 		KeyPressedEvent(int keyCode, int repeatCount)
@@ -42,7 +42,7 @@ namespace L3gion
 
 //----------------- KEY_RELEASED -------------------------
 
-	class L3GION_API KeyReleasedEvent : public KeyEvent
+	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int keyCode)
@@ -60,7 +60,7 @@ namespace L3gion
 
 //----------------- KEY_TYPED -------------------------
 
-	class L3GION_API KeyTypedEvent : public KeyEvent
+	class KeyTypedEvent : public KeyEvent
 	{
 	public:
 		KeyTypedEvent(int keyCode)

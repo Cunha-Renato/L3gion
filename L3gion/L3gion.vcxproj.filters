@@ -123,6 +123,9 @@
     <ClInclude Include="src\L3gion\Renderer\Renderer.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\Renderer\Renderer2D.h">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\RendererAPI.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
@@ -1413,7 +1416,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Renderer\Renderer2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Core\Application.cpp">
@@ -1450,6 +1452,9 @@
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\Renderer.cpp">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Renderer\Renderer2D.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\RendererAPI.cpp">
@@ -1494,6 +1499,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\L3gion\Renderer\Renderer2D.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\GraphicsContext.cpp" />
   </ItemGroup>
 </Project>

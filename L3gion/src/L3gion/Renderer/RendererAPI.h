@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include "VertexArray.h"
+#include "L3gion/Renderer/VertexArray.h"
 
 namespace L3gion
 {
@@ -22,9 +22,10 @@ namespace L3gion
 		virtual void setClearColor(const glm::vec4& color) = 0;
 		virtual void clear() = 0;
 
-		virtual void drawIndexed(const std::shared_ptr<VertexArray>& vertexArray) = 0;
+		virtual void drawIndexed(const ref<VertexArray>& vertexArray) = 0;
 
 		inline static API getAPI() { return s_API; }
+		static scope<RendererAPI> create();
 	private:
 		static API s_API;
 	};

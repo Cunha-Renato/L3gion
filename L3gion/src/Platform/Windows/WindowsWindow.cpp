@@ -1,5 +1,7 @@
 #include "lgpch.h"
-#include "WindowsWindow.h"
+
+#include "Platform/Windows/WindowsWindow.h"
+
 #include <glad/glad.h>
 
 #include "L3gion/Events/ApplicationEvent.h"
@@ -18,9 +20,9 @@ namespace L3gion
 		LG_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
-	Window* Window::create(const WindowProps& props)
+	scope<Window> Window::create(const WindowProps& props)
 	{
-		return new WindowsWindow(props);
+		return createScope<WindowsWindow>(props);
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
@@ -62,8 +64,9 @@ namespace L3gion
 		m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Data.title.c_str(), NULL, NULL);
 		LG_CORE_ASSERT(m_Window, "In WindowsWindow Init(): Failed to create a window!");
 
-		m_Context = createScope<OpenGLContext>(m_Window);
+		m_Context = GraphicsContext::create(m_Window);
 		m_Context->init();
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		setVSync(true);
 

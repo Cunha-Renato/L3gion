@@ -1,7 +1,7 @@
 #include "lgpch.h"
-#include "Renderer.h"
 
-#include "Renderer2D.h"
+#include "L3gion/Renderer/Renderer.h"
+#include "L3gion/Renderer/Renderer2D.h"
 
 #include "Platform/OpenGL/OpenGLShader.h"
 
@@ -11,6 +11,12 @@ namespace L3gion
 
 	Renderer::~Renderer()
 	{
+		shutdown();
+	}
+
+	void Renderer::shutdown()
+	{
+		Renderer2D::shutdown();
 	}
 
 	void Renderer::init()
@@ -34,11 +40,11 @@ namespace L3gion
 
 	}
 
-	void Renderer::submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform)
+	void Renderer::submit(const ref<Shader>& shader, const ref<VertexArray>& vertexArray, const glm::mat4& transform)
 	{
 		shader->bind();
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->setMat4("u_ViewProjection", m_SceneData->viewProjectionMatrix);
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->setMat4("u_Transform", transform);
+		shader->setMat4("u_ViewProjection", m_SceneData->viewProjectionMatrix);
+		shader->setMat4("u_Transform", transform);
 
 		vertexArray->bind();
 		RenderCommand::drawIndexed(vertexArray);

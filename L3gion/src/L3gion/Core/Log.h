@@ -1,22 +1,23 @@
 #pragma once
 
-#include "Core.h"
-#include "spdlog/spdlog.h"
-#include "spdlog/fmt/bundled/ostream.h"
+#include "L3gion/Core/Core.h"
+
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/bundled/ostream.h>
 
 namespace L3gion
 {
-	class L3GION_API Log
+	class Log
 	{
 	public:
 		static void init();
 
-		inline static std::shared_ptr<spdlog::logger>& getCoreLogger() { return s_CoreLogger; }
-		inline static std::shared_ptr<spdlog::logger>& getClientLogger() { return s_ClientLogger; }
+		inline static ref<spdlog::logger>& getCoreLogger() { return s_CoreLogger; }
+		inline static ref<spdlog::logger>& getClientLogger() { return s_ClientLogger; }
 	
 	private:
-		static std::shared_ptr<spdlog::logger> s_CoreLogger;
-		static std::shared_ptr<spdlog::logger> s_ClientLogger;
+		static ref<spdlog::logger> s_CoreLogger;
+		static ref<spdlog::logger> s_ClientLogger;
 	};
 }
 

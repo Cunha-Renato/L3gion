@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Event.h"
+#include "L3gion/Events/Event.h"
 
 namespace L3gion
 {
-	class L3GION_API WindowResizeEvent : public Event
+	class WindowResizeEvent : public Event
 	{
 	public:
 		WindowResizeEvent(unsigned int width, unsigned int height)
@@ -28,10 +28,10 @@ namespace L3gion
 
 //---------------------- CLOSE ------------------------
 
-	class L3GION_API WindowCloseEvent : public Event
+	class WindowCloseEvent : public Event
 	{
 	public:
-		WindowCloseEvent() {}
+		WindowCloseEvent() = default;
 
 		EVENT_CLASS_TYPE(WindowClose)
 		EVENT_CLASS_CATEGORY(EC_Application)
@@ -39,10 +39,10 @@ namespace L3gion
 
 //---------------------- APP_TICK ------------------------
 
-	class L3GION_API AppTickEvent : public Event
+	class AppTickEvent : public Event
 	{
 	public:
-		AppTickEvent() {}
+		AppTickEvent() = default;
 		
 		EVENT_CLASS_TYPE(AppTick)
 		EVENT_CLASS_CATEGORY(EC_Application)
@@ -50,10 +50,10 @@ namespace L3gion
 
 //---------------------- APP_UPDATE ------------------------
 
-	class L3GION_API AppUpdateEvent : public Event
+	class AppUpdateEvent : public Event
 	{
 	public:
-		AppUpdateEvent() {}
+		AppUpdateEvent() = default;
 
 		EVENT_CLASS_TYPE(AppUpdate)
 		EVENT_CLASS_CATEGORY(EC_Application)
@@ -61,10 +61,10 @@ namespace L3gion
 
 //---------------------- APP_RENDER ------------------------
 	
-	class L3GION_API AppRenderEvent : public Event
+	class AppRenderEvent : public Event
 	{
 	public:
-		AppRenderEvent() {}
+		AppRenderEvent() = default;
 
 		EVENT_CLASS_TYPE(AppRender)
 		EVENT_CLASS_CATEGORY(EC_Application)

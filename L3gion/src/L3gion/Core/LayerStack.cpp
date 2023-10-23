@@ -1,12 +1,8 @@
 #include "lgpch.h"
-#include "LayerStack.h"
+#include "L3gion/Core/LayerStack.h"
 
 namespace L3gion
 {
-	LayerStack::LayerStack()
-	{
-	}
-
 	LayerStack::~LayerStack()
 	{
 		for (Layer* layer : m_Layers)

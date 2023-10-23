@@ -1,5 +1,5 @@
 #include "lgpch.h"
-#include "Camera.h"
+#include "L3gion/Renderer/Camera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

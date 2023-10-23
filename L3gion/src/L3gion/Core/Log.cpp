@@ -1,11 +1,13 @@
 #include "lgpch.h"
 
-#include "spdlog/sinks/stdout_color_sinks.h"
+#include "L3gion/Core/Log.h"
+
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace L3gion
 {
-	std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
-	std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
+	ref<spdlog::logger> Log::s_CoreLogger;
+	ref<spdlog::logger> Log::s_ClientLogger;
 
 
 	void Log::init()

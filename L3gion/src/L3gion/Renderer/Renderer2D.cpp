@@ -1,9 +1,9 @@
 #include "lgpch.h"
-#include "Renderer2D.h"
+#include "L3gion/Renderer/Renderer2D.h"
 
-#include "VertexArray.h"
-#include "Shader.h"
-#include "RenderCommand.h"
+#include "L3gion/Renderer/VertexArray.h"
+#include "L3gion/Renderer/Shader.h"
+#include "L3gion/Renderer/RenderCommand.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -56,7 +56,7 @@ namespace L3gion
 		s_Data->textureShader->bind();
 		s_Data->textureShader->setInt("u_Texture", 0);
 	}
-	void Renderer2D::Shutdown()
+	void Renderer2D::shutdown()
 	{
 		delete s_Data;
 	}

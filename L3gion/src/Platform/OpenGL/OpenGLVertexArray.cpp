@@ -1,5 +1,6 @@
 #include "lgpch.h"
-#include "OpenGLVertexArray.h"
+
+#include "Platform/OpenGL/OpenGLVertexArray.h"
 
 #include <glad/glad.h>
 
@@ -9,17 +10,17 @@ namespace L3gion
 	{
 		switch (type)
 		{
-			case L3gion::ShaderDataType::Float:		return GL_FLOAT;
-			case L3gion::ShaderDataType::Float2:	return GL_FLOAT;
-			case L3gion::ShaderDataType::Float3:	return GL_FLOAT;
-			case L3gion::ShaderDataType::Float4:	return GL_FLOAT;
-			case L3gion::ShaderDataType::Mat3:		return GL_FLOAT;
-			case L3gion::ShaderDataType::Mat4:		return GL_FLOAT;
-			case L3gion::ShaderDataType::Int:		return GL_INT;
-			case L3gion::ShaderDataType::Int2:		return GL_INT;
-			case L3gion::ShaderDataType::Int3:		return GL_INT;
-			case L3gion::ShaderDataType::Int4:		return GL_INT;
-			case L3gion::ShaderDataType::Bool:		return GL_BOOL;
+			case ShaderDataType::Float:		return GL_FLOAT;
+			case ShaderDataType::Float2:	return GL_FLOAT;
+			case ShaderDataType::Float3:	return GL_FLOAT;
+			case ShaderDataType::Float4:	return GL_FLOAT;
+			case ShaderDataType::Mat3:		return GL_FLOAT;
+			case ShaderDataType::Mat4:		return GL_FLOAT;
+			case ShaderDataType::Int:		return GL_INT;
+			case ShaderDataType::Int2:		return GL_INT;
+			case ShaderDataType::Int3:		return GL_INT;
+			case ShaderDataType::Int4:		return GL_INT;
+			case ShaderDataType::Bool:		return GL_BOOL;
 		}
 
 		LG_CORE_ASSERT(false, "In ShaderDataTypeToOpenGLBaseType(): Unknown ShaderDataType!");

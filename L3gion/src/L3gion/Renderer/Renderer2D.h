@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Camera.h"
-#include "Texture.h"
+#include "L3gion/Renderer/Camera.h"
+#include "L3gion/Renderer/Texture.h"
 
 namespace L3gion
 {
@@ -9,7 +9,7 @@ namespace L3gion
 	{
 	public:
 		static void init();
-		static void Shutdown();
+		static void shutdown();
 
 		static void beginScene(const OrthoCamera& camera);
 		static void endScene();

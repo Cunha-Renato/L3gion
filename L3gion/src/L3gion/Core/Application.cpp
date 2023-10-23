@@ -1,8 +1,8 @@
 #include "lgpch.h"
-#include "Application.h"
+#include "L3gion/Core/Application.h"
 
 #include "L3gion/Events/MouseEvent.h"
-#include "Input.h"
+#include "L3gion/Core/Input.h"
 
 #include <glad/glad.h>
 #include "L3gion/Renderer/Renderer.h"
@@ -18,7 +18,7 @@ namespace L3gion
 		LG_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
-		m_Window = std::unique_ptr<Window>(Window::create());
+		m_Window = Window::create();
 		m_Window->setEventCallback(BIND_EVENT_FN(Application::onEvent));
 
 		Renderer::init();
@@ -31,6 +31,7 @@ namespace L3gion
 
 	Application::~Application()
 	{
+		Renderer::shutdown();
 	}
 
 	void Application::pushLayer(Layer* layer)

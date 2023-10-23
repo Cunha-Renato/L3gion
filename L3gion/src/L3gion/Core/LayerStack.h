@@ -1,14 +1,14 @@
 #pragma once
 
 #include "L3gion/Core/Core.h"
-#include "Layer.h"
+#include "L3gion/Core/Layer.h"
 
 namespace L3gion
 {
 	class LayerStack
 	{
 	public:
-		LayerStack();
+		LayerStack() = default;
 		~LayerStack();
 
 		void pushLayer(Layer* layer);

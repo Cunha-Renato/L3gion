@@ -21,7 +21,7 @@ namespace L3gion
 	};
 
 	// Interface representing a desktop window
-	class L3GION_API Window
+	class Window
 	{
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;
@@ -40,6 +40,6 @@ namespace L3gion
 
 		virtual void* getNativeWindow() const = 0;
 
-		static Window* create(const WindowProps& props = WindowProps());
+		static scope<Window> create(const WindowProps& props = WindowProps());
 	};
 }

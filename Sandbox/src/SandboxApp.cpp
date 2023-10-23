@@ -1,13 +1,13 @@
 #include <L3gion.h>
 #include <L3gion/Core/EntryPoint.h>
 
-#include "ImGui/imgui.h"
+#include "Sandbox2D.h"
 
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "L3gion/Renderer/Shader.h"
 #include <glm/gtc/type_ptr.hpp>
+#include <ImGui/imgui.h>
 
-#include "Sandbox2D.h"
 
 class ExampleLayer : public L3gion::Layer
 {
@@ -47,8 +47,8 @@ public:
 		m_Texture = L3gion::Texture2D::create("assets/textures/checkerboard.png");
 		m_TextureTransparent = L3gion::Texture2D::create("assets/textures/L3gion_Engine.png");
 
-		std::dynamic_pointer_cast<L3gion::OpenGLShader>(shader)->bind();
-		std::dynamic_pointer_cast<L3gion::OpenGLShader>(shader)->uploadUniformInt("u_Texture", 0);
+		shader->bind();
+		shader->setInt("u_Texture", 0);
 	}
 
 	void onUpdate(L3gion::Timestep& ts) override

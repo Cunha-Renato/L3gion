@@ -1,7 +1,8 @@
 #include "lgpch.h"
-#include "VertexArray.h"
 
-#include "Renderer.h"
+#include "L3gion/Renderer/VertexArray.h"
+#include "L3gion/Renderer/Renderer.h"
+
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace L3gion
@@ -17,7 +18,7 @@ namespace L3gion
 			}
 			case RendererAPI::API::OpenGL:
 			{
-				return std::make_shared<OpenGLVertexArray>();
+				return createRef<OpenGLVertexArray>();
 			}
 		}
 

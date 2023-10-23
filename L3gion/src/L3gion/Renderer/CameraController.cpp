@@ -1,5 +1,5 @@
 #include "lgpch.h"
-#include "CameraController.h"
+#include "L3gion/Renderer/CameraController.h"
 
 #include "L3gion/Core/Input.h"
 #include "L3gion/Core/KeyCodes.h"

@@ -1,11 +1,10 @@
 #pragma once
 
-#include "Event.h"
-#include "glm/glm.hpp"
+#include "L3gion/Events/Event.h"
 
 namespace L3gion
 {
-	class L3GION_API MouseMovedEvent : public Event
+	class MouseMovedEvent : public Event
 	{
 	public:
 		MouseMovedEvent(glm::vec2 position)
@@ -35,7 +34,7 @@ namespace L3gion
 
 //---------------------- SCROLL_EVENT ------------------------
 
-	class L3GION_API MouseScrollEvent : public Event
+	class MouseScrollEvent : public Event
 	{
 	public:
 		MouseScrollEvent(float xOffset, float yOffset)
@@ -60,7 +59,7 @@ namespace L3gion
 
 //------------------------ BUTTON_EVENT ------------------------
 	
-	class L3GION_API MouseButtonEvent : public Event
+	class MouseButtonEvent : public Event
 	{
 	public:
 		inline int getMouseButton() const { return m_Button; }
@@ -75,7 +74,7 @@ namespace L3gion
 
 //------------------------ BUTTON_PRESSED_EVENT ------------------------
 
-	class L3GION_API MouseButtonPressedEvent : public MouseButtonEvent
+	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonPressedEvent(int button)
@@ -93,7 +92,7 @@ namespace L3gion
 
 //------------------------ BUTTON_RELEASE_EVENT ------------------------
 
-	class L3GION_API MouseButtonReleasedEvent : public MouseButtonEvent
+	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonReleasedEvent(int button)

@@ -1,5 +1,6 @@
 #include "lgpch.h"
-#include "WindowsInput.h"
+
+#include "Platform/Windows/WindowsInput.h"
 
 #include "L3gion/Core/Application.h"
 #include <GLFW/glfw3.h>

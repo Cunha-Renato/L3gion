@@ -4,7 +4,7 @@
 
 namespace L3gion
 {
-	class L3GION_API ImGuiLayer : public Layer
+	class ImGuiLayer : public Layer
 	{
 	public:
 		ImGuiLayer();

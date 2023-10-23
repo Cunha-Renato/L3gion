@@ -1,7 +1,7 @@
 #pragma once
 
 #include "L3gion/Core/Core.h"
-#include "L3gion/Core/Log.h"
+#include <glm/glm.hpp>
 
 #define BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
 

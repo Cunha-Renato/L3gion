@@ -1,7 +1,8 @@
 #include "lgpch.h"
-#include "Shader.h"
 
-#include "Renderer.h"
+#include "L3gion/Renderer/Shader.h"
+#include "L3gion/Renderer/Renderer.h"
+
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace L3gion
@@ -17,7 +18,7 @@ namespace L3gion
 			}
 			case RendererAPI::API::OpenGL:
 			{
-				return std::make_shared<OpenGLShader>(filePath);
+				return createRef<OpenGLShader>(filePath);
 			}
 		}
 
@@ -36,7 +37,7 @@ namespace L3gion
 			}
 			case RendererAPI::API::OpenGL:
 			{
-				return std::make_shared<OpenGLShader>(name, vertexSrc, fragmentSrc);
+				return createRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
 			}
 		}
 

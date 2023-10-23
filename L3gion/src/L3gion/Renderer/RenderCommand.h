@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RendererAPI.h"
+#include "L3gion/Renderer/RendererAPI.h"
  
 namespace L3gion
 {
@@ -27,7 +27,7 @@ namespace L3gion
 		{
 			s_RendererAPI->clear();
 		}
-		inline static void drawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
+		inline static void drawIndexed(const ref<VertexArray>& vertexArray)
 		{
 			s_RendererAPI->drawIndexed(vertexArray);
 		}

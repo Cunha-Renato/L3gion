@@ -2,7 +2,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#include "ImGui/imgui.h"
+#include <ImGui/imgui.h>
 
 Sandbox2D::Sandbox2D(const std::string& name)
 	: Layer(name), m_CameraController(1280.0f / 720.0f)

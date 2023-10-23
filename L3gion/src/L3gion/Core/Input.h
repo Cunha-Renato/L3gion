@@ -5,7 +5,7 @@
 
 namespace L3gion
 {	
-	class L3GION_API Input
+	class Input
 	{
 	protected:
 		Input() = default;

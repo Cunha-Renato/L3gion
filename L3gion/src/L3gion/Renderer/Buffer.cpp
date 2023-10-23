@@ -1,7 +1,7 @@
 #include "lgpch.h"
-#include "Buffer.h"
 
-#include "Renderer.h"
+#include "L3gion/Renderer/Buffer.h"
+#include "L3gion/Renderer/Renderer.h"
 
 #include "Platform/OpenGL/OpenGLBuffer.h"
 
@@ -18,7 +18,7 @@ namespace L3gion
 			}
 			case RendererAPI::API::OpenGL:
 			{
-				return std::make_shared<OpenGLVertexBuffer>(vertices, size);
+				return createRef<OpenGLVertexBuffer>(vertices, size);
 			}
 		}
 
@@ -37,7 +37,7 @@ namespace L3gion
 			}
 			case RendererAPI::API::OpenGL:
 			{
-				return std::make_shared<OpenGLIndexBuffer>(indices, count);
+				return createRef<OpenGLIndexBuffer>(indices, count);
 			}
 		}
 

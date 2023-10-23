@@ -1,7 +1,8 @@
 #include "lgpch.h"
-#include "OpenGLTexture.h"
 
-#include "stb_image.h"
+#include "Platform/OpenGL/OpenGLTexture.h"
+
+#include <stb_image.h>
 
 namespace L3gion
 {
