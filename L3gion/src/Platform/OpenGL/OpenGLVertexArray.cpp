@@ -30,20 +30,28 @@ namespace L3gion
 
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
+		LG_PROFILE_FUNCTION();
+
 		glGenVertexArrays(1, &m_RendererID);
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray() 
 	{
+		LG_PROFILE_FUNCTION();
+
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
 
 	void OpenGLVertexArray::bind() const
 	{
+		LG_PROFILE_FUNCTION();
+
 		glBindVertexArray(m_RendererID);
 	}
 	void OpenGLVertexArray::unbind() const
 	{
+		LG_PROFILE_FUNCTION();
+
 		glBindVertexArray(0);
 
 	}

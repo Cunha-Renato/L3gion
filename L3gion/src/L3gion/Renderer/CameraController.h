@@ -13,7 +13,7 @@ namespace L3gion
 	public:
 		OrthoCameraController(float aspectRatio, bool rotation = false);
 
-		void OnUpdate(Timestep ts);
+		void onUpdate(Timestep ts);
 		void onEvent(Event& e);
 
 		OrthoCamera& getCamera() { return m_Camera; }

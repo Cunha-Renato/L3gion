@@ -22,19 +22,6 @@ namespace L3gion
 }
 
 // Formater
-// FUNCTION
-template <typename T>
-void formatToStringIMPL()
-{
-	struct CustomFormatter : fmt::formatter<std::string>
-	{
-		template <typename FormatContext>
-		auto format(const T& e, FormatContext& ctx) {
-			return fmt::format_to(ctx.out(), "{}", e.toString());
-		}
-	};
-}
-
 // MACRO
 #define FORMAT_TOSTR_IMPL(Type) \
 template <> \

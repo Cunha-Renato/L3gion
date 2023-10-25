@@ -14,7 +14,9 @@ namespace L3gion
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application()
-	{
+	{	
+		LG_PROFILE_FUNCTION();
+
 		LG_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
@@ -31,21 +33,31 @@ namespace L3gion
 
 	Application::~Application()
 	{
+		LG_PROFILE_FUNCTION();
+
 		Renderer::shutdown();
 	}
 
 	void Application::pushLayer(Layer* layer)
 	{
+		LG_PROFILE_FUNCTION();
+
 		m_LayerStack.pushLayer(layer);
+		layer->onAttach();
 	}
 
 	void Application::pushOverlay(Layer* overlay)
 	{
+		LG_PROFILE_FUNCTION();
+
 		m_LayerStack.pushOverlay(overlay);
+		overlay->onAttach();
 	}
 
 	void Application::onEvent(Event& e)
 	{
+		LG_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::onWindowClose));
 		dispatcher.dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::onWindowResize));
@@ -60,29 +72,42 @@ namespace L3gion
 
 	void Application::run()
 	{
+		LG_PROFILE_FUNCTION();
+
 		while (m_Running)
 		{
+			LG_PROFILE_SCOPE("Run Loop");
 			double time = glfwGetTime(); // Should be outside this class
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
 			if (!m_Minimized)
-				for (Layer* layer : m_LayerStack)
-					layer->onUpdate(timestep);
-			
-			
-			// ImGui rendering
-			m_ImGuiLayer->begin();
-			for (Layer* layer : m_LayerStack)
-				layer->onImGuiRender();
-			m_ImGuiLayer->end();
+			{
+				{
+					LG_PROFILE_SCOPE("LayerStack: OnUpdates");
 
+					for (Layer* layer : m_LayerStack)
+						layer->onUpdate(timestep);
+				}
+
+				{
+					LG_PROFILE_SCOPE("LayerStack: OnIMGUIRendering");
+
+					// ImGui rendering
+					m_ImGuiLayer->begin();
+					for (Layer* layer : m_LayerStack)
+						layer->onImGuiRender();
+					m_ImGuiLayer->end();
+				}
+			}
 			m_Window->onUpdate();
 		}
 	}
 
 	bool Application::onWindowResize(WindowResizeEvent& e)
 	{
+		LG_PROFILE_FUNCTION();
+
 		if (e.getWidth() == 0 || e.getHeight() == 0)
 		{
 			m_Minimized = true;

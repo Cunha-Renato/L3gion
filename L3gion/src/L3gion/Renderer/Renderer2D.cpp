@@ -15,11 +15,13 @@ namespace L3gion
 		ref<Shader> textureShader;
 		ref<Texture2D> whiteTexture;
 	};
-	
+
 	static Renderer2DSorage* s_Data;
 
 	void Renderer2D::init()
 	{
+		LG_PROFILE_FUNCTION();
+
 		s_Data = new Renderer2DSorage();
 
 		s_Data->vertexArray = VertexArray::create();
@@ -63,27 +65,32 @@ namespace L3gion
 
 	void Renderer2D::beginScene(const OrthoCamera& camera)
 	{
+		LG_PROFILE_FUNCTION();
+
 		s_Data->textureShader->bind();
 		s_Data->textureShader->setMat4("u_ViewProjection", camera.getViewProjectionMatrix());
 	}
 	void Renderer2D::endScene()
 	{
-
+		LG_PROFILE_FUNCTION();
 	}
 
 	// Primitives
 	void Renderer2D::drawQuad(const glm::vec2& position, const glm::vec2 size, const glm::vec4& color)
 	{
+		
 		drawQuad(glm::vec3(position, 0.0f), size, color);
 	}
 	void Renderer2D::drawQuad(const glm::vec3& position, const glm::vec2 size, const glm::vec4& color)
 	{
+		LG_PROFILE_FUNCTION();
+
 		s_Data->textureShader->setFloat4("u_Color", color);
 		s_Data->whiteTexture->bind();
 
-		glm::mat4 transfom = glm::translate(glm::mat4(1.0f), position) * 
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * 
 			glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
-		s_Data->textureShader->setMat4("u_Transform", transfom);
+		s_Data->textureShader->setMat4("u_Transform", transform);
 
 		s_Data->vertexArray->bind();
 		RenderCommand::drawIndexed(s_Data->vertexArray);
@@ -94,12 +101,37 @@ namespace L3gion
 	}
 	void Renderer2D::drawQuad(const glm::vec3& position, const glm::vec2 size, const ref<Texture2D> texture)
 	{
+		LG_PROFILE_FUNCTION();
+
 		s_Data->textureShader->setFloat4("u_Color", glm::vec4(1.0f));
 		texture->bind();
 
-		glm::mat4 transfom = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
-		s_Data->textureShader->setMat4("u_Transform", transfom);
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
+		s_Data->textureShader->setMat4("u_Transform", transform);
 
+		s_Data->vertexArray->bind();
+		RenderCommand::drawIndexed(s_Data->vertexArray);
+	}
+
+	void Renderer2D::drawQuad(const QuadSpecifications& specs)
+	{
+		LG_PROFILE_FUNCTION();
+
+		s_Data->textureShader->setFloat4("u_Color", specs.color);
+		s_Data->textureShader->setFloat("u_TilingFactor", specs.tiling);
+		
+		if (specs.texture)
+			specs.texture->bind();
+		else s_Data->whiteTexture->bind();
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), specs.position);
+
+		if (specs.rotation != 0.0f)
+			transform *= glm::rotate(glm::mat4(1.0f), specs.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+
+		transform *= glm::scale(glm::mat4(1.0f), glm::vec3(specs.size, 1.0f));
+
+		s_Data->textureShader->setMat4("u_Transform", transform);
 		s_Data->vertexArray->bind();
 		RenderCommand::drawIndexed(s_Data->vertexArray);
 	}

@@ -16,6 +16,8 @@
 
 #include "L3gion/Core/Timestep.h"
 
+int main(int argc, char** argv);
+
 namespace L3gion
 {
 	class Application
@@ -24,8 +26,6 @@ namespace L3gion
 		Application();
 		virtual ~Application();
 
-		void run();
-		
 		void onEvent(Event& e);
 
 		inline void setVsync(bool option) { m_Window->setVSync(option); }
@@ -37,6 +37,7 @@ namespace L3gion
 		inline static Application& get() { return *s_Instance; }
 
 	private:
+		void run();
 		bool onWindowClose(WindowCloseEvent& e);
 		bool onWindowResize(WindowResizeEvent& e);
 
@@ -50,8 +51,9 @@ namespace L3gion
 
 	private:
 		static Application* s_Instance;
+		friend int ::main(int argc, char** argv);
 	};
 
 	// To be defined in CLIENT
-	scope<Application> createApplication();
+	Application* createApplication();
 }

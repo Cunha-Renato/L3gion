@@ -54,7 +54,7 @@ public:
 	void onUpdate(L3gion::Timestep& ts) override
 	{
 		// Update
-		m_CameraController.OnUpdate(ts);
+		m_CameraController.onUpdate(ts);
 
 		// Render
 		L3gion::RenderCommand::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
@@ -100,16 +100,11 @@ private:
 
 class Sandbox : public L3gion::Application
 {
-private: 
-		ExampleLayer* m_Layer; 
 public:
 	Sandbox()
 	{
-		//m_Layer = new ExampleLayer("Example Layer");
-		//pushLayer(m_Layer);
-
 		pushLayer(new Sandbox2D("Sandbox 2D Layer"));
-		setVsync(false);
+		setVsync(true);
 	}
 
 	~Sandbox()
@@ -117,8 +112,8 @@ public:
 	}
 };
 
-L3gion::scope<L3gion::Application> L3gion::createApplication()
+L3gion::Application* L3gion::createApplication()
 {
-	L3gion::scope<L3gion::Application> app = std::make_unique<Sandbox>();
+	auto app = new Sandbox();
 	return app;
 }

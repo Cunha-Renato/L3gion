@@ -10,6 +10,9 @@
     <Filter Include="src\L3gion\Core">
       <UniqueIdentifier>{406D8792-ACF8-F456-B509-784B21145157}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\L3gion\Debug">
+      <UniqueIdentifier>{5E7081E3-4A69-A035-739B-85BA5FF37F41}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\L3gion\Events">
       <UniqueIdentifier>{CCCE3957-38E5-37ED-815C-C30EEDB10875}</UniqueIdentifier>
     </Filter>
@@ -89,6 +92,9 @@
     </ClInclude>
     <ClInclude Include="src\L3gion\Core\Window.h">
       <Filter>src\L3gion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Debug\Instrumentor.h">
+      <Filter>src\L3gion\Debug</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Events\ApplicationEvent.h">
       <Filter>src\L3gion\Events</Filter>
@@ -1421,9 +1427,6 @@
     <ClCompile Include="src\L3gion\Core\Application.cpp">
       <Filter>src\L3gion\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\L3gion\Core\KeyCodes.cpp">
-      <Filter>src\L3gion\Core</Filter>
-    </ClCompile>
     <ClCompile Include="src\L3gion\Core\Layer.cpp">
       <Filter>src\L3gion\Core</Filter>
     </ClCompile>
@@ -1446,6 +1449,9 @@
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\CameraController.cpp">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Renderer\GraphicsContext.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\RenderCommand.cpp">
@@ -1499,6 +1505,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\L3gion\Renderer\GraphicsContext.cpp" />
   </ItemGroup>
 </Project>

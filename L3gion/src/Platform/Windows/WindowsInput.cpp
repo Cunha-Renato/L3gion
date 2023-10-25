@@ -13,7 +13,7 @@ namespace L3gion
 	{
 		auto window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
 
-		auto state = glfwGetKey(window, LgKeyToGlfw(keycode));
+		auto state = glfwGetKey(window, LG_LG_KEY_TO_GLFW(keycode));
 
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}

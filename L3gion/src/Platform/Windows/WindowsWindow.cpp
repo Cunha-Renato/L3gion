@@ -13,7 +13,7 @@
 
 namespace L3gion
 {
-	static bool s_GLFWInitialized = false;
+	static uint8_t s_GLFWwindowCount = 0;
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
@@ -30,10 +30,16 @@ namespace L3gion
 		init(props);
 	}
 	
-	WindowsWindow::~WindowsWindow() { shutdown(); }
+	WindowsWindow::~WindowsWindow() 
+	{ 
+		LG_PROFILE_FUNCTION();
+
+		shutdown(); 
+	}
 
 	void WindowsWindow::init(const WindowProps& props)
 	{
+		LG_PROFILE_FUNCTION();
 		m_Data.title = props.title;
 		m_Data.width = props.width;
 		m_Data.height = props.height;
@@ -41,8 +47,9 @@ namespace L3gion
 		LG_CORE_INFO("Initializing WindowsWindow!");
 
 		// Initializing GLFW
-		if (!s_GLFWInitialized)
+		if (s_GLFWwindowCount == 0)
 		{
+			LG_PROFILE_SCOPE("GLFW_Init");
 			int success = glfwInit();
 			LG_CORE_ASSERT(success, "Could not initialize GLFW!");
 
@@ -52,17 +59,16 @@ namespace L3gion
 			glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
 
 			glfwSetErrorCallback(GLFWErrorCallback);
-
-			s_GLFWInitialized = true;
 		}
-		else
+
 		{
-			shutdown();
-			return;
-		}
+			LG_PROFILE_SCOPE("GLFW_CreateWindow");
 
-		m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Data.title.c_str(), NULL, NULL);
-		LG_CORE_ASSERT(m_Window, "In WindowsWindow Init(): Failed to create a window!");
+			m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Data.title.c_str(), NULL, NULL);
+			LG_CORE_ASSERT(m_Window, "In WindowsWindow Init(): Failed to create a window!");
+
+			++s_GLFWwindowCount;
+		}
 
 		m_Context = GraphicsContext::create(m_Window);
 		m_Context->init();
@@ -102,21 +108,21 @@ namespace L3gion
 			{
 				case GLFW_PRESS:
 				{
-					KeyPressedEvent event(GlfwKeyToLG(key), 0);
+					KeyPressedEvent event(LG_GLFW_KEY_TO_LG(key), 0);
 					data.EventCallback(event);
 
 					break;
 				}
 				case GLFW_REPEAT:
 				{
-					KeyPressedEvent event(GlfwKeyToLG(key), 1);
+					KeyPressedEvent event(LG_GLFW_KEY_TO_LG(key), 1);
 					data.EventCallback(event);
 
 					break;
 				}
 				case GLFW_RELEASE:
 				{
-					KeyReleasedEvent event(GlfwKeyToLG(key));
+					KeyReleasedEvent event(LG_GLFW_KEY_TO_LG(key));
 					data.EventCallback(event);
 
 					break;
@@ -183,17 +189,27 @@ namespace L3gion
 
 	void WindowsWindow::shutdown() 
 	{ 
+		LG_PROFILE_FUNCTION();
+
 		glfwDestroyWindow(m_Window); 
-		glfwTerminate();
+		--s_GLFWwindowCount;
+
+		if(s_GLFWwindowCount == 0)
+			glfwTerminate();
 	}
 
 	void WindowsWindow::onUpdate()
 	{
+		LG_PROFILE_FUNCTION();
+
+		glfwPollEvents();
 		m_Context->swapBuffers();
 	}
 
 	void WindowsWindow::setVSync(bool enable = true)
 	{
+		LG_PROFILE_FUNCTION();
+
 		if (enable)
 			glfwSwapInterval(1);
 		else

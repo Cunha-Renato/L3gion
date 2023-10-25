@@ -108,7 +108,7 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
@@ -134,7 +134,7 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
@@ -159,6 +159,7 @@
     <ClInclude Include="src\L3gion\Core\MouseButtonCodes.h" />
     <ClInclude Include="src\L3gion\Core\Timestep.h" />
     <ClInclude Include="src\L3gion\Core\Window.h" />
+    <ClInclude Include="src\L3gion\Debug\Instrumentor.h" />
     <ClInclude Include="src\L3gion\Events\ApplicationEvent.h" />
     <ClInclude Include="src\L3gion\Events\Event.h" />
     <ClInclude Include="src\L3gion\Events\KeyEvent.h" />
@@ -604,7 +605,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Core\Application.cpp" />
-    <ClCompile Include="src\L3gion\Core\KeyCodes.cpp" />
     <ClCompile Include="src\L3gion\Core\Layer.cpp" />
     <ClCompile Include="src\L3gion\Core\LayerStack.cpp" />
     <ClCompile Include="src\L3gion\Core\Log.cpp" />

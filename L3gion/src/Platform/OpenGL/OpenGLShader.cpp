@@ -21,6 +21,8 @@ namespace L3gion
 
 	OpenGLShader::OpenGLShader(const std::string& filePath)
 	{
+		LG_PROFILE_FUNCTION();
+		
 		std::string source = readFile(filePath);
 		auto shaderSrcs = preProcess(source);
 		compile(shaderSrcs);
@@ -36,6 +38,8 @@ namespace L3gion
 
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) : m_ShaderID(0), m_Name(name)
 	{
+		LG_PROFILE_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
 		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -44,11 +48,15 @@ namespace L3gion
 	}
 	OpenGLShader::~OpenGLShader()
 	{
+		LG_PROFILE_FUNCTION();
+
 		glDeleteProgram(m_ShaderID);
 	}
 
 	std::string OpenGLShader::readFile(const std::string& filePath)
 	{
+		LG_PROFILE_FUNCTION();
+		
 		std::string result;
 		std::ifstream in(filePath, std::ios::in | std::ios::binary);
 		
@@ -75,6 +83,8 @@ namespace L3gion
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::preProcess(const std::string& source)
 	{
+		LG_PROFILE_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> shaderSrcs;
 
 		const char* typeToken = "#type";
@@ -98,6 +108,8 @@ namespace L3gion
 
 	void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& shaderSrcs)
 	{
+		LG_PROFILE_FUNCTION();
+
 		// Vertex and fragment shaders are successfully compiled.
 		// Now time to link them together into a program.
 		// Get a program object.
@@ -185,10 +197,14 @@ namespace L3gion
 
 	void OpenGLShader::bind() const
 	{
+		LG_PROFILE_FUNCTION();
+
 		glUseProgram(m_ShaderID);
 	}
 	void OpenGLShader::unbind() const
 	{
+		LG_PROFILE_FUNCTION();
+
 		glUseProgram(0);
 	}
 
@@ -207,7 +223,10 @@ namespace L3gion
 	{
 		uploadUniformInt(name, value);
 	}
-
+	void OpenGLShader::setFloat(const std::string& name, float value)
+	{
+		uploadUniformFloat(name, value);
+	}
 	void OpenGLShader::setFloat3(const std::string& name, const glm::vec3& value)
 	{
 		uploadUniformFloat3(name, value);

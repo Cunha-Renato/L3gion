@@ -21,6 +21,8 @@ namespace L3gion
 
 	void Renderer::init()
 	{
+		LG_PROFILE_FUNCTION();
+
 		RenderCommand::init();
 		Renderer2D::init();
 	}

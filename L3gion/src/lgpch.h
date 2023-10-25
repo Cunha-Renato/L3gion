@@ -17,6 +17,8 @@
 
 #include "L3gion/Core/Log.h"
 
+#include "L3gion/Debug/Instrumentor.h"
+
 #ifdef LG_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif

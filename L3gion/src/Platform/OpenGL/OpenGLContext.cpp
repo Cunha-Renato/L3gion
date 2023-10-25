@@ -19,6 +19,8 @@ namespace L3gion
 
 	void OpenGLContext::init()
 	{
+		LG_PROFILE_FUNCTION();
+
 		// Initializing GLAD
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -31,7 +33,8 @@ namespace L3gion
 	}
 	void OpenGLContext::swapBuffers()
 	{
-		glfwPollEvents();
+		LG_PROFILE_FUNCTION();
+
 		glfwSwapBuffers(m_WindowHandle);
 	}
 }

@@ -9,11 +9,12 @@ namespace L3gion
 	OrthoCameraController::OrthoCameraController(float aspectRatio, bool rotation)
 		: m_AspectRatio(aspectRatio), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio* m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation)
 	{
-
 	}
 
-	void OrthoCameraController::OnUpdate(Timestep ts)
+	void OrthoCameraController::onUpdate(Timestep ts)
 	{
+		LG_PROFILE_FUNCTION();
+
 		if (Input::isKeyPressed(LG_KEY_A))
 			m_CameraPosition.x -= m_CameraTranslationSpeed * (float)ts;
 		if (Input::isKeyPressed(LG_KEY_D))
@@ -39,6 +40,8 @@ namespace L3gion
 
 	void OrthoCameraController::onEvent(Event& e)
 	{
+		LG_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<MouseScrollEvent>(BIND_EVENT_FN(OrthoCameraController::onMouseScrolled));
 		dispatcher.dispatch<WindowResizeEvent>(BIND_EVENT_FN(OrthoCameraController::onWindowResized));
@@ -46,6 +49,8 @@ namespace L3gion
 
 	bool OrthoCameraController::onMouseScrolled(MouseScrollEvent& e)
 	{
+		LG_PROFILE_FUNCTION();
+
 		m_ZoomLevel -= e.getYOffset() * 0.25f;
 
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
@@ -56,6 +61,8 @@ namespace L3gion
 	}
 	bool OrthoCameraController::onWindowResized(WindowResizeEvent& e)
 	{
+		LG_PROFILE_FUNCTION();
+
 		m_AspectRatio = (float)e.getWidth() / (float)e.getHeight();
 		m_Camera.setProjetion(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;

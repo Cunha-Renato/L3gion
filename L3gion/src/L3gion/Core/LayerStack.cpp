@@ -16,12 +16,10 @@ namespace L3gion
 	{
 		m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
 		m_LayerInsertIndex++;
-		layer->onAttach();
 	}
 
 	void LayerStack::pushOverlay(Layer* overlay)
 	{
-		overlay->onAttach();
 		m_Layers.emplace_back(overlay);
 	}
 

@@ -21,6 +21,8 @@ namespace L3gion
 
 	void ImGuiLayer::onAttach()
 	{
+		LG_PROFILE_FUNCTION();
+
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		IMGUI_HAS_DOCK true;
@@ -54,6 +56,8 @@ namespace L3gion
 	}
 	void ImGuiLayer::onDetach()
 	{
+		LG_PROFILE_FUNCTION();
+
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
@@ -61,12 +65,16 @@ namespace L3gion
 	
 	void ImGuiLayer::begin()
 	{
-		 ImGui_ImplOpenGL3_NewFrame();
-		 ImGui_ImplGlfw_NewFrame();
-		 ImGui::NewFrame();
+		LG_PROFILE_FUNCTION();
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 	}
 	void ImGuiLayer::end()
 	{
+		LG_PROFILE_FUNCTION();
+
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::get();
 		io.DisplaySize = ImVec2((float)app.getWindow().getWidth(), (float)app.getWindow().getHeight());
@@ -83,11 +91,5 @@ namespace L3gion
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backup_current_context);
 		}
-	}
-	
-	void ImGuiLayer::onImGuiRender()
-	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
 	}
 }
