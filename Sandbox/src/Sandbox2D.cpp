@@ -9,10 +9,15 @@ Sandbox2D::Sandbox2D(const std::string& name)
 {
 }
 
+static L3gion::ref<L3gion::Texture2D> l3gionTexture;
+static L3gion::ref<L3gion::Texture2D> chernoTexture;
+
 void Sandbox2D::onAttach()
 {
 	LG_PROFILE_FUNCTION();
-	m_Texture = L3gion::Texture2D::create("assets/textures/checkerboard.png");
+	m_Texture = L3gion::Texture2D::create("../Sandbox/assets/textures/Checkerboard.png");
+	l3gionTexture = L3gion::Texture2D::create("../Sandbox/assets/textures/L3gion_Engine.png");
+	chernoTexture = L3gion::Texture2D::create("../Sandbox/assets/textures/ChernoLogo.png");
 }
 
 void Sandbox2D::onDetach()
@@ -31,7 +36,7 @@ void Sandbox2D::onUpdate(L3gion::Timestep& ts)
 	// Render
 	{
 		LG_PROFILE_SCOPE("RendererCommands: ");
-		L3gion::RenderCommand::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+		L3gion::RenderCommand::setClearColor(glm::vec4(1.0f, 0.2f, 0.6f, 1.0f));
 		L3gion::RenderCommand::clear();
 	}
 
@@ -40,23 +45,38 @@ void Sandbox2D::onUpdate(L3gion::Timestep& ts)
 		L3gion::Renderer2D::beginScene(m_CameraController.getCamera());
 
 		L3gion::Renderer2D::drawQuad({
-			.position = { -1.0f, 0.0f, 0.0f},
-			.size = { 0.8f, 0.8f },
+			.position = { 0.0f, 0.0f, -0.1f },
+			.size = { 200.0f, 200.0f },
 			.color = m_Color
 			});
 
-		L3gion::Renderer2D::drawQuad({
-			.position = { 0.5f, -0.5f, 0.0f }, 
-			.size = { 0.5f, 0.75f }, 
-			.color = { 0.2f, 0.3f, 0.8f, 1.0f }
-			});
+		L3gion::QuadSpecs quad;
 
-		L3gion::Renderer2D::drawQuad({
-			.position = { 0.0f, 0.0f, -0.1f}, 
-			.size = { 10.0f, 10.0f },
-			.color = { 0.2, 0.5, 0.6, 1.0f },
-			.texture = m_Texture,
-			});
+		for (int x = 0; x < 200; x++)
+		{
+			for (int y = 0; y < 200; y++)
+			{
+				quad.position = {x, y, 0.0f};
+				
+				if (y % 2 == 0)
+				{
+					if(x%2 == 0)
+						quad.texture = l3gionTexture;
+					else
+						quad.texture = m_Texture;
+					
+				}
+				else
+				{
+					if (x % 2 == 0)
+						quad.texture = m_Texture;
+					else
+						quad.texture = l3gionTexture;
+				}
+
+				L3gion::Renderer2D::drawQuad(quad);
+			}
+		}
 
 		L3gion::Renderer2D::endScene();
 	}

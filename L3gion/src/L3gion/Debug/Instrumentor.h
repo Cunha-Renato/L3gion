@@ -28,10 +28,10 @@ namespace L3gion
     {
     public:
         Instrumentor()
-            : m_CurrentSession(nullptr), m_ProfileCount(0)
+            : m_CurrentSession(nullptr), m_ProfileCount(0), m_Active(true)
         {
         }
-
+        
         void beginSession(const std::string& name, const std::string& filepath = "results.json")
         {
             setActive(true);

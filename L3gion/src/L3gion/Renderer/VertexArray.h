@@ -19,6 +19,7 @@ namespace L3gion
 		virtual const std::vector<ref<VertexBuffer>>& getVertexBuffers() const = 0;
 		virtual const ref<IndexBuffer>& getIndexBuffer() const = 0;
 
+		// Creates and binds the VertexArray
 		static ref<VertexArray> create();
 	};
 }

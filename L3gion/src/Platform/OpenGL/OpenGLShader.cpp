@@ -223,6 +223,10 @@ namespace L3gion
 	{
 		uploadUniformInt(name, value);
 	}
+	void OpenGLShader::setIntArray(const std::string& name, int* values, uint32_t count)
+	{
+		uploadUniformIntArray(name, values, count);
+	}
 	void OpenGLShader::setFloat(const std::string& name, float value)
 	{
 		uploadUniformFloat(name, value);
@@ -251,6 +255,11 @@ namespace L3gion
 		}
 
 		glUniform1i(location, value);
+	}
+	void OpenGLShader::uploadUniformIntArray(const std::string& name, int* values, uint32_t count)
+	{
+		int location = getUniformLocation(name);
+		glUniform1iv(location, count, values);
 	}
 	void OpenGLShader::uploadUniformFloat(const std::string& name, float value)
 	{

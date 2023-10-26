@@ -32,7 +32,7 @@ namespace L3gion
 	{
 		LG_PROFILE_FUNCTION();
 
-		glGenVertexArrays(1, &m_RendererID);
+		glCreateVertexArrays(1, &m_RendererID);
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray() 

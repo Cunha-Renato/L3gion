@@ -17,8 +17,12 @@ namespace L3gion
 		virtual uint32_t getHeight() const override { return m_Height; }
 
 		void setData(void* data, uint32_t size) override;
-
 		virtual void bind(uint32_t slot = 0) const override;
+
+		virtual bool compare(const Texture& other) const override
+		{
+			return m_RendererID == ((OpenGLTexture2D&)other).m_RendererID;
+		}
 	private:
 		std::string m_Path;
 		uint32_t m_Width, m_Height;

@@ -127,6 +127,10 @@ namespace L3gion
 		virtual const BufferLayout& getLayout() const = 0;
 		virtual void setLayout(const BufferLayout& layout) = 0;
 
+		virtual void setData(const void* data, uint32_t size) = 0;
+
+		// Creates and binds the VertexBuffer
+		static ref<VertexBuffer> create(uint32_t size);
 		static ref<VertexBuffer> create(float* vertices, uint32_t size);
 	};
 
@@ -140,6 +144,7 @@ namespace L3gion
 
 		virtual uint32_t getCount() const = 0;
 
-		static ref<IndexBuffer> create(uint32_t* vertices, uint32_t count);
+		// Creates and binds the IndexBuffer
+		static ref<IndexBuffer> create(uint32_t* indices, uint32_t count);
 	};
 }

@@ -7,7 +7,7 @@ namespace L3gion
 	class OpenGLVertexArray : public VertexArray
 	{
 	public:
-		OpenGLVertexArray::OpenGLVertexArray();
+		OpenGLVertexArray();
 		virtual ~OpenGLVertexArray();
 
 		virtual void bind() const override;

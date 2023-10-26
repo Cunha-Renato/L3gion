@@ -27,9 +27,9 @@ namespace L3gion
 		{
 			s_RendererAPI->clear();
 		}
-		inline static void drawIndexed(const ref<VertexArray>& vertexArray)
+		inline static void drawIndexed(const ref<VertexArray>& vertexArray, uint32_t indexCount = 0)
 		{
-			s_RendererAPI->drawIndexed(vertexArray);
+			s_RendererAPI->drawIndexed(vertexArray, indexCount);
 		}
 	private:
 		static scope<RendererAPI> s_RendererAPI;

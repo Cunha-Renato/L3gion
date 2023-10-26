@@ -104,7 +104,7 @@ public:
 	Sandbox()
 	{
 		pushLayer(new Sandbox2D("Sandbox 2D Layer"));
-		setVsync(true);
+		setVsync(false);
 	}
 
 	~Sandbox()
