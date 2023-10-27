@@ -49,16 +49,14 @@ namespace L3gion
 		virtual int getCategoryFlags() const = 0;
 		virtual std::string toString() const { return getName(); }
 		
-		inline bool isHandled() const { return m_Handled; }
+		inline bool isHandled() const { return handled; }
 
 		inline bool isInCategory(EventCategory category)
 		{
 			return getCategoryFlags() & category;
 		}
 
-	protected:
-		bool m_Handled = false;
-		
+		bool handled = false;
 	};
 
 //------------------------ DISPATCHER ------------------------
@@ -74,7 +72,7 @@ namespace L3gion
 		{
 			if (m_Event.getEventType() == T::getStaticType())
 			{
-				m_Event.m_Handled = func(static_cast<T&>(m_Event));
+				m_Event.handled = func(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;

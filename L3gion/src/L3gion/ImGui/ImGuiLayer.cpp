@@ -62,7 +62,12 @@ namespace L3gion
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 	}
-	
+	void ImGuiLayer::onEvent(Event& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		e.handled |= e.isInCategory(EC_Mouse) & io.WantCaptureMouse;
+		e.handled |= e.isInCategory(EC_Keyboard) & io.WantCaptureKeyboard;
+	}
 	void ImGuiLayer::begin()
 	{
 		LG_PROFILE_FUNCTION();

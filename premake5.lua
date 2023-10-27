@@ -35,7 +35,7 @@ project "L3gion"
 	location "L3gion"
 	kind "StaticLib"
 	language "C++"
-	cppdialect "C++17"
+	cppdialect "C++20"
 	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
@@ -56,7 +56,8 @@ project "L3gion"
 
 	defines
 	{
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
+		"GLFW_INCLUDE_NONE"
 	}
 
 	includedirs
@@ -84,8 +85,6 @@ project "L3gion"
 		defines
 		{
 			"LG_PLATFORM_WINDOWS",
-			"LG_BUILD_DLL",
-			"GLFW_INCLUDE_NONE"
 		}
 
 	filter "configurations:Debug"

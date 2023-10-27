@@ -20,10 +20,10 @@ namespace L3gion
 
 	struct Renderer2DData
 	{
-		const uint32_t maxQuads = 40'001;
-		const uint32_t maxVertices = maxQuads * 4;
-		const uint32_t maxIndices = maxQuads * 6;
-		static const uint32_t maxtextureSlots = 20;
+		static const uint32_t maxQuads = 10'000;
+		static const uint32_t maxVertices = maxQuads * 4;
+		static const uint32_t maxIndices = maxQuads * 6;
+		static const uint32_t maxtextureSlots = 32;
 
 		ref<VertexArray> quadVertexArray;
 		ref<VertexBuffer> quadVertexBuffer;
@@ -36,6 +36,11 @@ namespace L3gion
 
 		std::array<ref<Texture2D>, maxtextureSlots> textureSlots;
 		uint32_t textureSlotIndex = 1;
+
+		glm::vec4 quadVertexPositions[4];
+		glm::vec2 quadTexturePositions[4];
+
+		Renderer2D::Statistics stats;
 
 		~Renderer2DData()
 		{
@@ -97,20 +102,28 @@ namespace L3gion
 		s_Data.textureShader->setIntArray("u_Textures", samplers, s_Data.maxtextureSlots);
 
 		s_Data.textureSlots[0] = s_Data.whiteTexture;
+
+		s_Data.quadVertexPositions[0] = { -0.5f, -0.5f, 1.0f, 1.0f };
+		s_Data.quadVertexPositions[1] = {  0.5f, -0.5f, 1.0f, 1.0f };
+		s_Data.quadVertexPositions[2] = {  0.5f,  0.5f, 1.0f, 1.0f };
+		s_Data.quadVertexPositions[3] = { -0.5f,  0.5f, 1.0f, 1.0f };
+
+		s_Data.quadTexturePositions[0] = { 0.0f, 0.0f };
+		s_Data.quadTexturePositions[1] = { 1.0f, 0.0f };
+		s_Data.quadTexturePositions[2] = { 1.0f, 1.0f };
+		s_Data.quadTexturePositions[3] = { 0.0f, 1.0f };
 	}
 	void Renderer2D::shutdown()
 	{
 		LG_PROFILE_FUNCTION();
 	}
 
-	void Renderer2D::endScene()
+	static void prepareBuffers()
 	{
-		LG_PROFILE_FUNCTION();
+		s_Data.quadIndexCount = 0;
+		s_Data.quadVertexBufferPtr = s_Data.quadVertexBufferBase;
 
-		uint32_t dataSize = (uint8_t*)s_Data.quadVertexBufferPtr - (uint8_t*)s_Data.quadVertexBufferBase;
-		s_Data.quadVertexBuffer->setData(s_Data.quadVertexBufferBase, dataSize);
-
-		flush();
+		s_Data.textureSlotIndex = 1;
 	}
 
 	void Renderer2D::beginScene(const OrthoCamera& camera)
@@ -120,24 +133,49 @@ namespace L3gion
 		s_Data.textureShader->bind();
 		s_Data.textureShader->setMat4("u_ViewProjection", camera.getViewProjectionMatrix());
 
-		s_Data.quadIndexCount = 0;
-		s_Data.quadVertexBufferPtr = s_Data.quadVertexBufferBase;
+		prepareBuffers();
+	}
+	
+	void Renderer2D::endScene()
+	{
+		LG_PROFILE_FUNCTION();
 
-		s_Data.textureSlotIndex = 1;
+		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.quadVertexBufferPtr - (uint8_t*)s_Data.quadVertexBufferBase);
+		s_Data.quadVertexBuffer->setData(s_Data.quadVertexBufferBase, dataSize);
+
+		flush();
 	}
 
 	void Renderer2D::flush()
 	{
+		if (s_Data.quadIndexCount == 0)
+			return; // Nothing to draw
+
 		s_Data.textureShader->bind();
 		for (uint32_t i = 0; i < s_Data.textureSlotIndex; i++)
 			s_Data.textureSlots[i]->bind(i);
 
 		RenderCommand::drawIndexed(s_Data.quadVertexArray, s_Data.quadIndexCount);
+
+		s_Data.stats.drawCalls++;
+	}
+
+	void Renderer2D::flushAndReset()
+	{
+		endScene();
+
+		prepareBuffers();
 	}
 
 	void Renderer2D::drawQuad(const QuadSpecs& specs)
 	{
 		LG_PROFILE_FUNCTION();
+
+		if (s_Data.quadIndexCount >= Renderer2DData::maxIndices)
+			flushAndReset();
+
+		if (s_Data.textureSlotIndex >= Renderer2DData::maxtextureSlots)
+			flushAndReset();
 
 		uint32_t textureIndex = 0;
 		if (specs.texture != nullptr)
@@ -159,34 +197,34 @@ namespace L3gion
 			}
 		}
 
-		s_Data.quadVertexBufferPtr->position = specs.position;
-		s_Data.quadVertexBufferPtr->color = specs.color;
-		s_Data.quadVertexBufferPtr->texCoord = { 0.0f, 0.0f };
-		s_Data.quadVertexBufferPtr->texIndex = textureIndex;
-		s_Data.quadVertexBufferPtr->tilingFactor = specs.tiling;
-		s_Data.quadVertexBufferPtr++;
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), specs.position);
+		if (specs.angle != 0.0f)
+			transform *= glm::rotate(glm::mat4(1.0f), specs.angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		
+		transform *= glm::scale(glm::mat4(1.0f), glm::vec3(specs.size, 1.0f));
 
-		s_Data.quadVertexBufferPtr->position = { specs.position.x + specs.size.x, specs.position.y, specs.position.z };
-		s_Data.quadVertexBufferPtr->color = specs.color;
-		s_Data.quadVertexBufferPtr->texCoord = { 1.0f, 0.0f };
-		s_Data.quadVertexBufferPtr->texIndex = textureIndex;
-		s_Data.quadVertexBufferPtr->tilingFactor = specs.tiling;
-		s_Data.quadVertexBufferPtr++;
-
-		s_Data.quadVertexBufferPtr->position = { specs.position.x + specs.size.x, specs.position.y +  specs.size.y, specs.position.z };
-		s_Data.quadVertexBufferPtr->color = specs.color;
-		s_Data.quadVertexBufferPtr->texCoord = { 1.0f, 1.0f };
-		s_Data.quadVertexBufferPtr->texIndex = textureIndex;
-		s_Data.quadVertexBufferPtr->tilingFactor = specs.tiling;
-		s_Data.quadVertexBufferPtr++;
-
-		s_Data.quadVertexBufferPtr->position = { specs.position.x, specs.position.y + specs.size.y, specs.position.z };
-		s_Data.quadVertexBufferPtr->color = specs.color;
-		s_Data.quadVertexBufferPtr->texCoord = { 0.0f, 1.0f };
-		s_Data.quadVertexBufferPtr->texIndex = textureIndex;
-		s_Data.quadVertexBufferPtr->tilingFactor = specs.tiling;
-		s_Data.quadVertexBufferPtr++;
+		for (int i = 0; i < 4; i++)
+		{
+			s_Data.quadVertexBufferPtr->position = transform * s_Data.quadVertexPositions[i];
+			s_Data.quadVertexBufferPtr->color = specs.color;
+			s_Data.quadVertexBufferPtr->texCoord = s_Data.quadTexturePositions[i];
+			s_Data.quadVertexBufferPtr->texIndex = textureIndex;
+			s_Data.quadVertexBufferPtr->tilingFactor = specs.tiling;
+			s_Data.quadVertexBufferPtr++;
+		}
 
 		s_Data.quadIndexCount += 6;
+
+		s_Data.stats.quadCount++;
+	}
+
+	void Renderer2D::resetStats()
+	{
+		memset(&s_Data.stats, 0, sizeof(Statistics));
+	}
+
+	Renderer2D::Statistics Renderer2D::getStats()
+	{
+		return s_Data.stats;
 	}
 }

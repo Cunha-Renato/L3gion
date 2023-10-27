@@ -141,20 +141,70 @@ namespace L3gion
         std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
         bool m_Stopped;
     };
+
+    namespace InstrumentorUtils 
+    {
+
+        template <size_t N>
+        struct ChangeResult
+        {
+            char data[N];
+        };
+
+        template <size_t N, size_t K>
+        constexpr auto cleanupOutputString(const char(&expr)[N], const char(&remove)[K])
+        {
+            ChangeResult<N> result = {};
+
+            size_t srcIndex = 0;
+            size_t dstIndex = 0;
+            while (srcIndex < N)
+            {
+                size_t matchIndex = 0;
+                while (matchIndex < K - 1 && srcIndex + matchIndex < N - 1 && expr[srcIndex + matchIndex] == remove[matchIndex])
+                    matchIndex++;
+                if (matchIndex == K - 1)
+                    srcIndex += matchIndex;
+                result.data[dstIndex++] = expr[srcIndex] == '"' ? '\'' : expr[srcIndex];
+                srcIndex++;
+            }
+            return result;
+        }
+    }
 }
 
-#define LG_PROFILING 1
-#if LG_PROFILING == 1
-    #define CONCAT(x, y) x ## y    
+#define LG_PROFILE 1
+#if LG_PROFILE
+// Resolve which function signature macro will be used. Note that this only
+// is resolved when the (pre)compiler starts, so the syntax highlighting
+// could mark the wrong one in your editor!
+    #if defined(__GNUC__) || (defined(__MWERKS__) && (__MWERKS__ >= 0x3000)) || (defined(__ICC) && (__ICC >= 600)) || defined(__ghs__)
+        #define LG_FUNC_SIG __PRETTY_FUNCTION__
+    #elif defined(__DMC__) && (__DMC__ >= 0x810)
+        #define LG_FUNC_SIG __PRETTY_FUNCTION__
+    #elif (defined(__FUNCSIG__) || (_MSC_VER))
+        #define LG_FUNC_SIG __FUNCSIG__
+    #elif (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 600)) || (defined(__IBMCPP__) && (__IBMCPP__ >= 500))
+        #define LG_FUNC_SIG __FUNCTION__
+    #elif defined(__BORLANDC__) && (__BORLANDC__ >= 0x550)
+        #define LG_FUNC_SIG __FUNC__
+    #elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901)
+        #define LG_FUNC_SIG __func__
+    #elif defined(__cplusplus) && (__cplusplus >= 201103)
+        #define LG_FUNC_SIG __func__
+    #else
+        #define LG_FUNC_SIG "LG_FUNC_SIG unknown!"
+    #endif
+
     #define LG_PROFILE_BEGIN_SESSION(name, filepath) ::L3gion::Instrumentor::get().beginSession(name, filepath)
     #define LG_PROFILE_END_SESSION() ::L3gion::Instrumentor::get().endSession()
-    #define LG_PROFILE_SCOPE(name) ::L3gion::InstrumentationTimer CONCAT(timer, __LINE__)(name)
-    #define LG_PROFILE_FUNCTION() LG_PROFILE_SCOPE(__FUNCSIG__)
-    #define LG_PROFILE_ACTIVATE() ::L3gion::Instrumentor::get().setActive(true)
-    #define LG_PROFILE_DEACTIVATE() ::L3gion::Instrumentor::get().setActive(false)
+
+    #define LG_PROFILE_SCOPE(name) constexpr auto fixedName = ::L3gion::InstrumentorUtils::cleanupOutputString(name, "__cdecl ");\
+									::L3gion::InstrumentationTimer timer##__LINE__(fixedName.data)
+    #define LG_PROFILE_FUNCTION() LG_PROFILE_SCOPE(LG_FUNC_SIG)
     #define LG_PROFILE_IS_ACTIVE() ::L3gion::Instrumentor::get().getActive()
 #else
-    #define LG_PROFILE_BEGIN_SESSION(name, filepath) 
+    #define LG_PROFILE_BEGIN_SESSION(name, filepath)
     #define LG_PROFILE_END_SESSION()
     #define LG_PROFILE_SCOPE(name)
     #define LG_PROFILE_FUNCTION()
