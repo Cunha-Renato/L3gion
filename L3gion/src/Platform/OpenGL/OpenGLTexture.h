@@ -15,6 +15,7 @@ namespace L3gion
 
 		virtual uint32_t getWidth() const override { return m_Width; }
 		virtual uint32_t getHeight() const override { return m_Height; }
+		virtual uint32_t getRendererID() const override { return m_RendererID; }
 
 		void setData(void* data, uint32_t size) override;
 		virtual void bind(uint32_t slot = 0) const override;

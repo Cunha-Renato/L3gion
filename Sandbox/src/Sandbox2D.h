@@ -19,15 +19,13 @@ public:
 
 private:
 	L3gion::OrthoCameraController m_CameraController;
-	
-	// Temporary
-	L3gion::ref<L3gion::Shader> m_Shader;
-	L3gion::ref<L3gion::VertexArray> m_VertexArray;
 
-	L3gion::ref<L3gion::Texture2D> m_Texture;
+	L3gion::ref<L3gion::Texture2D> m_SpriteSheetTexture;
+	L3gion::ref<L3gion::SubTexture2D> m_Checkerboard;
+	L3gion::ref<L3gion::SubTexture2D> m_Tree;
 
 	glm::vec4 m_Color = { 0.8f, 0.2f, 0.3f, 1.0f };
 
-	unsigned int m_FpsCounter = 0;
+	double m_Timesep = 0;
 };
 

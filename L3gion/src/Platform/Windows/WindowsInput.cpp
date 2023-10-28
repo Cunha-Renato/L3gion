@@ -1,15 +1,13 @@
 #include "lgpch.h"
 
-#include "Platform/Windows/WindowsInput.h"
+#include "L3gion/Core/Input.h"
 
 #include "L3gion/Core/Application.h"
 #include <GLFW/glfw3.h>
 
 namespace L3gion
 {
-	scope<Input> Input::s_Instance = createScope<WindowsInput>();
-
-	bool WindowsInput::isKeyPressedImpl(int keycode)
+	bool Input::isKeyPressed(int keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
 
@@ -18,7 +16,7 @@ namespace L3gion
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool WindowsInput::isMouseButtonPressedImpl(int button)
+	bool Input::isMouseButtonPressed(int button)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
 		
@@ -27,7 +25,7 @@ namespace L3gion
 		return state == GLFW_PRESS;
 	}
 
-	glm::vec2 WindowsInput::getMousePosImpl()
+	glm::vec2 Input::getMousePos()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
 		double xPos, yPos;

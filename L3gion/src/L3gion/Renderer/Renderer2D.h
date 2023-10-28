@@ -2,6 +2,7 @@
 
 #include "L3gion/Renderer/Camera.h"
 #include "L3gion/Renderer/Texture.h"
+#include "L3gion/Renderer/SubTexture.h"
 
 namespace L3gion
 {
@@ -22,7 +23,7 @@ namespace L3gion
 			glm::vec2 size = glm::vec2(1.0f);
 			float angle = 0.0f; // In radians
 			glm::vec4 color = glm::vec4(1.0f);
-			ref<Texture2D> texture = nullptr;
+			ref<SubTexture2D> subTexture = nullptr;
 			float tiling = 1.0f;
 		};
 

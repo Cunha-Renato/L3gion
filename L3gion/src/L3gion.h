@@ -26,9 +26,11 @@
 #include "L3gion/Renderer/Renderer2D.h"
 #include "L3gion/Renderer/RenderCommand.h"
 #include "L3gion/Renderer/Texture.h"
+#include "L3gion/Renderer/SubTexture.h"
 #include "L3gion/Renderer/Shader.h"
 #include "L3gion/Renderer/Buffer.h"
 #include "L3gion/Renderer/VertexArray.h"
+#include "L3gion/Renderer/FrameBuffer.h"
 
 #include "L3gion/Renderer/Camera.h"
 // ---------------------------------

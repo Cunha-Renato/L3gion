@@ -13,14 +13,14 @@ namespace L3gion
 {
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application()
+	Application::Application(const std::string& name)
 	{	
 		LG_PROFILE_FUNCTION();
 
 		LG_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
-		m_Window = Window::create();
+		m_Window = Window::create(WindowProps(name));
 		m_Window->setEventCallback(BIND_EVENT_FN(Application::onEvent));
 
 		Renderer::init();

@@ -9,15 +9,15 @@ Sandbox2D::Sandbox2D(const std::string& name)
 {
 }
 
-static L3gion::ref<L3gion::Texture2D> l3gionTexture;
-static L3gion::ref<L3gion::Texture2D> chernoTexture;
 
 void Sandbox2D::onAttach()
 {
 	LG_PROFILE_FUNCTION();
-	m_Texture = L3gion::Texture2D::create("../Sandbox/assets/textures/Checkerboard.png");
-	l3gionTexture = L3gion::Texture2D::create("../Sandbox/assets/textures/L3gion_Engine.png");
-	chernoTexture = L3gion::Texture2D::create("../Sandbox/assets/textures/ChernoLogo.png");
+	m_CameraController.setZoomLevel(5.0f);
+	m_Checkerboard = L3gion::SubTexture2D::create("../Sandbox/assets/textures/Checkerboard.png");
+	m_SpriteSheetTexture = L3gion::Texture2D::create("../Sandbox/assets/textures/game/Game_SpriteSheet.png");
+	m_Tree = L3gion::SubTexture2D::create(m_SpriteSheetTexture, { 2, 1 }, { 128, 128 }, {1, 2});
+
 }
 
 void Sandbox2D::onDetach()
@@ -29,73 +29,57 @@ void Sandbox2D::onUpdate(L3gion::Timestep& ts)
 {
 	LG_PROFILE_FUNCTION();
 
-	m_FpsCounter = (int)(1 / ts.getSeconds());
+	m_Timesep = ts;
 	m_CameraController.onUpdate(ts);
 
 	L3gion::Renderer2D::resetStats();
 	// Render
 	{
-		LG_PROFILE_SCOPE("RendererCommands: ");
+		LG_PROFILE_SCOPE("Renderer Prep: ");
 		L3gion::RenderCommand::setClearColor(glm::vec4(1.0f, 0.2f, 0.6f, 1.0f));
 		L3gion::RenderCommand::clear();
 	}
 
 	{
-		LG_PROFILE_SCOPE("Renderer drawQuad: ");
+		LG_PROFILE_SCOPE("Renderer drawQuads: ");
 		L3gion::Renderer2D::beginScene(m_CameraController.getCamera());
 
 		L3gion::Renderer2D::drawQuad({
 			.position = { 0.0f, 0.0f, -0.1f },
-			.size = { 100.0f, 100.0f },
-			.angle = glm::radians(45.0f),
-			.color = m_Color
+			.size = { 10.0f, 10.0f },
+			.subTexture = m_Checkerboard
 			});
 
-		L3gion::Renderer2D::QuadSpecs quad;
+		L3gion::Renderer2D::drawQuad({
+			.position = { 0.0f, 0.0f, 0.0f },
+			.size = { 1.0f, 2.0f },
+			.subTexture = m_Tree
+		});
 
-		for (int x = 0; x < 50; x++)
-		{
-			for (int y = 0; y < 50; y++)
-			{
-				quad.position = { (-24.5f + (float)x), (-24.5f + (float)y), 0.0f };
-				if (y % 2 == 0)
-				{
-					if(x%2 == 0)
-						quad.texture = l3gionTexture;
-					else
-						quad.texture = m_Texture;
-				}
-				else
-				{
-					if (x % 2 == 0)
-						quad.texture = m_Texture;
-					else
-						quad.texture = l3gionTexture;
-				}
-
-				L3gion::Renderer2D::drawQuad(quad);
-			}
-		}
+		L3gion::Renderer2D::drawQuad({
+			.position = { -3.2f, 0.0f, 0.0f },
+			.size = { 3.0f, 2.0f },
+			.color = m_Color
+			});
 
 		L3gion::Renderer2D::endScene();
 	}
 }
+
 void Sandbox2D::onImGuiRender()
 {
 	LG_PROFILE_FUNCTION();
 
-	ImGui::Begin("Render Settings");
-	ImGui::ColorEdit4("Color", glm::value_ptr(m_Color));
-	ImGui::End();
-
 	ImGui::Begin("Performance: ");
-	ImGui::Text("%d fps", m_FpsCounter);
+	ImGui::Text("Timestep: %.4fms (%d fps)", m_Timesep, (int)(1 / m_Timesep));
 	ImGui::Text("Profiling: %d", LG_PROFILE_IS_ACTIVE());
 	ImGui::Text("\nRenderer2D:");
 	ImGui::Text("Draw Calls: %d", L3gion::Renderer2D::getStats().drawCalls);
 	ImGui::Text("Quad Count: %d", L3gion::Renderer2D::getStats().quadCount);
 	ImGui::Text("Vertex Count: %d", L3gion::Renderer2D::getStats().getTotalVertexCount());
 	ImGui::Text("Index Count: %d", L3gion::Renderer2D::getStats().getTotalIndexCount());
+	ImGui::Text("\nRender Settings");
+	ImGui::ColorEdit4("Color", glm::value_ptr(m_Color));
 	ImGui::End();
 }
 

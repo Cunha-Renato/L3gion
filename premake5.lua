@@ -1,6 +1,6 @@
 workspace "L3gion"
 	architecture "x86_64"
-	startproject "Sandbox"
+	startproject "L3gion_Editor"
 
 	configurations
 	{
@@ -104,6 +104,58 @@ project "L3gion"
 
 project "Sandbox"
 	location "Sandbox"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++20"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin_int/" .. outputdir .. "/%{prj.name}")
+
+	files
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+
+	includedirs
+	{
+		"L3gion/vendor/spdlog/include",
+		"L3gion/src",
+		"L3gion/vendor",
+		"%{IncludeDir.glm}"
+	}
+
+	links
+	{
+		"L3gion"
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+		defines
+		{
+			"LG_PLATFORM_WINDOWS"
+		}
+
+	filter "configurations:Debug"
+		defines "LG_DEBUG"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "LG_RELEASE"
+		runtime "Release"
+		optimize "on"
+
+	filter "configurations:Dist"
+		defines "LG_DIST"
+		runtime "Release"
+		optimize "on"
+
+project "L3gion_Editor"
+	location "L3gion_Editor"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++20"

@@ -44,6 +44,8 @@ namespace L3gion
 		}
 
 	public:
+		virtual ~Event() = default;
+
 		virtual EventType getEventType() const = 0;
 		virtual const char* getName() const = 0;
 		virtual int getCategoryFlags() const = 0;

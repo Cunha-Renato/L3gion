@@ -640,13 +640,13 @@ namespace L3gion
 			return instance;
 		}
 		
-		inline int LgKeyToGlfw(int keycode) const
+		int LgKeyToGlfw(int keycode) const
 		{
 			int index = keycode - 1;
 			return m_GlfwKeysBuffer[index];
 		}
 
-		inline int LgKeyToImGui(int keycode) const
+		int LgKeyToImGui(int keycode) const
 		{
 			int index = keycode - 1;
 			return m_ImGuiKeysBuffer[index];

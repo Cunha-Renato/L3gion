@@ -23,11 +23,14 @@ namespace L3gion
 	class Application
 	{
 	public:
-		Application();
+		Application(const std::string& name = "L3gion App");
 		virtual ~Application();
 
-		void onEvent(Event& e);
+		inline void close() { m_Running = false; }
 
+		ImGuiLayer* getImGui() { return m_ImGuiLayer; }
+
+		void onEvent(Event& e);
 		inline void setVsync(bool option) { m_Window->setVSync(option); }
 
 		void pushLayer(Layer* layer);

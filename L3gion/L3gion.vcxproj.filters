@@ -120,6 +120,9 @@
     <ClInclude Include="src\L3gion\Renderer\CameraController.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\Renderer\FrameBuffer.h">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\GraphicsContext.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
@@ -138,6 +141,9 @@
     <ClInclude Include="src\L3gion\Renderer\Shader.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\Renderer\SubTexture.h">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\Texture.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
@@ -148,6 +154,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFrameBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
@@ -161,9 +170,6 @@
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Windows\WindowsInput.h">
-      <Filter>src\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
@@ -1451,6 +1457,9 @@
     <ClCompile Include="src\L3gion\Renderer\CameraController.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\L3gion\Renderer\FrameBuffer.cpp">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\GraphicsContext.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
@@ -1469,6 +1478,9 @@
     <ClCompile Include="src\L3gion\Renderer\Shader.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\L3gion\Renderer\SubTexture.cpp">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\Texture.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
@@ -1479,6 +1491,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFrameBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">

@@ -64,9 +64,12 @@ namespace L3gion
 	}
 	void ImGuiLayer::onEvent(Event& e)
 	{
-		ImGuiIO& io = ImGui::GetIO();
-		e.handled |= e.isInCategory(EC_Mouse) & io.WantCaptureMouse;
-		e.handled |= e.isInCategory(EC_Keyboard) & io.WantCaptureKeyboard;
+		if (m_BlockEvents)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			e.handled |= e.isInCategory(EC_Mouse) & io.WantCaptureMouse;
+			e.handled |= e.isInCategory(EC_Keyboard) & io.WantCaptureKeyboard;
+		}
 	}
 	void ImGuiLayer::begin()
 	{

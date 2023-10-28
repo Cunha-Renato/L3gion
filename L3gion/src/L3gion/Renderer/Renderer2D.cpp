@@ -38,7 +38,6 @@ namespace L3gion
 		uint32_t textureSlotIndex = 1;
 
 		glm::vec4 quadVertexPositions[4];
-		glm::vec2 quadTexturePositions[4];
 
 		Renderer2D::Statistics stats;
 
@@ -103,15 +102,10 @@ namespace L3gion
 
 		s_Data.textureSlots[0] = s_Data.whiteTexture;
 
-		s_Data.quadVertexPositions[0] = { -0.5f, -0.5f, 1.0f, 1.0f };
-		s_Data.quadVertexPositions[1] = {  0.5f, -0.5f, 1.0f, 1.0f };
-		s_Data.quadVertexPositions[2] = {  0.5f,  0.5f, 1.0f, 1.0f };
-		s_Data.quadVertexPositions[3] = { -0.5f,  0.5f, 1.0f, 1.0f };
-
-		s_Data.quadTexturePositions[0] = { 0.0f, 0.0f };
-		s_Data.quadTexturePositions[1] = { 1.0f, 0.0f };
-		s_Data.quadTexturePositions[2] = { 1.0f, 1.0f };
-		s_Data.quadTexturePositions[3] = { 0.0f, 1.0f };
+		s_Data.quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+		s_Data.quadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
+		s_Data.quadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
+		s_Data.quadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 	}
 	void Renderer2D::shutdown()
 	{
@@ -171,43 +165,61 @@ namespace L3gion
 	{
 		LG_PROFILE_FUNCTION();
 
-		if (s_Data.quadIndexCount >= Renderer2DData::maxIndices)
-			flushAndReset();
+		{
+			LG_PROFILE_SCOPE("Initial IFs");
+			if (s_Data.quadIndexCount >= Renderer2DData::maxIndices)
+				flushAndReset();
 
-		if (s_Data.textureSlotIndex >= Renderer2DData::maxtextureSlots)
-			flushAndReset();
+			if (s_Data.textureSlotIndex >= Renderer2DData::maxtextureSlots)
+				flushAndReset();
+		}
 
 		uint32_t textureIndex = 0;
-		if (specs.texture != nullptr)
-		{
-			for (uint32_t i = 1; i < s_Data.textureSlotIndex; i++)
-			{
-				if (s_Data.textureSlots[i]->compare(*specs.texture.get()))
-				{
-					textureIndex = i;
-					break;
-				}
-			}
+		glm::vec2 texCoords[4];
 
-			if (textureIndex == 0)
+		{
+			LG_PROFILE_SCOPE("Texture IFs");
+
+			if (specs.subTexture != nullptr)
 			{
-				textureIndex = s_Data.textureSlotIndex;
-				s_Data.textureSlots[s_Data.textureSlotIndex] = specs.texture;
-				s_Data.textureSlotIndex++;
+				for (uint32_t i = 1; i < s_Data.textureSlotIndex; i++)
+				{
+					if (s_Data.textureSlots[i]->compare(*specs.subTexture->getTexture().get()))
+					{
+						textureIndex = i;
+						break;
+					}
+				}
+
+				if (textureIndex == 0)
+				{
+					textureIndex = s_Data.textureSlotIndex;
+					s_Data.textureSlots[s_Data.textureSlotIndex] = specs.subTexture->getTexture();
+					s_Data.textureSlotIndex++;
+				}
+
+				texCoords[0] = specs.subTexture->getTexCoords()[0];
+				texCoords[1] = specs.subTexture->getTexCoords()[1];
+				texCoords[2] = specs.subTexture->getTexCoords()[2];
+				texCoords[3] = specs.subTexture->getTexCoords()[3];
 			}
 		}
 
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), specs.position);
-		if (specs.angle != 0.0f)
-			transform *= glm::rotate(glm::mat4(1.0f), specs.angle, glm::vec3(0.0f, 0.0f, 1.0f));
-		
-		transform *= glm::scale(glm::mat4(1.0f), glm::vec3(specs.size, 1.0f));
+		glm::mat4 transform;
+		{
+			LG_PROFILE_SCOPE("Transforms");
+			transform = glm::translate(glm::mat4(1.0f), specs.position);
+			if (specs.angle != 0.0f)
+				transform *= glm::rotate(glm::mat4(1.0f), specs.angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+			transform *= glm::scale(glm::mat4(1.0f), glm::vec3(specs.size, 1.0f));
+		}
 
 		for (int i = 0; i < 4; i++)
 		{
 			s_Data.quadVertexBufferPtr->position = transform * s_Data.quadVertexPositions[i];
 			s_Data.quadVertexBufferPtr->color = specs.color;
-			s_Data.quadVertexBufferPtr->texCoord = s_Data.quadTexturePositions[i];
+			s_Data.quadVertexBufferPtr->texCoord = texCoords[i];
 			s_Data.quadVertexBufferPtr->texIndex = textureIndex;
 			s_Data.quadVertexBufferPtr->tilingFactor = specs.tiling;
 			s_Data.quadVertexBufferPtr++;
