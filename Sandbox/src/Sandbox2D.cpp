@@ -93,7 +93,7 @@ void Sandbox2D::onEvent(L3gion::Event& e)
 
 bool Sandbox2D::onKeyPressed(L3gion::Event& e)
 {
-	if (L3gion::Input::isKeyPressed(LG_KEY_I))
+	if (L3gion::Input::isKeyPressed(LgKeys::LG_KEY_I))
 	{
 		if (LG_PROFILE_IS_ACTIVE())
 		{

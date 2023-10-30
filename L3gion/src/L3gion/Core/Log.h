@@ -2,8 +2,10 @@
 
 #include "L3gion/Core/Core.h"
 
+#pragma warning(push, 0)
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/bundled/ostream.h>
+#pragma warning(pop)
 
 namespace L3gion
 {

@@ -12,6 +12,7 @@ namespace L3gion
 		static void init();
 		static void shutdown();
 
+		static void beginScene(const Camera& camera, const glm::mat4& transform);
 		static void beginScene(const OrthoCamera& camera);
 		static void endScene();
 		static void flush();
@@ -19,9 +20,7 @@ namespace L3gion
 		// Primitives
 		struct QuadSpecs
 		{
-			glm::vec3 position = glm::vec3(0.0f);
-			glm::vec2 size = glm::vec2(1.0f);
-			float angle = 0.0f; // In radians
+			glm::mat4 transform = glm::mat4(1.0f);
 			glm::vec4 color = glm::vec4(1.0f);
 			ref<SubTexture2D> subTexture = nullptr;
 			float tiling = 1.0f;
@@ -34,8 +33,8 @@ namespace L3gion
 			uint32_t drawCalls = 0;
 			uint32_t quadCount = 0;
 
-			uint32_t getTotalVertexCount() { return quadCount * 4; }
-			uint32_t getTotalIndexCount() { return quadCount * 6; }
+			uint32_t getTotalVertexCount() const { return quadCount * 4; }
+			uint32_t getTotalIndexCount() const { return quadCount * 6; }
 		};
 
 		static Statistics getStats();

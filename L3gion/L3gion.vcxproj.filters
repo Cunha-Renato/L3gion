@@ -1428,6 +1428,11 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\Scene\Scene.h" />
+    <ClInclude Include="src\L3gion\Scene\Entity.h" />
+    <ClInclude Include="src\L3gion\Scene\Components.h" />
+    <ClInclude Include="src\L3gion\Scene\SceneCamera.h" />
+    <ClInclude Include="src\L3gion\Scene\ScriptableEntity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Core\Application.cpp">
@@ -1520,5 +1525,8 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\L3gion\Scene\Scene.cpp" />
+    <ClCompile Include="src\L3gion\Scene\Entity.cpp" />
+    <ClCompile Include="src\L3gion\Scene\SceneCamera.cpp" />
   </ItemGroup>
 </Project>

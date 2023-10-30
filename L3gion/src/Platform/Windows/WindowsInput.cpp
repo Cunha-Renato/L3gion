@@ -7,7 +7,7 @@
 
 namespace L3gion
 {
-	bool Input::isKeyPressed(int keycode)
+	bool Input::isKeyPressed(LgKeys keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
 

@@ -38,6 +38,9 @@ namespace L3gion
 		//io.ConfigFlags |= ImGuiViewportFlags_NoTaskBarIcon;
 		//io.ConfigFlags |= ImGuiViewportFlags_NoAutoMerge;
 
+		io.Fonts->AddFontFromFileTTF("assets/fonts/Roboto/Roboto-Bold.ttf", 17.0f);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/Roboto/Roboto-Regular.ttf", 17.0f);
+
 		// Setup Imgui style
 		ImGui::StyleColorsDark();
 
@@ -47,6 +50,8 @@ namespace L3gion
 			style.WindowRounding = 0.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
+
+		setDarkTheme();
 
 		Application& app = Application::get();
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.getWindow().getNativeWindow());
@@ -99,5 +104,61 @@ namespace L3gion
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backup_current_context);
 		}
+	}
+
+	void ImGuiLayer::setDarkTheme()
+	{
+		ImVec4 orange = { 0.8f, 0.4, 0.21f, 1.0f };
+		ImVec4 fadedOrange = { 0.8f, 0.5, 0.31f, 1.0f };
+		ImVec4 dark = { 0.09f, 0.07f, 0.07f, 1.0f };
+		ImVec4 light = { 0.2f, 0.18f, 0.18f, 1.0f };
+
+		auto& colors = ImGui::GetStyle().Colors;
+		colors[ImGuiCol_WindowBg] = dark;
+		colors[ImGuiCol_ChildBg] = dark;
+		colors[ImGuiCol_MenuBarBg] = dark;
+
+		// Headers
+		colors[ImGuiCol_Header] = light;
+		colors[ImGuiCol_HeaderHovered] = orange;
+		colors[ImGuiCol_HeaderActive] = fadedOrange;
+
+		// Buttons
+		colors[ImGuiCol_Button] = light;
+		colors[ImGuiCol_ButtonHovered] = orange;
+		colors[ImGuiCol_ButtonActive] = fadedOrange;
+
+		// Frame BG
+		colors[ImGuiCol_FrameBg] = light;
+		colors[ImGuiCol_FrameBgHovered] = light;
+		colors[ImGuiCol_FrameBgActive] = orange;
+
+		// Tabs
+		colors[ImGuiCol_Tab] = dark;
+		colors[ImGuiCol_TabHovered] = fadedOrange;
+		colors[ImGuiCol_TabActive] = orange;
+		colors[ImGuiCol_TabUnfocused] = dark;
+		colors[ImGuiCol_TabUnfocusedActive] = dark;
+
+		// Title
+		colors[ImGuiCol_TitleBg] = dark;
+		colors[ImGuiCol_TitleBgActive] = dark;
+		colors[ImGuiCol_TitleBgCollapsed] = dark;
+
+		// Resize
+		colors[ImGuiCol_ResizeGrip] = orange;
+		colors[ImGuiCol_ResizeGripHovered] = fadedOrange;
+		colors[ImGuiCol_ResizeGripActive] = orange;
+
+		// Navigation
+		colors[ImGuiCol_NavWindowingHighlight] = orange;
+		colors[ImGuiCol_ScrollbarGrabActive] = orange;
+		colors[ImGuiCol_NavHighlight] = orange;
+
+		// Tools
+		colors[ImGuiCol_PopupBg] = dark;
+		colors[ImGuiCol_DockingPreview] = light;
+		colors[ImGuiCol_DockingEmptyBg] = dark;
+		colors[ImGuiCol_CheckMark] = orange;
 	}
 }

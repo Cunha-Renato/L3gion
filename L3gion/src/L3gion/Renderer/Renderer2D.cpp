@@ -120,6 +120,19 @@ namespace L3gion
 		s_Data.textureSlotIndex = 1;
 	}
 
+	void Renderer2D::beginScene(const Camera& camera, const glm::mat4& transform)
+	{
+		LG_PROFILE_FUNCTION();
+
+		glm::mat4 viewProj = camera.getProjection();
+		viewProj *= glm::inverse(transform);
+
+		s_Data.textureShader->bind();
+		s_Data.textureShader->setMat4("u_ViewProjection", viewProj);
+
+		prepareBuffers();
+	}
+
 	void Renderer2D::beginScene(const OrthoCamera& camera)
 	{
 		LG_PROFILE_FUNCTION();
@@ -145,7 +158,10 @@ namespace L3gion
 		if (s_Data.quadIndexCount == 0)
 			return; // Nothing to draw
 
-		s_Data.textureShader->bind();
+
+		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.quadVertexBufferPtr - (uint8_t*)s_Data.quadVertexBufferBase);
+		s_Data.quadVertexBuffer->setData(s_Data.quadVertexBufferBase, dataSize);
+
 		for (uint32_t i = 0; i < s_Data.textureSlotIndex; i++)
 			s_Data.textureSlots[i]->bind(i);
 
@@ -156,8 +172,7 @@ namespace L3gion
 
 	void Renderer2D::flushAndReset()
 	{
-		endScene();
-
+		flush();
 		prepareBuffers();
 	}
 
@@ -176,7 +191,10 @@ namespace L3gion
 
 		uint32_t textureIndex = 0;
 		glm::vec2 texCoords[4];
-
+		texCoords[0] = { 0.0f, 0.0f, };
+		texCoords[1] = { 1.0f, 0.0f, };
+		texCoords[2] = { 1.0f, 1.0f, };
+		texCoords[3] = { 0.0f, 1.0f, };
 		{
 			LG_PROFILE_SCOPE("Texture IFs");
 
@@ -205,19 +223,9 @@ namespace L3gion
 			}
 		}
 
-		glm::mat4 transform;
-		{
-			LG_PROFILE_SCOPE("Transforms");
-			transform = glm::translate(glm::mat4(1.0f), specs.position);
-			if (specs.angle != 0.0f)
-				transform *= glm::rotate(glm::mat4(1.0f), specs.angle, glm::vec3(0.0f, 0.0f, 1.0f));
-
-			transform *= glm::scale(glm::mat4(1.0f), glm::vec3(specs.size, 1.0f));
-		}
-
 		for (int i = 0; i < 4; i++)
 		{
-			s_Data.quadVertexBufferPtr->position = transform * s_Data.quadVertexPositions[i];
+			s_Data.quadVertexBufferPtr->position = specs.transform * s_Data.quadVertexPositions[i];
 			s_Data.quadVertexBufferPtr->color = specs.color;
 			s_Data.quadVertexBufferPtr->texCoord = texCoords[i];
 			s_Data.quadVertexBufferPtr->texIndex = textureIndex;

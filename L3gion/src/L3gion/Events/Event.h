@@ -3,7 +3,7 @@
 #include "L3gion/Core/Core.h"
 #include <glm/glm.hpp>
 
-#define BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+#define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
 namespace L3gion
 {
@@ -74,7 +74,7 @@ namespace L3gion
 		{
 			if (m_Event.getEventType() == T::getStaticType())
 			{
-				m_Event.handled = func(static_cast<T&>(m_Event));
+				m_Event.handled |= func(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;

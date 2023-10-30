@@ -13,8 +13,8 @@ namespace L3gion
 		uint32_t height;
 
 		WindowProps(const std::string& Title = "L3gion Engine",
-			uint32_t Width = 1280,
-			uint32_t Height = 720)
+			uint32_t Width = 1600,
+			uint32_t Height = 900)
 			: title(Title), width(Width), height(Height)
 		{
 		}

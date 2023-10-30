@@ -1,21 +1,22 @@
 #pragma once
 
 #include "L3gion/Events/Event.h"
+#include "L3gion/Core/KeyCodes.h"
 
 namespace L3gion
 {
 	class KeyEvent : public Event
 	{
 	public:
-		inline int getKeyCode() { return m_KeyCode; }
+		inline LgKeys getKeyCode() { return m_KeyCode; }
 
 		EVENT_CLASS_CATEGORY(EC_Keyboard | EC_Input)
 
 	protected:
-		KeyEvent(int keyCode)
+		KeyEvent(LgKeys keyCode)
 			: m_KeyCode(keyCode) {}
 
-		int m_KeyCode;
+		LgKeys m_KeyCode;
 	};
 
 //----------------- KEY_PRESSED -------------------------
@@ -23,7 +24,7 @@ namespace L3gion
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(int keyCode, int repeatCount)
+		KeyPressedEvent(LgKeys keyCode, int repeatCount)
 			: KeyEvent(keyCode), m_RepeatCount(repeatCount) {}
 
 		inline int getRepeatCount() const { return m_RepeatCount; }
@@ -31,7 +32,7 @@ namespace L3gion
 		std::string toString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
+			ss << "KeyPressedEvent: " << (int)m_KeyCode << " (" << m_RepeatCount << " repeats)";
 			return ss.str();
 		}
 
@@ -45,13 +46,13 @@ namespace L3gion
 	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(int keyCode)
+		KeyReleasedEvent(LgKeys keyCode)
 			: KeyEvent(keyCode) {}
 
 		std::string toString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyReleasedEvent: " << m_KeyCode;
+			ss << "KeyReleasedEvent: " << (int)m_KeyCode;
 			return ss.str();
 		}
 
@@ -63,13 +64,13 @@ namespace L3gion
 	class KeyTypedEvent : public KeyEvent
 	{
 	public:
-		KeyTypedEvent(int keyCode)
-			: KeyEvent(keyCode) {}
+		KeyTypedEvent(unsigned int keyCode) // TODO: this is wrong
+			: KeyEvent((LgKeys)0) {}
 
 		std::string toString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyTypedEvent: " << m_KeyCode;
+			ss << "KeyTypedEvent: " << (unsigned int)m_KeyCode;
 
 			return ss.str();
 		}

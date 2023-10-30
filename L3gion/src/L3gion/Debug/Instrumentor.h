@@ -27,10 +27,8 @@ namespace L3gion
     class Instrumentor
     {
     public:
-        Instrumentor()
-            : m_CurrentSession(nullptr), m_ProfileCount(0), m_Active(true)
-        {
-        }
+        Instrumentor(const Instrumentor&) = delete;
+        Instrumentor(Instrumentor&&) = delete;
         
         void beginSession(const std::string& name, const std::string& filepath = "results.json")
         {
@@ -96,7 +94,12 @@ namespace L3gion
 
         void setActive(bool option = true) { m_Active = option; }
         const bool getActive() const { return m_Active; }
-
+    private:
+        Instrumentor()
+            : m_CurrentSession(nullptr), m_ProfileCount(0), m_Active(true)
+        {
+        }
+        ~Instrumentor() { endSession(); }
     private:
         InstrumentationSession* m_CurrentSession;
         std::ofstream m_OutputStream;

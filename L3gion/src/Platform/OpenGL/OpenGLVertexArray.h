@@ -27,6 +27,7 @@ namespace L3gion
 
 	private:
 		uint32_t m_RendererID;
+		uint32_t m_VertexBufferIndex = 0;
 		std::vector<ref<VertexBuffer>> m_VertexBuffers;
 		ref<IndexBuffer> m_IndexBuffer;
 	};

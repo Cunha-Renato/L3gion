@@ -2,6 +2,9 @@
 
 #include "L3gion.h"
 #include "L3gion/Renderer/Texture.h"
+#include "L3gion/Scene/Scene.h"
+#include "L3gion/Scene/Entity.h"
+#include "Panels/SceneHierarchyPanel.h"
 
 namespace L3gion
 {
@@ -20,19 +23,17 @@ namespace L3gion
 		bool onKeyPressed(Event& e);
 
 	private:
-		OrthoCameraController m_CameraController;
-
 		ref<FrameBuffer> m_FrameBuffer;
 
-		ref<Texture2D> m_SpriteSheetTexture;
-		ref<SubTexture2D> m_Checkerboard;
-		ref<SubTexture2D> m_Tree;
+		ref<Scene> m_ActiveScene;
+		Entity m_Square;
+		Entity m_CameraEntity;
 
-		glm::vec4 m_Color = { 0.8f, 0.2f, 0.3f, 1.0f };
+		SceneHierarchyPanel m_SceneHierarchyPanel;
 
 		bool m_ViewPortFocused = false, m_ViewPortHovered = false;
-
 		glm::vec2 m_ViewPortSize = { 0, 0 };
+
 		double m_Timesep = 0;
 	};
 

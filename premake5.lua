@@ -23,6 +23,7 @@ IncludeDir["Glad"] = "L3gion/vendor/Glad/include"
 IncludeDir["ImGui"] = "L3gion/vendor/imgui"
 IncludeDir["glm"] = "L3gion/vendor/glm"
 IncludeDir["stb_image"] = "L3gion/vendor/stb_image"
+IncludeDir["EnTT"] = "L3gion/vendor/EnTT/include"
 
 group "Dependencies"
 	include "L3gion/vendor/GLFW"
@@ -68,7 +69,8 @@ project "L3gion"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.EnTT}"
 	}
 
 	links 
@@ -123,7 +125,8 @@ project "Sandbox"
 		"L3gion/vendor/spdlog/include",
 		"L3gion/src",
 		"L3gion/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.EnTT}"
 	}
 
 	links
@@ -175,7 +178,8 @@ project "L3gion_Editor"
 		"L3gion/vendor/spdlog/include",
 		"L3gion/src",
 		"L3gion/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.EnTT}"
 	}
 
 	links

@@ -2,127 +2,131 @@
 
 // TODO: Refactor the rest of the code to use this keycodes
 
-#define LG_KEY_SPACE			1
-#define LG_KEY_APOSTROPHE		2 /* ' */
-#define LG_KEY_COMMA			3 /*  */
-#define LG_KEY_MINUS			4 /* - */
-#define LG_KEY_PERIOD			5 /* . */
-#define LG_KEY_SLASH			6 /* / */
-#define LG_KEY_0				7
-#define LG_KEY_1				8
-#define LG_KEY_2				9
-#define LG_KEY_3				10
-#define LG_KEY_4				11
-#define LG_KEY_5				12
-#define LG_KEY_6				13
-#define LG_KEY_7				14
-#define LG_KEY_8				15
-#define LG_KEY_9				16
-#define LG_KEY_SEMICOLON		17 /* ; */
-#define LG_KEY_EQUAL			18 /*  */
-#define LG_KEY_A				19
-#define LG_KEY_B				20
-#define LG_KEY_C				21
-#define LG_KEY_D				22
-#define LG_KEY_E				23
-#define LG_KEY_F				24
-#define LG_KEY_G				25
-#define LG_KEY_H				26
-#define LG_KEY_I				27
-#define LG_KEY_J				28
-#define LG_KEY_K				29
-#define LG_KEY_L				30
-#define LG_KEY_M				31
-#define LG_KEY_N				32
-#define LG_KEY_O				33
-#define LG_KEY_P				34
-#define LG_KEY_Q				35
-#define LG_KEY_R				36
-#define LG_KEY_S				37
-#define LG_KEY_T				38
-#define LG_KEY_U				39
-#define LG_KEY_V				40
-#define LG_KEY_W				41
-#define LG_KEY_X				42
-#define LG_KEY_Y				43
-#define LG_KEY_Z				44
-#define LG_KEY_LEFT_BRACKET		45 /* [ */
-#define LG_KEY_BACKSLASH		46 /* \ */
-#define LG_KEY_RIGHT_BRACKET	47 /* ] */
-#define LG_KEY_GRAVE_ACCENT		48 /* ` */
-#define LG_KEY_WORLD_1			49 /* non-US #1 */
-#define LG_KEY_WORLD_2			50 /* non-US #2 */
-#define LG_KEY_ESCAPE			51
-#define LG_KEY_ENTER			52
-#define LG_KEY_TAB				53
-#define LG_KEY_BACKSPACE		54
-#define LG_KEY_INSERT			55
-#define LG_KEY_DELETE			56
-#define LG_KEY_RIGHT			57
-#define LG_KEY_LEFT				58
-#define LG_KEY_DOWN				59
-#define LG_KEY_UP				60
-#define LG_KEY_PAGE_UP			61
-#define LG_KEY_PAGE_DOWN		62
-#define LG_KEY_HOME				63
-#define LG_KEY_END				64
-#define LG_KEY_CAPS_LOCK		65
-#define LG_KEY_SCROLL_LOCK		66
-#define LG_KEY_NUM_LOCK			67
-#define LG_KEY_PRINT_SCREEN		68
-#define LG_KEY_PAUSE			69
-#define LG_KEY_F1				70
-#define LG_KEY_F2				71
-#define LG_KEY_F3				72
-#define LG_KEY_F4				73
-#define LG_KEY_F5				74
-#define LG_KEY_F6				75
-#define LG_KEY_F7				76
-#define LG_KEY_F8				77
-#define LG_KEY_F9				78
-#define LG_KEY_F10				79
-#define LG_KEY_F11				80
-#define LG_KEY_F12				81
-#define LG_KEY_F13				82
-#define LG_KEY_F14				83
-#define LG_KEY_F15				84
-#define LG_KEY_F16				85
-#define LG_KEY_F17				86
-#define LG_KEY_F18				87
-#define LG_KEY_F19				88
-#define LG_KEY_F20				89
-#define LG_KEY_F21				90
-#define LG_KEY_F22				91
-#define LG_KEY_F23				92
-#define LG_KEY_F24				93
-#define LG_KEY_F25				94
-#define LG_KEY_KP_0				95
-#define LG_KEY_KP_1				96
-#define LG_KEY_KP_2				97
-#define LG_KEY_KP_3				98
-#define LG_KEY_KP_4				99
-#define LG_KEY_KP_5				100
-#define LG_KEY_KP_6				101
-#define LG_KEY_KP_7				102
-#define LG_KEY_KP_8				103
-#define LG_KEY_KP_9				104
-#define LG_KEY_KP_DECIMAL		105
-#define LG_KEY_KP_DIVIDE		106
-#define LG_KEY_KP_MULTIPLY		107
-#define LG_KEY_KP_SUBTRACT		108
-#define LG_KEY_KP_ADD			109
-#define LG_KEY_KP_ENTER			110
-#define LG_KEY_KP_EQUAL			111
-#define LG_KEY_LEFT_SHIFT		112
-#define LG_KEY_LEFT_CONTROL		113
-#define LG_KEY_LEFT_ALT			114
-#define LG_KEY_LEFT_SUPER		115
-#define LG_KEY_RIGHT_SHIFT		116
-#define LG_KEY_RIGHT_CONTROL	117
-#define LG_KEY_RIGHT_ALT		118
-#define LG_KEY_RIGHT_SUPER		119
-#define LG_KEY_MENU				120
-#define LG_KEY_LAST				LG_KEY_MENU
+enum class LgKeys
+{
+	LG_KEY_NONE				= 0,
+	LG_KEY_SPACE			= 1,
+	LG_KEY_APOSTROPHE		= 2, /* ' */
+	LG_KEY_COMMA			= 3, /*  */
+	LG_KEY_MINUS			= 4, /* - */
+	LG_KEY_PERIOD			= 5, /* . */
+	LG_KEY_SLASH			= 6, /* / */
+	LG_KEY_0				= 7,
+	LG_KEY_1				= 8,
+	LG_KEY_2				= 9,
+	LG_KEY_3				= 10,
+	LG_KEY_4				= 11,
+	LG_KEY_5				= 12,
+	LG_KEY_6				= 13,
+	LG_KEY_7				= 14,
+	LG_KEY_8				= 15,
+	LG_KEY_9				= 16,
+	LG_KEY_SEMICOLON		= 17, /* ; */
+	LG_KEY_EQUAL			= 18, /*  */
+	LG_KEY_A				= 19,
+	LG_KEY_B				= 20,
+	LG_KEY_C				= 21,
+	LG_KEY_D				= 22,
+	LG_KEY_E				= 23,
+	LG_KEY_F				= 24,
+	LG_KEY_G				= 25,
+	LG_KEY_H				= 26,
+	LG_KEY_I				= 27,
+	LG_KEY_J				= 28,
+	LG_KEY_K				= 29,
+	LG_KEY_L				= 30,
+	LG_KEY_M				= 31,
+	LG_KEY_N				= 32,
+	LG_KEY_O				= 33,
+	LG_KEY_P				= 34,
+	LG_KEY_Q				= 35,
+	LG_KEY_R				= 36,
+	LG_KEY_S				= 37,
+	LG_KEY_T				= 38,
+	LG_KEY_U				= 39,
+	LG_KEY_V				= 40,
+	LG_KEY_W				= 41,
+	LG_KEY_X				= 42,
+	LG_KEY_Y				= 43,
+	LG_KEY_Z				= 44,
+	LG_KEY_LEFT_BRACKET		= 45, /* [ */
+	LG_KEY_BACKSLASH		= 46, /* \ */
+	LG_KEY_RIGHT_BRACKET	= 47, /* ] */
+	LG_KEY_GRAVE_ACCENT		= 48, /* ` */
+	LG_KEY_WORLD_1			= 49, /* non-US #1 */
+	LG_KEY_WORLD_2			= 50, /* non-US #2 */
+	LG_KEY_ESCAPE			= 51,
+	LG_KEY_ENTER			= 52,
+	LG_KEY_TAB				= 53,
+	LG_KEY_BACKSPACE		= 54,
+	LG_KEY_INSERT			= 55,
+	LG_KEY_DELETE			= 56,
+	LG_KEY_RIGHT			= 57,
+	LG_KEY_LEFT				= 58,
+	LG_KEY_DOWN				= 59,
+	LG_KEY_UP				= 60,
+	LG_KEY_PAGE_UP			= 61,
+	LG_KEY_PAGE_DOWN		= 62,
+	LG_KEY_HOME				= 63,
+	LG_KEY_END				= 64,
+	LG_KEY_CAPS_LOCK		= 65,
+	LG_KEY_SCROLL_LOCK		= 66,
+	LG_KEY_NUM_LOCK			= 67,
+	LG_KEY_PRINT_SCREEN		= 68,
+	LG_KEY_PAUSE			= 69,
+	LG_KEY_F1				= 70,
+	LG_KEY_F2				= 71,
+	LG_KEY_F3				= 72,
+	LG_KEY_F4				= 73,
+	LG_KEY_F5				= 74,
+	LG_KEY_F6				= 75,
+	LG_KEY_F7				= 76,
+	LG_KEY_F8				= 77,
+	LG_KEY_F9				= 78,
+	LG_KEY_F10				= 79,
+	LG_KEY_F11				= 80,
+	LG_KEY_F12				= 81,
+	LG_KEY_F13				= 82,
+	LG_KEY_F14				= 83,
+	LG_KEY_F15				= 84,
+	LG_KEY_F16				= 85,
+	LG_KEY_F17				= 86,
+	LG_KEY_F18				= 87,
+	LG_KEY_F19				= 88,
+	LG_KEY_F20				= 89,
+	LG_KEY_F21				= 90,
+	LG_KEY_F22				= 91,
+	LG_KEY_F23				= 92,
+	LG_KEY_F24				= 93,
+	LG_KEY_F25				= 94,
+	LG_KEY_KP_0				= 95,
+	LG_KEY_KP_1				= 96,
+	LG_KEY_KP_2				= 97,
+	LG_KEY_KP_3				= 98,
+	LG_KEY_KP_4				= 99,
+	LG_KEY_KP_5				= 100,
+	LG_KEY_KP_6				= 101,
+	LG_KEY_KP_7				= 102,
+	LG_KEY_KP_8				= 103,
+	LG_KEY_KP_9				= 104,
+	LG_KEY_KP_DECIMAL		= 105,
+	LG_KEY_KP_DIVIDE		= 106,
+	LG_KEY_KP_MULTIPLY		= 107,
+	LG_KEY_KP_SUBTRACT		= 108,
+	LG_KEY_KP_ADD			= 109,
+	LG_KEY_KP_ENTER			= 110,
+	LG_KEY_KP_EQUAL			= 111,
+	LG_KEY_LEFT_SHIFT		= 112,
+	LG_KEY_LEFT_CONTROL		= 113,
+	LG_KEY_LEFT_ALT			= 114,
+	LG_KEY_LEFT_SUPER		= 115,
+	LG_KEY_RIGHT_SHIFT		= 116,
+	LG_KEY_RIGHT_CONTROL	= 117,
+	LG_KEY_RIGHT_ALT		= 118,
+	LG_KEY_RIGHT_SUPER		= 119,
+	LG_KEY_MENU				= 120,
+	LG_KEY_LAST				= LG_KEY_MENU
+};
 
 namespace L3gion
 {
@@ -250,7 +254,7 @@ namespace L3gion
 		GLFW_ENUM_KEY_RIGHT_ALT = 346,
 		GLFW_ENUM_KEY_RIGHT_SUPER = 347,
 		GLFW_ENUM_KEY_MENU = 348,
-		GLFW_ENUM_KEY_LAST = LG_KEY_MENU
+		GLFW_ENUM_KEY_LAST = 348
 	};
 
 	// ImGui
@@ -640,39 +644,39 @@ namespace L3gion
 			return instance;
 		}
 		
-		int LgKeyToGlfw(int keycode) const
+		int LgKeyToGlfw(LgKeys keycode) const
 		{
-			int index = keycode - 1;
+			int index = (int)keycode - 1;
 			return m_GlfwKeysBuffer[index];
 		}
 
-		int LgKeyToImGui(int keycode) const
+		int LgKeyToImGui(LgKeys keycode) const
 		{
-			int index = keycode - 1;
+			int index = (int)keycode - 1;
 			return m_ImGuiKeysBuffer[index];
 		}
 
-		int GlfwKeyToLG(int keycode) const
+		LgKeys GlfwKeyToLG(int keycode) const
 		{
 			auto it = std::find(m_GlfwKeysBuffer.begin(), m_GlfwKeysBuffer.end(), keycode);
 
 			if (it != m_GlfwKeysBuffer.end())
-				return (int)(std::distance(m_GlfwKeysBuffer.begin(), it) + 1);
+				return (LgKeys)(std::distance(m_GlfwKeysBuffer.begin(), it) + 1);
 
 			LG_CORE_ERROR("The GLFW_KEY provided ({0}) does not match the LG_KEYs!!", keycode);
 
-			return 0;
+			return LgKeys::LG_KEY_NONE;
 		}
-		int ImGuiKeyToLG(int keycode) const
+		LgKeys ImGuiKeyToLG(int keycode) const
 		{
 			auto it = std::find(m_ImGuiKeysBuffer.begin(), m_ImGuiKeysBuffer.end(), keycode);
 
 			if (it != m_ImGuiKeysBuffer.end())
-				return (int)(std::distance(m_ImGuiKeysBuffer.begin(), it) + 1);
+				return (LgKeys)(std::distance(m_ImGuiKeysBuffer.begin(), it) + 1);
 
 			LG_CORE_ERROR("The IMGUI_KEY provided ({0}) does not match the LG_KEYs!!", keycode);
 
-			return 0;
+			return LgKeys::LG_KEY_NONE;
 		}
 	};
 }

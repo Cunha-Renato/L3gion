@@ -19,6 +19,9 @@
 #include "L3gion/Events/ApplicationEvent.h"
 #include "L3gion/Renderer/CameraController.h"
 
+#include "L3gion/Scene/Scene.h"
+#include "L3gion/Scene/Entity.h"
+
 #include "L3gion/ImGui/ImGuiLayer.h"
 
 // ----------- Renderer ------------
