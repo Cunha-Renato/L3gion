@@ -18,6 +18,7 @@ namespace L3gion
 	void SceneHierarchyPanel::setContext(const ref<Scene>& scene)
 	{
 		m_Context = scene;
+		m_SelectionContext = {};
 	}
 
 	void SceneHierarchyPanel::onImGuiRender()
@@ -33,16 +34,16 @@ namespace L3gion
 			ImGui::EndPopup();
 		}
 
-		m_Context->m_Registry.each([&](auto entityID)
+		for (auto [entityID, ref] : m_Context->m_Registry.storage<TagComponent>().each())
 		{
-			Entity entity{ entityID, m_Context.get() };
+			Entity entity{ entityID, m_Context.get()};
 			drawEntityNode(entity);
 			ImGui::Separator();
-		});
+		}
 
 		ImGui::End();
 
-		ImGui::Begin("Properties");
+		ImGui::Begin("Components");
 		if (m_SelectionContext)
 			drawComponents(m_SelectionContext);
 
@@ -224,16 +225,22 @@ namespace L3gion
 
 		if (ImGui::BeginPopup("NewComponent"))
 		{
-			if (ImGui::MenuItem("Camera"))
+			if (!entity.hasComponent<CameraComponent>())
 			{
-				m_SelectionContext.addComponent<CameraComponent>();
-				ImGui::CloseCurrentPopup();
+				if (ImGui::MenuItem("Camera"))
+				{
+					m_SelectionContext.addComponent<CameraComponent>();
+					ImGui::CloseCurrentPopup();
+				}
 			}
 
-			if (ImGui::MenuItem("Sprite Renderer"))
+			if (!entity.hasComponent<SpriteRendererComponent>())
 			{
-				m_SelectionContext.addComponent<SpriteRendererComponent>();
-				ImGui::CloseCurrentPopup();
+				if (ImGui::MenuItem("Sprite Renderer"))
+				{
+					m_SelectionContext.addComponent<SpriteRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
 			}
 
 			ImGui::EndPopup();

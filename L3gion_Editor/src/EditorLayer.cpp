@@ -1,6 +1,8 @@
 #include "EditorLayer.h"
 
 #include "L3gion/Scene/Components.h"
+#include "L3gion/Scene/SceneSerializer.h"
+#include "L3gion/Utils/PlatformUtils.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <ImGui/imgui.h>
@@ -25,37 +27,8 @@ namespace L3gion
 
 		// Entity
 		m_ActiveScene = createRef<Scene>();
-
-		m_Square = m_ActiveScene->createEntity("Square Entity");
-		m_Square.addComponent<SpriteRendererComponent>();
-		m_Square.getComponent<SpriteRendererComponent>().color = { 0.3f, 0.2f, 0.7f, 1.0f };
-
-		m_CameraEntity = m_ActiveScene->createEntity("Camera Entity");
-		m_CameraEntity.addComponent<CameraComponent>().primary = true;
-
-		class CameraController : public ScriptableEntity
-		{
-		public:
-			void onUpdate(Timestep ts) override
-			{
-				auto& translation = getComponent<TransformComponent>().translation;
-
-				float speed = 5.0f;
-
-				if (Input::isKeyPressed(LgKeys::LG_KEY_A))
-					translation.x -= speed * ts;
-				if (Input::isKeyPressed(LgKeys::LG_KEY_D))
-					translation.x += speed * ts;
-				if (Input::isKeyPressed(LgKeys::LG_KEY_W))
-					translation.y += speed * ts;
-				if (Input::isKeyPressed(LgKeys::LG_KEY_S))
-					translation.y -= speed * ts;
-			}
-		};
-
-		m_CameraEntity.addComponent<NativeScriptComponent>().bind<CameraController>();
-
 		m_SceneHierarchyPanel.setContext(m_ActiveScene);
+		SceneSerializer serializer(m_ActiveScene);
 	}
 
 	void EditorLayer::onDetach()
@@ -67,14 +40,14 @@ namespace L3gion
 	{
 		LG_PROFILE_FUNCTION();
 
-		m_Timesep = ts;
+		m_Timesep = ts.getMiliSeconds();
 
 		// Resize
 		if (L3gion::FrameBufferSpecs spec = m_FrameBuffer->getSpecification();
-			m_ViewPortSize.x > 0.0f && m_ViewPortSize.y > 0.0f && // zero sized framebuffer is invalid
-			(spec.width != m_ViewPortSize.x || spec.height != m_ViewPortSize.y))
+			m_ViewPortSize.x > 0.0f && m_ViewPortSize.y > 0.0f) // zero sized framebuffer is invalid
 		{
-			m_FrameBuffer->resize((uint32_t)m_ViewPortSize.x, (uint32_t)m_ViewPortSize.y);
+			if ((spec.width != m_ViewPortSize.x || spec.height != m_ViewPortSize.y))
+				m_FrameBuffer->resize((uint32_t)m_ViewPortSize.x, (uint32_t)m_ViewPortSize.y);
 			
 			m_ActiveScene->onViewportResize((uint32_t)m_ViewPortSize.x, (uint32_t)m_ViewPortSize.y);
 		}
@@ -83,7 +56,7 @@ namespace L3gion
 		// Render
 		Renderer2D::resetStats();
 		m_FrameBuffer->bind();
-		RenderCommand::setClearColor(glm::vec4(1.0f, 0.2f, 0.6f, 1.0f));
+		RenderCommand::setClearColor(glm::vec4(0.15f, 0.1f, 0.1f, 1.0f));
 		RenderCommand::clear();
 		
 		m_ActiveScene->onUptdate(ts);
@@ -147,6 +120,12 @@ namespace L3gion
 		{
 			if (ImGui::BeginMenu("File"))
 			{
+				if (ImGui::MenuItem("New", "CTRL+N"))
+					newScene();
+				if (ImGui::MenuItem("Open...", "CTRL+O"))
+					openScene();
+				if (ImGui::MenuItem("Save as...", "CTRL+SHIFT+S"))
+					saveSceneAs();
 				if (ImGui::MenuItem("Exit")) Application::get().close();
 				ImGui::EndMenu();
 			}
@@ -168,16 +147,18 @@ namespace L3gion
 			m_ViewPortSize = { viewportPanelSize.x, viewportPanelSize.y };
 
 			uint32_t viewPort = m_FrameBuffer->getColorAttachmentRendererID();
-			ImGui::Image((void*)viewPort, viewportPanelSize, ImVec2{ 0,1 }, ImVec2{ 1, 0 });
+			ImGui::Image((void*)(uint64_t)viewPort, viewportPanelSize, ImVec2{ 0,1 }, ImVec2{ 1, 0 });
 
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
-
+//--------------------------------------------------------------------
+		
 		ImGui::Begin("Settings: ");
-		ImGui::Text("Timestep: %.4fms \n%d fps", m_Timesep, (int)(1 / m_Timesep));
+		ImGui::Text("Timestep: %.2fms \n%d fps", m_Timesep, (int)(1000 / m_Timesep));
 		ImGui::Text("Profiling: %d", LG_PROFILE_IS_ACTIVE());
-		ImGui::Text("\nRenderer2D:");
+		ImGui::Separator();
+		ImGui::Text("Renderer2D:");
 		ImGui::Text("Draw Calls: %d", Renderer2D::getStats().drawCalls);
 		ImGui::Text("Quad Count: %d", Renderer2D::getStats().quadCount);
 		ImGui::Text("Vertex Count: %d", Renderer2D::getStats().getTotalVertexCount());
@@ -194,20 +175,85 @@ namespace L3gion
 		dispatcher.dispatch<KeyPressedEvent>(BIND_EVENT_FN(EditorLayer::onKeyPressed));
 	}
 
-	bool EditorLayer::onKeyPressed(Event& e)
+	bool EditorLayer::onKeyPressed(KeyPressedEvent& e)
 	{
-		if (Input::isKeyPressed(LgKeys::LG_KEY_I))
+		if (e.getRepeatCount() > 0)
+			return false;
+
+		bool control = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_CONTROL);
+		bool shift = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_SHIFT) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_SHIFT);
+
+		LG_CORE_WARN("{0}, {1}, {2}", (int)e.getKeyCode(), control, shift);
+
+		switch (e.getKeyCode())
 		{
-			if (LG_PROFILE_IS_ACTIVE())
+			case LgKeys::LG_KEY_I:
 			{
-				LG_PROFILE_END_SESSION();
+				if (LG_PROFILE_IS_ACTIVE())
+				{
+					LG_PROFILE_END_SESSION();
+				}
+				else
+				{
+					LG_PROFILE_BEGIN_SESSION("Runtime", "L3gionProfile_Runtime.json");
+				}
+				break;
 			}
-			else
+			case LgKeys::LG_KEY_N:
 			{
-				LG_PROFILE_BEGIN_SESSION("Runtime", "L3gionProfile_Runtime.json");
+				if (control)
+					newScene();
+				break;
 			}
+			case LgKeys::LG_KEY_O:
+			{
+				if (control)
+					openScene();
+				break;
+			}
+			case LgKeys::LG_KEY_S:
+			{
+				if (shift)
+					saveSceneAs();
+				break;
+			}
+
+		default:
+			break;
+		}
+	
+		if (e.getKeyCode() == LgKeys::LG_KEY_I)
+		{
+			
 		}
 
 		return false;
+	}
+
+	void EditorLayer::newScene()
+	{
+		m_ActiveScene = createRef<Scene>();
+		m_SceneHierarchyPanel.setContext(m_ActiveScene);
+	}
+	void EditorLayer::openScene()
+	{
+		std::string filepath = FileDialogs::openFile("L3gion Scene (*.lg)\0*.lg\0");
+		if (!filepath.empty())
+		{
+			m_ActiveScene = createRef<Scene>();
+			m_SceneHierarchyPanel.setContext(m_ActiveScene);
+
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.deserialize(filepath);
+		}
+	}
+	void EditorLayer::saveSceneAs()
+	{
+		std::string filepath = FileDialogs::saveFile("L3gion Scene (*.lg)\0*.lg\0");
+		if (!filepath.empty())
+		{
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.serialize(filepath);
+		}
 	}
 }

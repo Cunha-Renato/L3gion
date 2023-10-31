@@ -19,15 +19,19 @@ namespace L3gion
 
 		virtual void onUpdate(Timestep& ts) override;
 		virtual void onImGuiRender() override;
-		virtual void onEvent(Event& e) override;
-		bool onKeyPressed(Event& e);
 
+		virtual void onEvent(Event& e) override;
+	
 	private:
+		bool onKeyPressed(KeyPressedEvent& e);
+			
+		void newScene();
+		void openScene();
+		void saveSceneAs();
+
 		ref<FrameBuffer> m_FrameBuffer;
 
-		ref<Scene> m_ActiveScene;
-		Entity m_Square;
-		Entity m_CameraEntity;
+		ref<Scene> m_ActiveScene = nullptr;// Mainly the camera entity
 
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 

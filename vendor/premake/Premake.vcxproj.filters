@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="..">
+      <UniqueIdentifier>{61705900-4DFC-870B-B6AA-880BA255880B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\L3gion">
+      <UniqueIdentifier>{9C7A5B2B-08E5-0FA2-5123-C147BDCCEDF6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\L3gion\vendor">
+      <UniqueIdentifier>{79891F0B-6582-3E5D-8EB4-23E27A0C1E69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\L3gion\vendor\GLFW">
+      <UniqueIdentifier>{5818F886-C484-B381-8D78-4BDFF9A3D5E9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\L3gion\vendor\Glad">
+      <UniqueIdentifier>{00A4F886-6C10-B481-3504-4CDFA12FD6E9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\L3gion\vendor\ImGui">
+      <UniqueIdentifier>{63753166-4F6F-5AB8-38DC-F0C82475C024}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\L3gion\vendor\yaml_cpp">
+      <UniqueIdentifier>{3D138ACD-A9D5-BD57-F285-4CE45E879635}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\L3gion_Editor">
+      <UniqueIdentifier>{8294A907-6E8D-C859-97BF-ADDE8317A865}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\Sandbox">
+      <UniqueIdentifier>{3F7B6B1D-2B33-AD6A-943A-86C68011485B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\L3gion\premake5.lua">
+      <Filter>..\L3gion</Filter>
+    </None>
+    <None Include="..\..\L3gion\vendor\GLFW\premake5.lua">
+      <Filter>..\L3gion\vendor\GLFW</Filter>
+    </None>
+    <None Include="..\..\L3gion\vendor\Glad\premake5.lua">
+      <Filter>..\L3gion\vendor\Glad</Filter>
+    </None>
+    <None Include="..\..\L3gion\vendor\ImGui\premake5.lua">
+      <Filter>..\L3gion\vendor\ImGui</Filter>
+    </None>
+    <None Include="..\..\L3gion\vendor\yaml_cpp\premake5.lua">
+      <Filter>..\L3gion\vendor\yaml_cpp</Filter>
+    </None>
+    <None Include="..\..\L3gion_Editor\premake5.lua">
+      <Filter>..\L3gion_Editor</Filter>
+    </None>
+    <None Include="..\..\Sandbox\premake5.lua">
+      <Filter>..\Sandbox</Filter>
+    </None>
+    <None Include="..\..\premake5.lua">
+      <Filter>..</Filter>
+    </None>
+    <None Include="premake5.lua" />
+  </ItemGroup>
+</Project>

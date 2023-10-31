@@ -22,6 +22,12 @@
     <Filter Include="src\L3gion\Renderer">
       <UniqueIdentifier>{8EC0E303-FA21-C111-838F-07C4EFEFF7D0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\L3gion\Scene">
+      <UniqueIdentifier>{05D38FE4-F1CB-AE36-1AFE-93BB06568E42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\L3gion\Utils">
+      <UniqueIdentifier>{4867BDE4-3460-DC36-5D92-C1BB49EABB42}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
     </Filter>
@@ -149,6 +155,27 @@
     </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\VertexArray.h">
       <Filter>src\L3gion\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Scene\Components.h">
+      <Filter>src\L3gion\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Scene\Entity.h">
+      <Filter>src\L3gion\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Scene\Scene.h">
+      <Filter>src\L3gion\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Scene\SceneCamera.h">
+      <Filter>src\L3gion\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Scene\SceneSerializer.h">
+      <Filter>src\L3gion\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Scene\ScriptableEntity.h">
+      <Filter>src\L3gion\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Utils\PlatformUtils.h">
+      <Filter>src\L3gion\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
@@ -1428,11 +1455,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Scene\Scene.h" />
-    <ClInclude Include="src\L3gion\Scene\Entity.h" />
-    <ClInclude Include="src\L3gion\Scene\Components.h" />
-    <ClInclude Include="src\L3gion\Scene\SceneCamera.h" />
-    <ClInclude Include="src\L3gion\Scene\ScriptableEntity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Core\Application.cpp">
@@ -1492,6 +1514,18 @@
     <ClCompile Include="src\L3gion\Renderer\VertexArray.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\L3gion\Scene\Entity.cpp">
+      <Filter>src\L3gion\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Scene\Scene.cpp">
+      <Filter>src\L3gion\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Scene\SceneCamera.cpp">
+      <Filter>src\L3gion\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Scene\SceneSerializer.cpp">
+      <Filter>src\L3gion\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1516,6 +1550,9 @@
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsUtils.cpp">
+      <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
@@ -1525,8 +1562,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\L3gion\Scene\Scene.cpp" />
-    <ClCompile Include="src\L3gion\Scene\Entity.cpp" />
-    <ClCompile Include="src\L3gion\Scene\SceneCamera.cpp" />
   </ItemGroup>
 </Project>

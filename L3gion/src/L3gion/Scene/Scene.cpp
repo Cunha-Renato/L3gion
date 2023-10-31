@@ -2,8 +2,6 @@
 #include "Scene.h"
 
 #include "L3gion/Scene/Components.h"
-#include "L3gion/Renderer/Renderer2D.h"
-
 #include <glm/glm.hpp>
 
 #include "L3gion/Scene/Entity.h"
@@ -59,7 +57,7 @@ namespace L3gion
 			for (auto entity : view)
 			{
 				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
-				
+
 				if (camera.primary)
 				{
 					mainCamera = &camera.camera;
@@ -79,10 +77,9 @@ namespace L3gion
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-				Renderer2D::drawQuad({
-						.transform = transform.getTransform(),
-						.color = sprite.color
-					});
+				m_QuadSpecs.transform = transform.getTransform();
+				m_QuadSpecs.color = sprite.color;
+				Renderer2D::drawQuad(m_QuadSpecs);
 			}
 
 			Renderer2D::endScene();
@@ -94,15 +91,14 @@ namespace L3gion
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
-		// Resize non vixed aspect ration
+		// Resize non static aspect ratio
 		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{
 			auto& camera = view.get<CameraComponent>(entity);
-			
-			if (!camera.staticAspectRatio)
+
+			if (!camera.staticAspectRatio && camera.primary)
 				camera.camera.setViewportSize(width, height);
-			
 		}
 	}
 }

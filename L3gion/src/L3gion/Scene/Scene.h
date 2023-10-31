@@ -1,7 +1,7 @@
 #pragma once
 
 #include "L3gion/Core/Timestep.h"
-
+#include "L3gion/Renderer/Renderer2D.h"
 #include <entt.hpp>
 
 namespace L3gion
@@ -22,8 +22,10 @@ namespace L3gion
 	private:
 		entt::registry m_Registry;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
+		Renderer2D::QuadSpecs m_QuadSpecs;
 
 		friend class Entity;
+		friend class SceneSerializer;
 		friend class SceneHierarchyPanel;
 	};
 }

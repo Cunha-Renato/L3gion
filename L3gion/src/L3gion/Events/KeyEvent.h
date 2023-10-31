@@ -28,6 +28,7 @@ namespace L3gion
 			: KeyEvent(keyCode), m_RepeatCount(repeatCount) {}
 
 		inline int getRepeatCount() const { return m_RepeatCount; }
+		inline LgKeys getKeyCode() { return m_KeyCode; }
 
 		std::string toString() const override
 		{
