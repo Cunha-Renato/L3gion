@@ -1,0 +1,47 @@
+Scene: Untitled Scene
+Entities:
+  - Entity: 12837192831273
+    TagComponent:
+      tag: Top
+    TransformComponent:
+      translation: [0, 0.5, 0]
+      rotation: [1.57079637, 0.785398185, 0]
+      scale: [1, 1, 1]
+    SpriteRendererComponent:
+      color: [0.876447856, 0, 0.834712803, 1]
+  - Entity: 12837192831273
+    TagComponent:
+      tag: Camera
+    TransformComponent:
+      translation: [0, 1.70000005, 4]
+      rotation: [-0.404916406, 0, 0]
+      scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        projectionType: 0
+        perspectiveVerticalFov: 0.52359879
+        perspectiveNearClip: 0.00999999978
+        perspectiveFarClip: 1000
+        orthographicSize: 10
+        orthographicNearClip: -1
+        orthographicFarClip: 1
+      primary: true
+      staticAspectRatio: false
+  - Entity: 12837192831273
+    TagComponent:
+      tag: Right
+    TransformComponent:
+      translation: [0.351999998, 0, 0.349999994]
+      rotation: [0, 0.785398185, 0]
+      scale: [1, 1, 1]
+    SpriteRendererComponent:
+      color: [0.54842025, 0, 0.586872578, 1]
+  - Entity: 12837192831273
+    TagComponent:
+      tag: Left
+    TransformComponent:
+      translation: [-0.354999989, 0, 0.349999994]
+      rotation: [0, -0.785398185, 0]
+      scale: [1, 1, 1]
+    SpriteRendererComponent:
+      color: [1, 0, 0.949807167, 1]

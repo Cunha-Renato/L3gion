@@ -17,6 +17,8 @@ namespace L3gion
 
 		void onImGuiRender();
 
+		Entity getSelectedEntity() const { return m_SelectionContext; }
+
 	private:
 		void drawEntityNode(Entity entity);
 		void drawComponents(Entity entity);

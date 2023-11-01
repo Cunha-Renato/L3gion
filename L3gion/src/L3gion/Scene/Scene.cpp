@@ -33,6 +33,18 @@ namespace L3gion
 		m_Registry.destroy(entity);
 	}
 	
+	Entity Scene::getPrimaryCameraEntity()
+	{
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			const auto& camera = view.get<CameraComponent>(entity);
+			if (camera.primary)
+				return Entity{ entity, this };
+		}
+		return {};
+	}
+
 	void Scene::onUptdate(Timestep ts)
 	{
 		// Update Scripts

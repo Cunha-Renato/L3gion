@@ -13,3 +13,6 @@
 [submodule "L3gion/vendor/yaml_cpp"]
 	path = L3gion/vendor/yaml_cpp
 	url = https://github.com/Cunha-Renato/yaml-cpp
+[submodule "L3gion/vendor/ImGuizmo"]
+	path = L3gion/vendor/ImGuizmo
+	url = https://github.com/Cunha-Renato/ImGuizmo

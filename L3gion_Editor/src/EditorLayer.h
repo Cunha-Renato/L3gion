@@ -38,6 +38,8 @@ namespace L3gion
 		bool m_ViewPortFocused = false, m_ViewPortHovered = false;
 		glm::vec2 m_ViewPortSize = { 0, 0 };
 
+		int m_GizmoType = -1;
+
 		double m_Timesep = 0;
 	};
 

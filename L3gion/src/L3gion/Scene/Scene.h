@@ -16,6 +16,8 @@ namespace L3gion
 		Entity createEntity(const std::string& name = std::string());
 		void deleteEntity(Entity entity);
 
+		Entity getPrimaryCameraEntity();
+
 		void onUptdate(Timestep ts);
 		void onViewportResize(uint32_t width, uint32_t height);
 

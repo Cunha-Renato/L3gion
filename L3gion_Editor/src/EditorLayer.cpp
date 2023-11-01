@@ -1,12 +1,15 @@
 #include "EditorLayer.h"
 
-#include "L3gion/Scene/Components.h"
-#include "L3gion/Scene/SceneSerializer.h"
-#include "L3gion/Utils/PlatformUtils.h"
-
 #include <glm/gtc/type_ptr.hpp>
 #include <ImGui/imgui.h>
 #include <chrono>
+
+#include "L3gion/Scene/Components.h"
+#include "L3gion/Scene/SceneSerializer.h"
+#include "L3gion/Utils/PlatformUtils.h"
+#include "L3gion/Maths/Math.h"
+
+#include "ImGuizmo.h"
 
 namespace L3gion
 {
@@ -141,7 +144,7 @@ namespace L3gion
 			m_ViewPortFocused = ImGui::IsWindowFocused();
 			m_ViewPortHovered = ImGui::IsWindowHovered();
 
-			Application::get().getImGui()->blockEvents(!m_ViewPortFocused || !m_ViewPortHovered);
+			Application::get().getImGui()->blockEvents(!m_ViewPortFocused && !m_ViewPortHovered);
 
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 			m_ViewPortSize = { viewportPanelSize.x, viewportPanelSize.y };
@@ -150,6 +153,57 @@ namespace L3gion
 			ImGui::Image((void*)(uint64_t)viewPort, viewportPanelSize, ImVec2{ 0,1 }, ImVec2{ 1, 0 });
 
 		}
+
+		// Gizmos
+		Entity selectedEntity = m_SceneHierarchyPanel.getSelectedEntity();
+		if (selectedEntity && m_GizmoType != -1)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+
+			float windowWidth = (float)ImGui::GetWindowWidth();
+			float windowHeight = (float)ImGui::GetWindowHeight();
+			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+			// Camera
+			auto cameraEntity = m_ActiveScene->getPrimaryCameraEntity();
+			const auto& camera = cameraEntity.getComponent<CameraComponent>().camera;
+			const glm::mat4& cameraProjection = camera.getProjection();
+			glm::mat4 cameraView = glm::inverse(cameraEntity.getComponent<TransformComponent>().getTransform());
+
+			// Snapping
+			bool snap = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL);
+			float snapValue = 0.5f;
+			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+				snapValue = 45.0f;
+
+			float snapValues[3] = { snapValue, snapValue, snapValue };
+
+			// Entity transform
+			auto& tc = selectedEntity.getComponent<TransformComponent>();
+			glm::mat4 transform = tc.getTransform();
+
+			ImGuizmo::Manipulate(
+				glm::value_ptr(cameraView), 
+				glm::value_ptr(cameraProjection),
+				(ImGuizmo::OPERATION)m_GizmoType,
+				ImGuizmo::LOCAL, 
+				glm::value_ptr(transform),
+				nullptr,
+				snap ? snapValues : nullptr);
+
+			if (ImGuizmo::IsUsing())
+			{
+				glm::vec3 translation{0.0f}, rotation{0.0f}, scale{1.0f};
+				Math::decomposeTransform(transform, translation, rotation, scale);
+
+				glm::vec3 deltaRotation = rotation - tc.rotation;
+				tc.translation = translation;
+				tc.rotation += deltaRotation;
+				tc.scale = scale;
+			}
+		}
+
 		ImGui::End();
 		ImGui::PopStyleVar();
 //--------------------------------------------------------------------
@@ -183,8 +237,6 @@ namespace L3gion
 		bool control = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_CONTROL);
 		bool shift = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_SHIFT) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_SHIFT);
 
-		LG_CORE_WARN("{0}, {1}, {2}", (int)e.getKeyCode(), control, shift);
-
 		switch (e.getKeyCode())
 		{
 			case LgKeys::LG_KEY_I:
@@ -217,7 +269,28 @@ namespace L3gion
 					saveSceneAs();
 				break;
 			}
-
+			
+			// Gizmos
+			case LgKeys::LG_KEY_Q:
+			{
+				m_GizmoType = -1;
+				break;
+			}
+			case LgKeys::LG_KEY_W:
+			{
+				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				break;
+			}
+			case LgKeys::LG_KEY_E:
+			{
+				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				break;
+			}
+			case LgKeys::LG_KEY_R:
+			{
+				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				break;
+			}
 		default:
 			break;
 		}

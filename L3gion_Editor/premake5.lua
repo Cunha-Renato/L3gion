@@ -19,7 +19,8 @@ project "L3gion_Editor"
 		"%{wks.location}/L3gion/src",
 		"%{wks.location}/L3gion/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.EnTT}"
+		"%{IncludeDir.EnTT}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links
