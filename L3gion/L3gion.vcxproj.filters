@@ -135,7 +135,10 @@
     <ClInclude Include="src\L3gion\Renderer\CameraController.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Renderer\Framebuffer.h">
+    <ClInclude Include="src\L3gion\Renderer\EditorCamera.h">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Renderer\FrameBuffer.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\GraphicsContext.h">
@@ -192,7 +195,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFrameBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
@@ -1467,7 +1470,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Renderer\EditorCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Core\Application.cpp">
@@ -1500,7 +1502,10 @@
     <ClCompile Include="src\L3gion\Renderer\CameraController.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\L3gion\Renderer\Framebuffer.cpp">
+    <ClCompile Include="src\L3gion\Renderer\EditorCamera.cpp">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Renderer\FrameBuffer.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\GraphicsContext.cpp">
@@ -1548,7 +1553,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFrameBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">
@@ -1581,6 +1586,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\L3gion\Renderer\EditorCamera.cpp" />
   </ItemGroup>
 </Project>

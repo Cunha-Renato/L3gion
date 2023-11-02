@@ -48,15 +48,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>..\..\bin\Debug-windows-x86_64\Premake\</OutDir>
-    <IntDir>..\..\bin-int\Debug-windows-x86_64\Premake\</IntDir>
+    <IntDir>..\..\bin_int\Debug-windows-x86_64\Premake\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>..\..\bin\Release-windows-x86_64\Premake\</OutDir>
-    <IntDir>..\..\bin-int\Release-windows-x86_64\Premake\</IntDir>
+    <IntDir>..\..\bin_int\Release-windows-x86_64\Premake\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <OutDir>..\..\bin\Dist-windows-x86_64\Premake\</OutDir>
-    <IntDir>..\..\bin-int\Dist-windows-x86_64\Premake\</IntDir>
+    <IntDir>..\..\bin_int\Dist-windows-x86_64\Premake\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PostBuildEvent>

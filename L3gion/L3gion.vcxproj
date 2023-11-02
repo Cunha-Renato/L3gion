@@ -170,7 +170,7 @@
     <ClInclude Include="src\L3gion\Renderer\Camera.h" />
     <ClInclude Include="src\L3gion\Renderer\CameraController.h" />
     <ClInclude Include="src\L3gion\Renderer\EditorCamera.h" />
-    <ClInclude Include="src\L3gion\Renderer\Framebuffer.h" />
+    <ClInclude Include="src\L3gion\Renderer\FrameBuffer.h" />
     <ClInclude Include="src\L3gion\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\L3gion\Renderer\RenderCommand.h" />
     <ClInclude Include="src\L3gion\Renderer\Renderer.h" />
@@ -189,7 +189,7 @@
     <ClInclude Include="src\L3gion\Utils\PlatformUtils.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFrameBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
@@ -627,7 +627,7 @@
     <ClCompile Include="src\L3gion\Renderer\Camera.cpp" />
     <ClCompile Include="src\L3gion\Renderer\CameraController.cpp" />
     <ClCompile Include="src\L3gion\Renderer\EditorCamera.cpp" />
-    <ClCompile Include="src\L3gion\Renderer\Framebuffer.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\FrameBuffer.cpp" />
     <ClCompile Include="src\L3gion\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="src\L3gion\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\L3gion\Renderer\Renderer.cpp" />
@@ -643,7 +643,7 @@
     <ClCompile Include="src\L3gion\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFrameBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
