@@ -316,11 +316,11 @@ namespace L3gion
 
 				float perspectiveNear = camera.getPerspectiveNearClip();
 				if (ImGui::DragFloat("Near", &perspectiveNear, 0.1f))
-					camera.setOrthographicNearClip(perspectiveNear);
+					camera.setPerspectiveNearClip(perspectiveNear);
 
 				float perspectiveFar = camera.getPerspectiveFarClip();
 				if (ImGui::DragFloat("Far", &perspectiveFar, 0.1f))
-					camera.setOrthographicFarClip(perspectiveFar);
+					camera.setPerspectiveFarClip(perspectiveFar);
 			}
 		});
 	

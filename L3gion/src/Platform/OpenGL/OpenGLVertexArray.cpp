@@ -72,6 +72,17 @@ namespace L3gion {
 			case ShaderDataType::Float2:
 			case ShaderDataType::Float3:
 			case ShaderDataType::Float4:
+			{
+				glEnableVertexAttribArray(m_VertexBufferIndex);
+				glVertexAttribPointer(m_VertexBufferIndex,
+					element.getComponentCount(),
+					ShaderDataTypeToOpenGLBaseType(element.type),
+					element.normalized ? GL_TRUE : GL_FALSE,
+					layout.getStride(),
+					(const void*)element.offset);
+				m_VertexBufferIndex++;
+				break;
+			}
 			case ShaderDataType::Int:
 			case ShaderDataType::Int2:
 			case ShaderDataType::Int3:
@@ -79,10 +90,9 @@ namespace L3gion {
 			case ShaderDataType::Bool:
 			{
 				glEnableVertexAttribArray(m_VertexBufferIndex);
-				glVertexAttribPointer(m_VertexBufferIndex,
+				glVertexAttribIPointer(m_VertexBufferIndex,
 					element.getComponentCount(),
 					ShaderDataTypeToOpenGLBaseType(element.type),
-					element.normalized ? GL_TRUE : GL_FALSE,
 					layout.getStride(),
 					(const void*)element.offset);
 				m_VertexBufferIndex++;

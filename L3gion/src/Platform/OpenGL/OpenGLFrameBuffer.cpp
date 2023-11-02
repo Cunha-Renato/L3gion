@@ -73,6 +73,22 @@ namespace L3gion
 		{
 			glBindTexture(textureTarget(multisampled), id);
 		}
+	
+		static GLenum lgTexFormatToOpenGL(FramebufferTextureFormat format)
+		{
+			switch (format)
+			{
+			case L3gion::FramebufferTextureFormat::None: return GL_NONE;
+			case L3gion::FramebufferTextureFormat::RGBA8: return GL_RGBA8;
+			case L3gion::FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+			case L3gion::FramebufferTextureFormat::DEPTH24STENCIL8:
+			default:
+				LG_CORE_ASSERT(false, "Currently not supported");
+				break;
+			}
+
+			return 0;
+		}
 	}
 
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecs& spec)
@@ -204,6 +220,26 @@ namespace L3gion
 		m_Specification.height = height;
 
 		invalidate();
+	}
+
+	void OpenGLFramebuffer::clearTexColor(uint32_t attachmentIndex, int value)
+	{
+		LG_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(), " ");
+
+		GLenum format = Utils::lgTexFormatToOpenGL(m_ColorAttachmentSpecs[attachmentIndex].textureFormat);
+		GLenum type = GL_NONE;
+		switch (format)
+		{
+			case GL_RED_INTEGER:
+				type = GL_INT;
+			break;
+			default:
+				LG_CORE_ASSERT(false, "Currently not supported");
+			break;
+		}
+
+		glClearTexImage(m_ColorAttachments[attachmentIndex], 0, format, type, &value);
+
 	}
 
 	int OpenGLFramebuffer::readPixel(uint32_t attachmentIndex, int x, int y)

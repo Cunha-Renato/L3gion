@@ -24,6 +24,7 @@ namespace L3gion
 		{
 			glm::mat4 transform = glm::mat4(1.0f);
 			glm::vec4 color = glm::vec4(1.0f);
+			int id = -1; // Editor Only
 			ref<SubTexture2D> subTexture = nullptr;
 			float tiling = 1.0f;
 		};

@@ -16,6 +16,9 @@ namespace L3gion
 		glm::vec2 texCoord;
 		float texIndex;
 		float tilingFactor;
+
+		// Editor Only
+		int entityId;
 	};
 
 	struct Renderer2DData
@@ -61,11 +64,12 @@ namespace L3gion
 		s_Data.quadVertexBuffer = VertexBuffer::create(s_Data.maxVertices * sizeof(QuadVertex));
 
 		s_Data.quadVertexBuffer->setLayout({
-			{ShaderDataType::Float3, "a_position"},
-			{ShaderDataType::Float4, "a_color"},
+			{ShaderDataType::Float3, "a_Position"},
+			{ShaderDataType::Float4, "a_Color"},
 			{ShaderDataType::Float2, "a_TextCoord"},
-			{ShaderDataType::Float, "a_texIndex"},
-			{ShaderDataType::Float, "a_tilingFactor"}
+			{ShaderDataType::Float, "a_TexIndex"},
+			{ShaderDataType::Float, "a_TilingFactor"},
+			{ShaderDataType::Int, "a_EntityID"}
 		});
 		s_Data.quadVertexArray->addVertexBuffer(s_Data.quadVertexBuffer);
 
@@ -240,6 +244,7 @@ namespace L3gion
 			s_Data.quadVertexBufferPtr->texCoord = texCoords[i];
 			s_Data.quadVertexBufferPtr->texIndex = textureIndex;
 			s_Data.quadVertexBufferPtr->tilingFactor = specs.tiling;
+			s_Data.quadVertexBufferPtr->entityId = specs.id;
 			s_Data.quadVertexBufferPtr++;
 		}
 

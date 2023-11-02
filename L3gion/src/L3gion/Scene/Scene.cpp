@@ -98,6 +98,7 @@ namespace L3gion
 
 			m_QuadSpecs.transform = transform.getTransform();
 			m_QuadSpecs.color = sprite.color;
+			m_QuadSpecs.id = (int)entity;
 			Renderer2D::drawQuad(m_QuadSpecs);
 		}
 

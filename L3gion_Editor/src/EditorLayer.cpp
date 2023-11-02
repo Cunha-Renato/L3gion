@@ -71,24 +71,12 @@ namespace L3gion
 		m_FrameBuffer->bind();
 		RenderCommand::setClearColor(glm::vec4(0.15f, 0.1f, 0.1f, 1.0f));
 		RenderCommand::clear();
+
+		// Clear entityID attachmet to -1
+		m_FrameBuffer->clearTexColor(1, -1);
 		
 		// Update Scene
 		m_ActiveScene->onUptdateEditor(ts, m_EditorCamera);
-
-		auto [mx, my] = ImGui::GetMousePos();
-		mx -= m_ViewportBounds[0].x;
-		my -= m_ViewportBounds[0].y;
-		glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-		my = viewportSize.y - my;
-
-		int mouseX = (int)mx;
-		int mouseY = (int)my;
-
-		if (mouseX >= 0 && mouseY >= 0 && mouseX <= (int)viewportSize.x && (int)mouseY <= viewportSize.y)
-		{
-			int pixelData = m_FrameBuffer->readPixel(1, mouseX, mouseY);
-			LG_CORE_WARN("{0}", pixelData);		
-		}
 
 		m_FrameBuffer->unbind();
 	}
@@ -235,7 +223,7 @@ namespace L3gion
 				nullptr,
 				snap ? snapValues : nullptr);
 
-			if (ImGuizmo::IsUsing())
+			if (ImGuizmo::IsUsing() && !Input::isKeyPressed(LgKeys::LG_KEY_LEFT_ALT))
 			{
 				glm::vec3 translation{0.0f}, rotation{0.0f}, scale{1.0f};
 				Math::decomposeTransform(transform, translation, rotation, scale);
@@ -271,8 +259,37 @@ namespace L3gion
 		m_EditorCamera.onEvent(e);
 		auto dispatcher = EventDispatcher(e);
 		dispatcher.dispatch<KeyPressedEvent>(BIND_EVENT_FN(EditorLayer::onKeyPressed));
+		dispatcher.dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(EditorLayer::onMouseButtonPressed));
 	}
+	bool EditorLayer::onMouseButtonPressed(MouseButtonPressedEvent& e)
+	{
+		bool control = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_CONTROL);
+		bool alt = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_ALT) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_ALT);
+		if (e.getMouseButton() == LG_MOUSE_BUTTON_LEFT && !control && !alt)
+		{
+			auto [mx, my] = ImGui::GetMousePos();
+			mx -= m_ViewportBounds[0].x;
+			my -= m_ViewportBounds[0].y;
+			glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+			my = viewportSize.y - my;
 
+			int mouseX = (int)mx;
+			int mouseY = (int)my;
+
+			if (mouseX >= 0 && mouseY >= 0 && mouseX <= (int)viewportSize.x && (int)mouseY <= viewportSize.y && !ImGuizmo::IsOver())
+			{
+				m_FrameBuffer->bind();
+				int pixelData = m_FrameBuffer->readPixel(1, mouseX, mouseY);
+				
+				if (pixelData > -1)
+					m_SceneHierarchyPanel.setSelectedEntity({(entt::entity)pixelData, m_ActiveScene.get()});
+
+				m_FrameBuffer->unbind();
+			}
+		}
+
+		return false;
+	}
 	bool EditorLayer::onKeyPressed(KeyPressedEvent& e)
 	{
 		if (e.getRepeatCount() > 0)
@@ -337,11 +354,6 @@ namespace L3gion
 			}
 		default:
 			break;
-		}
-	
-		if (e.getKeyCode() == LgKeys::LG_KEY_I)
-		{
-			
 		}
 
 		return false;
