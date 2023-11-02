@@ -54,7 +54,7 @@ namespace L3gion
 	{
 		LG_PROFILE_FUNCTION();
 
-		s_Data.textureShader = Shader::create("../Sandbox/assets/shaders/Texture.glsl");
+		s_Data.textureShader = Shader::create("assets/shaders/Texture.glsl");
 		s_Data.textureShader->bind();
 
 		s_Data.quadVertexArray = VertexArray::create();
@@ -132,7 +132,17 @@ namespace L3gion
 
 		prepareBuffers();
 	}
+	void Renderer2D::beginScene(const EditorCamera& editorCamera)
+	{
+		LG_PROFILE_FUNCTION();
 
+		glm::mat4 viewProj = editorCamera.getViewProjection();
+
+		s_Data.textureShader->bind();
+		s_Data.textureShader->setMat4("u_ViewProjection", viewProj);
+
+		prepareBuffers();
+	}
 	void Renderer2D::beginScene(const OrthoCamera& camera)
 	{
 		LG_PROFILE_FUNCTION();

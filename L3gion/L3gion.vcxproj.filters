@@ -19,6 +19,9 @@
     <Filter Include="src\L3gion\ImGui">
       <UniqueIdentifier>{12DBDFE3-FED3-FE35-2706-E4BA135EDE41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\L3gion\Maths">
+      <UniqueIdentifier>{546622E4-405F-4136-6991-26BB55E92042}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\L3gion\Renderer">
       <UniqueIdentifier>{8EC0E303-FA21-C111-838F-07C4EFEFF7D0}</UniqueIdentifier>
     </Filter>
@@ -120,6 +123,9 @@
     <ClInclude Include="src\L3gion\ImGui\ImGuiLayer.h">
       <Filter>src\L3gion\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\Maths\Math.h">
+      <Filter>src\L3gion\Maths</Filter>
+    </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\Buffer.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
@@ -129,7 +135,7 @@
     <ClInclude Include="src\L3gion\Renderer\CameraController.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Renderer\FrameBuffer.h">
+    <ClInclude Include="src\L3gion\Renderer\Framebuffer.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\GraphicsContext.h">
@@ -186,7 +192,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLFrameBuffer.h">
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
@@ -1461,7 +1467,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Maths\Math.h" />
+    <ClInclude Include="src\L3gion\Renderer\EditorCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Core\Application.cpp">
@@ -1482,6 +1488,9 @@
     <ClCompile Include="src\L3gion\ImGui\ImGuiLayer.cpp">
       <Filter>src\L3gion\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="src\L3gion\Maths\Math.cpp">
+      <Filter>src\L3gion\Maths</Filter>
+    </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\Buffer.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
@@ -1491,7 +1500,7 @@
     <ClCompile Include="src\L3gion\Renderer\CameraController.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\L3gion\Renderer\FrameBuffer.cpp">
+    <ClCompile Include="src\L3gion\Renderer\Framebuffer.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\GraphicsContext.cpp">
@@ -1539,7 +1548,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLFrameBuffer.cpp">
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">
@@ -1572,6 +1581,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\L3gion\Maths\Math.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\EditorCamera.cpp" />
   </ItemGroup>
 </Project>

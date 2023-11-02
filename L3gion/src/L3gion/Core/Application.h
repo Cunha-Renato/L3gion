@@ -45,7 +45,7 @@ namespace L3gion
 		bool onWindowResize(WindowResizeEvent& e);
 
 	private:
-		std::unique_ptr<Window> m_Window;
+		scope<Window> m_Window;
 		bool m_Running = false;
 		bool m_Minimized = false;
 		ImGuiLayer* m_ImGuiLayer;

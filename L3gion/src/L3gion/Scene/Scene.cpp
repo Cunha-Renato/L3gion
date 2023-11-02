@@ -32,20 +32,8 @@ namespace L3gion
 	{
 		m_Registry.destroy(entity);
 	}
-	
-	Entity Scene::getPrimaryCameraEntity()
-	{
-		auto view = m_Registry.view<CameraComponent>();
-		for (auto entity : view)
-		{
-			const auto& camera = view.get<CameraComponent>(entity);
-			if (camera.primary)
-				return Entity{ entity, this };
-		}
-		return {};
-	}
 
-	void Scene::onUptdate(Timestep ts)
+	void Scene::onUptdateRuntime(Timestep ts)
 	{
 		// Update Scripts
 		m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
@@ -98,6 +86,24 @@ namespace L3gion
 		}
 	}
 
+	void Scene::onUptdateEditor(Timestep ts, EditorCamera& editorCamera)
+	{
+		Renderer2D::beginScene(editorCamera);
+
+		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+
+		for (auto entity : group)
+		{
+			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+			m_QuadSpecs.transform = transform.getTransform();
+			m_QuadSpecs.color = sprite.color;
+			Renderer2D::drawQuad(m_QuadSpecs);
+		}
+
+		Renderer2D::endScene();
+	}
+
 	void Scene::onViewportResize(uint32_t width, uint32_t height)
 	{
 		m_ViewportWidth = width;
@@ -112,5 +118,17 @@ namespace L3gion
 			if (!camera.staticAspectRatio && camera.primary)
 				camera.camera.setViewportSize(width, height);
 		}
+	}
+	
+	Entity Scene::getPrimaryCameraEntity()
+	{
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			const auto& camera = view.get<CameraComponent>(entity);
+			if (camera.primary)
+				return Entity{ entity, this };
+		}
+		return {};
 	}
 }

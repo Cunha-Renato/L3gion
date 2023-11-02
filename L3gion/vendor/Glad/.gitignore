@@ -1,0 +1,13 @@
+# Directories
+.vs/
+bin/
+bin_int/
+bin
+CMake
+
+# Hazel files
+*.log
+
+# Files
+*.user
+*.obj

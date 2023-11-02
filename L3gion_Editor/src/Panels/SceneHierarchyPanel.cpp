@@ -220,7 +220,7 @@ namespace L3gion
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 		ImGui::PushItemWidth(-1);
-		if (ImGui::Button("New Component"))
+		if (ImGui::Button("Add +"))
 			ImGui::OpenPopup("NewComponent");
 
 		if (ImGui::BeginPopup("NewComponent"))

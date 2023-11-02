@@ -5,7 +5,7 @@
 
 namespace L3gion
 {
-	ref<FrameBuffer> FrameBuffer::create(const FrameBufferSpecs& specs)
+	ref<Framebuffer> Framebuffer::create(const FramebufferSpecs& specs)
 	{
 		switch (Renderer::getAPI())
 		{
@@ -14,7 +14,7 @@ namespace L3gion
 			LG_CORE_ASSERT(false, "In RendererAPI create(): RendererAPI::None is not supported!");
 			return nullptr;
 		}
-		case RendererAPI::API::OpenGL: return createScope<OpenGLFrameBuffer>(specs);
+		case RendererAPI::API::OpenGL: return createScope<OpenGLFramebuffer>(specs);
 		}
 
 		LG_CORE_ASSERT(false, "In RendererAPI create(): Unknown RendererAPI!");

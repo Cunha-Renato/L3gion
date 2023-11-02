@@ -5,6 +5,7 @@
 #include "L3gion/Scene/Scene.h"
 #include "L3gion/Scene/Entity.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "L3gion/Renderer/EditorCamera.h"
 
 namespace L3gion
 {
@@ -29,14 +30,16 @@ namespace L3gion
 		void openScene();
 		void saveSceneAs();
 
-		ref<FrameBuffer> m_FrameBuffer;
+		ref<Framebuffer> m_FrameBuffer;
 
-		ref<Scene> m_ActiveScene = nullptr;// Mainly the camera entity
+		ref<Scene> m_ActiveScene = nullptr;
+		EditorCamera m_EditorCamera;
 
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 
 		bool m_ViewPortFocused = false, m_ViewPortHovered = false;
 		glm::vec2 m_ViewPortSize = { 0, 0 };
+		glm::vec2 m_ViewportBounds[2];
 
 		int m_GizmoType = -1;
 

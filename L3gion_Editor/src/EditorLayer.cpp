@@ -23,15 +23,22 @@ namespace L3gion
 	{
 		LG_PROFILE_FUNCTION();
 
-		FrameBufferSpecs frameBufferSpecs;
+		FramebufferSpecs frameBufferSpecs;
+		frameBufferSpecs.attachments = { 
+			FramebufferTextureFormat::RGBA8,
+			FramebufferTextureFormat::RED_INTEGER,
+			FramebufferTextureFormat::Depth 
+		};
 		frameBufferSpecs.width = 1280;
 		frameBufferSpecs.height = 720;
-		m_FrameBuffer = FrameBuffer::create(frameBufferSpecs);
+		m_FrameBuffer = Framebuffer::create(frameBufferSpecs);
 
 		// Entity
 		m_ActiveScene = createRef<Scene>();
+		
+		m_EditorCamera = EditorCamera(30.0f, 16.0f/9.0f, 0.01f, 1000.0f);
+
 		m_SceneHierarchyPanel.setContext(m_ActiveScene);
-		SceneSerializer serializer(m_ActiveScene);
 	}
 
 	void EditorLayer::onDetach()
@@ -46,15 +53,18 @@ namespace L3gion
 		m_Timesep = ts.getMiliSeconds();
 
 		// Resize
-		if (L3gion::FrameBufferSpecs spec = m_FrameBuffer->getSpecification();
+		if (L3gion::FramebufferSpecs spec = m_FrameBuffer->getSpecification();
 			m_ViewPortSize.x > 0.0f && m_ViewPortSize.y > 0.0f) // zero sized framebuffer is invalid
 		{
 			if ((spec.width != m_ViewPortSize.x || spec.height != m_ViewPortSize.y))
 				m_FrameBuffer->resize((uint32_t)m_ViewPortSize.x, (uint32_t)m_ViewPortSize.y);
 			
+			m_EditorCamera.setViewportSize(m_ViewPortSize.x, m_ViewPortSize.y);
 			m_ActiveScene->onViewportResize((uint32_t)m_ViewPortSize.x, (uint32_t)m_ViewPortSize.y);
 		}
 
+		if (m_ViewPortFocused)
+			m_EditorCamera.onUpdate(ts);
 
 		// Render
 		Renderer2D::resetStats();
@@ -62,7 +72,23 @@ namespace L3gion
 		RenderCommand::setClearColor(glm::vec4(0.15f, 0.1f, 0.1f, 1.0f));
 		RenderCommand::clear();
 		
-		m_ActiveScene->onUptdate(ts);
+		// Update Scene
+		m_ActiveScene->onUptdateEditor(ts, m_EditorCamera);
+
+		auto [mx, my] = ImGui::GetMousePos();
+		mx -= m_ViewportBounds[0].x;
+		my -= m_ViewportBounds[0].y;
+		glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+		my = viewportSize.y - my;
+
+		int mouseX = (int)mx;
+		int mouseY = (int)my;
+
+		if (mouseX >= 0 && mouseY >= 0 && mouseX <= (int)viewportSize.x && (int)mouseY <= viewportSize.y)
+		{
+			int pixelData = m_FrameBuffer->readPixel(1, mouseX, mouseY);
+			LG_CORE_WARN("{0}", pixelData);		
+		}
 
 		m_FrameBuffer->unbind();
 	}
@@ -111,7 +137,7 @@ namespace L3gion
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuiStyle& style = ImGui::GetStyle();
 		float minWindowSizeX = style.WindowMinSize.x;
-		style.WindowMinSize.x = 370.0f;
+		style.WindowMinSize.x = 355.0f;
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
@@ -141,6 +167,8 @@ namespace L3gion
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::Begin("Viewport");
 		{
+			auto viewportOffset = ImGui::GetCursorPos();
+
 			m_ViewPortFocused = ImGui::IsWindowFocused();
 			m_ViewPortHovered = ImGui::IsWindowHovered();
 
@@ -149,8 +177,19 @@ namespace L3gion
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 			m_ViewPortSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-			uint32_t viewPort = m_FrameBuffer->getColorAttachmentRendererID();
+			uint32_t viewPort = m_FrameBuffer->getColorAttachmentRendererID(0);
 			ImGui::Image((void*)(uint64_t)viewPort, viewportPanelSize, ImVec2{ 0,1 }, ImVec2{ 1, 0 });
+
+
+			auto windowSize =  ImGui::GetWindowSize();
+			ImVec2 minBound = ImGui::GetWindowPos();
+			//minBound.x += viewportOffset.x;
+			//minBound.y += viewportOffset.y;
+
+			ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
+			m_ViewportBounds[0] = { minBound.x, minBound.y };
+			m_ViewportBounds[1] = { maxBound.x, maxBound.y };
+
 
 		}
 
@@ -165,11 +204,15 @@ namespace L3gion
 			float windowHeight = (float)ImGui::GetWindowHeight();
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
-			// Camera
-			auto cameraEntity = m_ActiveScene->getPrimaryCameraEntity();
-			const auto& camera = cameraEntity.getComponent<CameraComponent>().camera;
-			const glm::mat4& cameraProjection = camera.getProjection();
-			glm::mat4 cameraView = glm::inverse(cameraEntity.getComponent<TransformComponent>().getTransform());
+			// Camera runtime
+			//auto cameraEntity = m_ActiveScene->getPrimaryCameraEntity();
+			//const auto& camera = cameraEntity.getComponent<CameraComponent>().camera;
+			//const glm::mat4& cameraProjection = camera.getProjection();
+			//glm::mat4 cameraView = glm::inverse(cameraEntity.getComponent<TransformComponent>().getTransform());
+
+			// EditorCamera
+			const glm::mat4& cameraProjection = m_EditorCamera.getProjection();
+			glm::mat4 cameraView = m_EditorCamera.getViewMatrix();
 
 			// Snapping
 			bool snap = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL);
@@ -225,6 +268,7 @@ namespace L3gion
 
 	void EditorLayer::onEvent(Event& e)
 	{
+		m_EditorCamera.onEvent(e);
 		auto dispatcher = EventDispatcher(e);
 		dispatcher.dispatch<KeyPressedEvent>(BIND_EVENT_FN(EditorLayer::onKeyPressed));
 	}

@@ -3,6 +3,7 @@
 #include "L3gion/Renderer/Camera.h"
 #include "L3gion/Renderer/Texture.h"
 #include "L3gion/Renderer/SubTexture.h"
+#include "L3gion/Renderer/EditorCamera.h"
 
 namespace L3gion
 {
@@ -13,6 +14,7 @@ namespace L3gion
 		static void shutdown();
 
 		static void beginScene(const Camera& camera, const glm::mat4& transform);
+		static void beginScene(const EditorCamera& editorCamera);
 		static void beginScene(const OrthoCamera& camera);
 		static void endScene();
 		static void flush();

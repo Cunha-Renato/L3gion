@@ -2,6 +2,7 @@
 
 #include "L3gion/Core/Timestep.h"
 #include "L3gion/Renderer/Renderer2D.h"
+#include "L3gion/Renderer/EditorCamera.h"
 #include <entt.hpp>
 
 namespace L3gion
@@ -18,7 +19,8 @@ namespace L3gion
 
 		Entity getPrimaryCameraEntity();
 
-		void onUptdate(Timestep ts);
+		void onUptdateRuntime(Timestep ts);
+		void onUptdateEditor(Timestep ts, EditorCamera& editorCamera);
 		void onViewportResize(uint32_t width, uint32_t height);
 
 	private:
