@@ -3,9 +3,11 @@
 
 #include "L3gion/Renderer/VertexArray.h"
 #include "L3gion/Renderer/Shader.h"
+#include "L3gion/Renderer/UniformBuffer.h"
 #include "L3gion/Renderer/RenderCommand.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace L3gion
 {
@@ -44,6 +46,13 @@ namespace L3gion
 
 		Renderer2D::Statistics stats;
 
+		struct CameraData
+		{
+			glm::mat4 viewProjection;
+		};
+		CameraData cameraBuffer;
+		ref<UniformBuffer> cameraUniformBuffer;
+
 		~Renderer2DData()
 		{
 			if(quadVertexBufferBase)
@@ -56,9 +65,6 @@ namespace L3gion
 	void Renderer2D::init()
 	{
 		LG_PROFILE_FUNCTION();
-
-		s_Data.textureShader = Shader::create("assets/shaders/Texture.glsl");
-		s_Data.textureShader->bind();
 
 		s_Data.quadVertexArray = VertexArray::create();
 		s_Data.quadVertexBuffer = VertexBuffer::create(s_Data.maxVertices * sizeof(QuadVertex));
@@ -93,6 +99,7 @@ namespace L3gion
 
 		auto quadIB = IndexBuffer::create(quadIndices, s_Data.maxIndices);
 		s_Data.quadVertexArray->setIndexBuffer(quadIB);
+		delete[] quadIndices;
 
 		s_Data.whiteTexture = Texture2D::create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
@@ -102,7 +109,7 @@ namespace L3gion
 		for (uint32_t i = 0; i < s_Data.maxtextureSlots; i++)
 			samplers[i] = i;
 
-		s_Data.textureShader->setIntArray("u_Textures", samplers, s_Data.maxtextureSlots);
+		s_Data.textureShader = Shader::create("assets/shaders/Texture.glsl");
 
 		s_Data.textureSlots[0] = s_Data.whiteTexture;
 
@@ -110,6 +117,8 @@ namespace L3gion
 		s_Data.quadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.quadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
 		s_Data.quadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
+
+		s_Data.cameraUniformBuffer = UniformBuffer::create(sizeof(Renderer2DData::CameraData), 0);
 	}
 	void Renderer2D::shutdown()
 	{
@@ -131,8 +140,8 @@ namespace L3gion
 		glm::mat4 viewProj = camera.getProjection();
 		viewProj *= glm::inverse(transform);
 
-		s_Data.textureShader->bind();
-		s_Data.textureShader->setMat4("u_ViewProjection", viewProj);
+		s_Data.cameraBuffer.viewProjection = camera.getProjection() * glm::inverse(transform);
+		s_Data.cameraUniformBuffer->setData(&s_Data.cameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		prepareBuffers();
 	}
@@ -140,29 +149,15 @@ namespace L3gion
 	{
 		LG_PROFILE_FUNCTION();
 
-		glm::mat4 viewProj = editorCamera.getViewProjection();
-
-		s_Data.textureShader->bind();
-		s_Data.textureShader->setMat4("u_ViewProjection", viewProj);
+		s_Data.cameraBuffer.viewProjection = editorCamera.getViewProjection();
+		s_Data.cameraUniformBuffer->setData(&s_Data.cameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		prepareBuffers();
 	}
-	void Renderer2D::beginScene(const OrthoCamera& camera)
-	{
-		LG_PROFILE_FUNCTION();
 
-		s_Data.textureShader->bind();
-		s_Data.textureShader->setMat4("u_ViewProjection", camera.getViewProjectionMatrix());
-
-		prepareBuffers();
-	}
-	
 	void Renderer2D::endScene()
 	{
 		LG_PROFILE_FUNCTION();
-
-		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.quadVertexBufferPtr - (uint8_t*)s_Data.quadVertexBufferBase);
-		s_Data.quadVertexBuffer->setData(s_Data.quadVertexBufferBase, dataSize);
 
 		flush();
 	}
@@ -179,6 +174,7 @@ namespace L3gion
 		for (uint32_t i = 0; i < s_Data.textureSlotIndex; i++)
 			s_Data.textureSlots[i]->bind(i);
 
+		s_Data.textureShader->bind();
 		RenderCommand::drawIndexed(s_Data.quadVertexArray, s_Data.quadIndexCount);
 
 		s_Data.stats.drawCalls++;
@@ -194,21 +190,15 @@ namespace L3gion
 	{
 		LG_PROFILE_FUNCTION();
 
-		{
-			LG_PROFILE_SCOPE("Initial IFs");
-			if (s_Data.quadIndexCount >= Renderer2DData::maxIndices)
-				flushAndReset();
+		if (s_Data.quadIndexCount >= Renderer2DData::maxIndices)
+			flushAndReset();
 
-			if (s_Data.textureSlotIndex >= Renderer2DData::maxtextureSlots)
-				flushAndReset();
-		}
-
-		uint32_t textureIndex = 0;
-		glm::vec2 texCoords[4];
-		texCoords[0] = { 0.0f, 0.0f, };
-		texCoords[1] = { 1.0f, 0.0f, };
-		texCoords[2] = { 1.0f, 1.0f, };
-		texCoords[3] = { 0.0f, 1.0f, };
+		int textureIndex = 0;
+		glm::vec2 texCoords[4] = {
+			{ 0.0f, 0.0f, },
+			{ 1.0f, 0.0f, },
+			{ 1.0f, 1.0f, },
+			{ 0.0f, 1.0f, }};
 		{
 			LG_PROFILE_SCOPE("Texture IFs");
 
@@ -225,6 +215,9 @@ namespace L3gion
 
 				if (textureIndex == 0)
 				{
+					if (s_Data.textureSlotIndex >= Renderer2DData::maxtextureSlots)
+						flushAndReset();
+
 					textureIndex = s_Data.textureSlotIndex;
 					s_Data.textureSlots[s_Data.textureSlotIndex] = specs.subTexture->getTexture();
 					s_Data.textureSlotIndex++;

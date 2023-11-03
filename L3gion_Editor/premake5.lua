@@ -2,7 +2,7 @@ project "L3gion_Editor"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++20"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin_int/" .. outputdir .. "/%{prj.name}")
@@ -20,6 +20,7 @@ project "L3gion_Editor"
 		"%{wks.location}/L3gion/vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.EnTT}",
+		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}"
 	}
 

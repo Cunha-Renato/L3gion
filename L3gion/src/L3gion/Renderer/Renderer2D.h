@@ -15,7 +15,6 @@ namespace L3gion
 
 		static void beginScene(const Camera& camera, const glm::mat4& transform);
 		static void beginScene(const EditorCamera& editorCamera);
-		static void beginScene(const OrthoCamera& camera);
 		static void endScene();
 		static void flush();
 

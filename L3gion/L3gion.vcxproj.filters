@@ -99,6 +99,9 @@
     <ClInclude Include="src\L3gion\Core\MouseButtonCodes.h">
       <Filter>src\L3gion\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\Core\Timer.h">
+      <Filter>src\L3gion\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\L3gion\Core\Timestep.h">
       <Filter>src\L3gion\Core</Filter>
     </ClInclude>
@@ -165,6 +168,9 @@
     <ClInclude Include="src\L3gion\Renderer\Texture.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\Renderer\UniformBuffer.h">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\VertexArray.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
@@ -205,6 +211,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
@@ -1532,6 +1541,9 @@
     <ClCompile Include="src\L3gion\Renderer\Texture.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\L3gion\Renderer\UniformBuffer.cpp">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\VertexArray.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
@@ -1563,6 +1575,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">

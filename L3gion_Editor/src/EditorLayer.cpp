@@ -35,6 +35,14 @@ namespace L3gion
 
 		// Entity
 		m_ActiveScene = createRef<Scene>();
+
+		auto commandLineArgs = Application::get().getCommandLineArgs();
+		if (commandLineArgs.count > 1)
+		{
+			auto sceneFilePath = commandLineArgs[1];
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.deserialize(sceneFilePath);
+		}
 		
 		m_EditorCamera = EditorCamera(30.0f, 16.0f/9.0f, 0.01f, 1000.0f);
 

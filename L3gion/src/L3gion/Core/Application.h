@@ -20,10 +20,22 @@ int main(int argc, char** argv);
 
 namespace L3gion
 {
+	struct ApplicationCommandLineArgs
+	{
+		int count = 0;
+		char** args = nullptr;
+
+		const char* operator[](int index) const
+		{
+			LG_CORE_ASSERT(index < count, " ");
+			return args[index];
+		}
+	};
+
 	class Application
 	{
 	public:
-		Application(const std::string& name = "L3gion App");
+		Application(const std::string& name = "L3gion App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
 		virtual ~Application();
 
 		inline void close() { m_Running = false; }
@@ -39,12 +51,15 @@ namespace L3gion
 		inline Window& getWindow() { return *m_Window; }
 		inline static Application& get() { return *s_Instance; }
 
+		ApplicationCommandLineArgs getCommandLineArgs() const { return m_CommandLineArgs; }
+
 	private:
 		void run();
 		bool onWindowClose(WindowCloseEvent& e);
 		bool onWindowResize(WindowResizeEvent& e);
 
 	private:
+		ApplicationCommandLineArgs m_CommandLineArgs;
 		scope<Window> m_Window;
 		bool m_Running = false;
 		bool m_Minimized = false;
@@ -58,5 +73,5 @@ namespace L3gion
 	};
 
 	// To be defined in CLIENT
-	Application* createApplication();
+	Application* createApplication(ApplicationCommandLineArgs args);
 }

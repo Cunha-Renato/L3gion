@@ -39,17 +39,24 @@ namespace L3gion
 		void uploadUniformMat3(const std::string& name, glm::mat3 matrix);
 		void uploadUniformMat4(const std::string& name, glm::mat4 matrix);
 	
-	public:
-		uint32_t m_ShaderID;
-
 	private:
 		std::string readFile(const std::string& filePath);
 		std::unordered_map<GLenum, std::string> preProcess(const std::string& source);
-		void compile(const std::unordered_map<GLenum, std::string>& shaderSrcs);
+		void compileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSrcs);
+		void compileOrGetOpenGLBinaries();
+		void createProgram();
+		void reflect(GLenum stage, const std::vector<uint32_t>& shaderData);
 		int getUniformLocation(const std::string& name) const;
 	
 	private:
+		uint32_t m_ShaderID;
 		std::string m_Name;
-		mutable std::unordered_map<std::string, int> m_UniformLocationCache;
+		std::string m_Filepath;
+
+		std::unordered_map<GLenum, std::vector<uint32_t>> m_VulkanSPIRV;
+		std::unordered_map<GLenum, std::vector<uint32_t>> m_OpenGLSPIRV;
+		mutable std::unordered_map<std::string, GLenum> m_UniformLocationCache;
+
+		std::unordered_map<GLenum, std::string> m_OpenGLSourceCode;
 	};
 }

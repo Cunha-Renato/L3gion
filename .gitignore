@@ -1,4 +1,7 @@
 # Directories
+L3gion/vendor/VulkanSDK
+L3gion_Editor/assets/cache
+scripts/__pycache__
 .vs/
 bin/
 bin_int/

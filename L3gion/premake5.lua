@@ -2,7 +2,7 @@ project "L3gion"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++20"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin_int/" .. outputdir .. "/%{prj.name}")
@@ -40,7 +40,8 @@ project "L3gion"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.EnTT}",
 		"%{IncludeDir.yaml_cpp}",
-		"%{IncludeDir.ImGuizmo}"
+		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.VulkanSDK}"
 	}
 
 	links
@@ -68,12 +69,33 @@ project "L3gion"
 		runtime "Debug"
 		symbols "on"
 
+		links
+		{
+			"%{Library.ShaderC_Debug}",
+			"%{Library.SPIRV_Cross_Debug}",
+			"%{Library.SPIRV_Cross_GLSL_Debug}"
+		}
+
 	filter "configurations:Release"
 		defines "LG_RELEASE"
 		runtime "Release"
 		optimize "on"
 
+		links
+		{
+			"%{Library.ShaderC_Release}",
+			"%{Library.SPIRV_Cross_Release}",
+			"%{Library.SPIRV_Cross_GLSL_Release}"
+		}
+
 	filter "configurations:Dist"
 		defines "LG_DIST"
 		runtime "Release"
 		optimize "on"
+
+		links
+		{
+			"%{Library.ShaderC_Release}",
+			"%{Library.SPIRV_Cross_Release}",
+			"%{Library.SPIRV_Cross_GLSL_Release}"
+		}
