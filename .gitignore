@@ -1,12 +1,9 @@
 # Directories
-L3gion/vendor/VulkanSDK/Bin
-L3gion/vendor/VulkanSDK/Bin32
-L3gion/vendor/VulkanSDK/Lib
-L3gion/vendor/VulkanSDK/Lib32
-L3gion/vendor/VulkanSDK/VulkanSDK.exe
-L3gion_Editor/assets/cache
+L3gion/vendor/VulkanSDK
+L3gion_Editor/resources/cache
 scripts/__pycache__
 .vs/
+.vscode/
 bin/
 bin_int/
 bin

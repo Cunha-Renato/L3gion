@@ -1,10 +1,40 @@
 #include "lgpch.h"
 #include "ContentBrowserPanel.h"
 
+#include "L3gion/Core/Input.h"
+
 #include <ImGui/imgui.h>
 
 namespace L3gion
 {
+	static void drawTree(DirectoryTree& tree, std::filesystem::path& currentPath, std::filesystem::path& selected)
+	{
+		auto& selectedDir = tree[currentPath];
+		ImGuiTreeNodeFlags flags;
+
+		for (auto& dir : selectedDir.childs)
+		{
+			if (dir.isDir)
+				flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Selected;
+			else
+				flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+			if (ImGui::TreeNodeEx(dir.filenameStr.c_str(), flags, dir.filenameStr.c_str()))
+			{
+				drawTree(tree, dir.path, selected);
+				ImGui::TreePop();
+			}
+
+			if (Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL) && Input::isMouseButtonPressed(LG_MOUSE_BUTTON_LEFT) && ImGui::IsItemHovered())
+			{
+				if (dir.isDir)
+					selected = dir.path;
+				else
+					selected = dir.parent->path;
+			}
+		}
+	}
+
 	ContentBrowserPanel::ContentBrowserPanel()
 	{	
 		m_FolderIcon = SubTexture2D::create("resources/icons/ContentBrowserPanel/FolderIcon.png");
@@ -15,12 +45,15 @@ namespace L3gion
 		m_RootDir.filenameStr = "assets";
 
 		m_CurrentDirPath = m_RootDir.path;
+		m_SelectedDirPath = m_RootDir.path;
+
 		refresh();
 	}
 
 	void ContentBrowserPanel::onImGuiRender()
 	{
 		ImGui::Begin("Content Browser");
+		ImGui::ShowDemoWindow();
 
 		if (ImGui::BeginTable("ContentBrowserFilesistem", 2, ImGuiTableFlags_ScrollY | ImGuiTableFlags_BordersInnerV))
 		{
@@ -30,8 +63,14 @@ namespace L3gion
 				300.0f);
 
 			// Filesystem
+			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
-
+			if (ImGui::BeginTable("fileBrowser", 1, ImGuiTableFlags_ScrollY))
+			{
+				ImGui::TableNextColumn();
+				drawTree(tree, m_RootDir.path, m_CurrentDirPath);
+				ImGui::EndTable();
+			}
 
 			// ContentBrowser
 			ImGui::TableNextColumn();
@@ -40,8 +79,13 @@ namespace L3gion
 				ImGui::Button("<--");
 				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 					m_CurrentDirPath = tree[m_CurrentDirPath].parent->path;
+
+				ImGui::SameLine();
+				ImGui::Button("Root");
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+					m_CurrentDirPath = m_RootDir.path;
+				ImGui::SameLine();
 			}
-			ImGui::SameLine();
 			if (ImGui::Button("Refresh"))
 				m_SetRefresh = true;
 

@@ -17,6 +17,7 @@ namespace L3gion
 		bool m_SetRefresh = false;
 		
 		std::filesystem::path m_CurrentDirPath;
+		std::filesystem::path m_SelectedDirPath;
 
 		Directory m_RootDir;
 		DirectoryTree tree;

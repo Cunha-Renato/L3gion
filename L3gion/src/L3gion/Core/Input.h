@@ -2,6 +2,7 @@
 
 #include "L3gion/Core/Core.h"
 #include "L3gion/Core/KeyCodes.h"
+#include "L3gion/Core/MouseButtonCodes.h"
 #include <glm/glm.hpp>
 
 namespace L3gion
