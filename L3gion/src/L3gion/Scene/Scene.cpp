@@ -79,6 +79,8 @@ namespace L3gion
 
 				m_QuadSpecs.transform = transform.getTransform();
 				m_QuadSpecs.color = sprite.color;
+				m_QuadSpecs.tiling = sprite.tilingFactor;
+				m_QuadSpecs.subTexture = sprite.texture;
 				Renderer2D::drawQuad(m_QuadSpecs);
 			}
 
@@ -99,6 +101,8 @@ namespace L3gion
 			m_QuadSpecs.transform = transform.getTransform();
 			m_QuadSpecs.color = sprite.color;
 			m_QuadSpecs.id = (int)entity;
+			m_QuadSpecs.tiling = sprite.tilingFactor;
+			m_QuadSpecs.subTexture = sprite.texture;
 			Renderer2D::drawQuad(m_QuadSpecs);
 		}
 

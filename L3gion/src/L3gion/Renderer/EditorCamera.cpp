@@ -68,6 +68,7 @@ namespace L3gion
 			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 			m_InitialMousePosition = mouse;
 
+			
 			if (Input::isMouseButtonPressed(LG_MOUSE_BUTTON_RIGHT))
 				mousePan(delta);
 			else if (Input::isMouseButtonPressed(LG_MOUSE_BUTTON_LEFT))

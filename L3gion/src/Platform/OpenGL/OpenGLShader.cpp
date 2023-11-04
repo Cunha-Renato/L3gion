@@ -52,7 +52,7 @@ namespace L3gion
 
 		static const char* getCacheDirectory()
 		{
-			return "assets/cache/shader/opengl";
+			return "resources/cache/shader/opengl";
 		}
 
 		static void createCacheDirectoryIfNeeded()

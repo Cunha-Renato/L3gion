@@ -109,7 +109,7 @@ namespace L3gion
 		for (uint32_t i = 0; i < s_Data.maxtextureSlots; i++)
 			samplers[i] = i;
 
-		s_Data.textureShader = Shader::create("assets/shaders/Texture.glsl");
+		s_Data.textureShader = Shader::create("resources/shaders/Texture.glsl");
 
 		s_Data.textureSlots[0] = s_Data.whiteTexture;
 

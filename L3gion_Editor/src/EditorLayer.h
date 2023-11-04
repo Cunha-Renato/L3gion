@@ -4,8 +4,9 @@
 #include "L3gion/Renderer/Texture.h"
 #include "L3gion/Scene/Scene.h"
 #include "L3gion/Scene/Entity.h"
-#include "Panels/SceneHierarchyPanel.h"
 #include "L3gion/Renderer/EditorCamera.h"
+#include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 
 namespace L3gion
 {
@@ -36,8 +37,6 @@ namespace L3gion
 		ref<Scene> m_ActiveScene = nullptr;
 		EditorCamera m_EditorCamera;
 
-		SceneHierarchyPanel m_SceneHierarchyPanel;
-
 		bool m_ViewPortFocused = false, m_ViewPortHovered = false;
 		glm::vec2 m_ViewPortSize = { 0, 0 };
 		glm::vec2 m_ViewportBounds[2];
@@ -45,6 +44,9 @@ namespace L3gion
 		int m_GizmoType = -1;
 
 		double m_Timesep = 0;
+
+		SceneHierarchyPanel m_SceneHierarchyPanel;
+		ContentBrowserPanel m_ContentBrowserPanel;
 	};
 
 }

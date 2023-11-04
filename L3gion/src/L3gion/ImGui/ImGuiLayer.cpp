@@ -38,8 +38,8 @@ namespace L3gion
 		//io.ConfigFlags |= ImGuiViewportFlags_NoTaskBarIcon;
 		//io.ConfigFlags |= ImGuiViewportFlags_NoAutoMerge;
 
-		io.Fonts->AddFontFromFileTTF("assets/fonts/Roboto/Roboto-Bold.ttf", 17.0f);
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/Roboto/Roboto-Regular.ttf", 17.0f);
+		io.Fonts->AddFontFromFileTTF("resources/fonts/Roboto/Roboto-Bold.ttf", 17.0f);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("resources/fonts/Roboto/Roboto-Regular.ttf", 17.0f);
 
 		// Setup Imgui style
 		ImGui::StyleColorsDark();

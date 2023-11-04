@@ -45,6 +45,8 @@ namespace L3gion
 	struct SpriteRendererComponent
 	{
 		glm::vec4 color{1.0f};
+		ref<SubTexture2D> texture = nullptr;
+		uint32_t tilingFactor = 1;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;

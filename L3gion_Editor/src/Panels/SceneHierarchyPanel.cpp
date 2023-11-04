@@ -23,7 +23,7 @@ namespace L3gion
 
 	void SceneHierarchyPanel::onImGuiRender()
 	{
-		ImGui::Begin("Scene Hierarchy");
+		ImGui::Begin("Scene Hierarchy", nullptr, ImGuiWindowFlags_NoNav);
 
 		// Only on empty spaces
 		if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
@@ -38,7 +38,6 @@ namespace L3gion
 		{
 			Entity entity{ entityID, m_Context.get()};
 			drawEntityNode(entity);
-			ImGui::Separator();
 		}
 
 		ImGui::End();

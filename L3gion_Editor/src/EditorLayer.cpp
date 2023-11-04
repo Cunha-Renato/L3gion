@@ -71,7 +71,7 @@ namespace L3gion
 			m_ActiveScene->onViewportResize((uint32_t)m_ViewPortSize.x, (uint32_t)m_ViewPortSize.y);
 		}
 
-		if (m_ViewPortFocused)
+		if (m_ViewPortHovered)
 			m_EditorCamera.onUpdate(ts);
 
 		// Render
@@ -158,10 +158,11 @@ namespace L3gion
 		}
 
 		m_SceneHierarchyPanel.onImGuiRender();
+		m_ContentBrowserPanel.onImGuiRender();
 
 //-------------------------------VIEWPORT--------------------------
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		ImGui::Begin("Viewport");
+		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoNav);
 		{
 			auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 			auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
