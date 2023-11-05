@@ -16,3 +16,6 @@
 [submodule "L3gion/vendor/ImGuizmo"]
 	path = L3gion/vendor/ImGuizmo
 	url = https://github.com/Cunha-Renato/ImGuizmo
+[submodule "L3gion/vendor/box2d"]
+	path = L3gion/vendor/box2d
+	url = https://github.com/Cunha-Renato/box2d

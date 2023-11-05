@@ -7,9 +7,10 @@ namespace L3gion
 	struct Directory
 	{
 		std::filesystem::path path;
+		std::string pathStr;
 		Directory* parent = nullptr;
 		std::filesystem::path relativePath;
-		std::string filenameStr;
+		std::string relativePathStr;
 		bool isDir = false;
 		std::vector<Directory> childs;
 	};
@@ -65,8 +66,9 @@ namespace L3gion
 				auto dir = &target[target.size() - 1];
 
 				dir->path = path;
+				dir->pathStr = path.string();
 				dir->relativePath = relativePath;
-				dir->filenameStr = filenameStr;
+				dir->relativePathStr = filenameStr;
 				dir->isDir = directoryEntry.is_directory();
 				dir->parent = relativeTo;
 				

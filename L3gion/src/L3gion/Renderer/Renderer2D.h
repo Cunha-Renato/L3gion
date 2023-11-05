@@ -26,6 +26,8 @@ namespace L3gion
 			int id = -1; // Editor Only
 			ref<SubTexture2D> subTexture = nullptr;
 			float tiling = 1.0f;
+
+			float distanceFromCamera = 0.0f;
 		};
 
 		static void drawQuad(const QuadSpecs& specs);
@@ -44,5 +46,6 @@ namespace L3gion
 
 	private:
 		static void flushAndReset();
+		static void fillBuffer();
 	};
 }

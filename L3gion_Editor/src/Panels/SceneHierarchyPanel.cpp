@@ -326,6 +326,20 @@ namespace L3gion
 		drawComponent<SpriteRendererComponent>(entity, "Sprite Renderer", [](auto& component)
 		{
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
+
+			ImGui::Button("Texture", {100, 0});
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					std::string path = *(std::string*)payload->Data;
+					component.texture = SubTexture2D::create(path);
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::SliderInt("Tiling Factor", (int*)&component.tilingFactor, 1, 100);
 		});
 	}
 }

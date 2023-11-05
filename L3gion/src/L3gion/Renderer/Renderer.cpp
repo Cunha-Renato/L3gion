@@ -32,14 +32,13 @@ namespace L3gion
 		RenderCommand::setViewPort(0, 0, width, height);
 	}
 
-
 	void Renderer::beginScene(OrthoCamera& camera)
 	{
 		m_SceneData->viewProjectionMatrix = camera.getViewProjectionMatrix();
 	}
 	void Renderer::endScene()
 	{
-
+		
 	}
 
 	void Renderer::submit(const ref<Shader>& shader, const ref<VertexArray>& vertexArray, const glm::mat4& transform)

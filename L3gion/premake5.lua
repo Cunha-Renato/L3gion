@@ -41,7 +41,8 @@ project "L3gion"
 		"%{IncludeDir.EnTT}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.VulkanSDK}"
+		"%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.box2d}"
 	}
 
 	links
@@ -50,7 +51,8 @@ project "L3gion"
 		"Glad",
 		"ImGui",
 		"opengl32.lib",
-		"yaml_cpp"
+		"yaml_cpp",
+		"box2d"
 	}
 
 	filter "files:vendor/ImGuizmo/**.cpp"

@@ -23,6 +23,9 @@ namespace L3gion
 	{
 		LG_PROFILE_FUNCTION();
 
+		m_PlayIcon = SubTexture2D::create("resources/icons/PlayButtonIcon.png");
+		m_StopIcon = SubTexture2D::create("resources/icons/StopButtonIcon.png");
+
 		FramebufferSpecs frameBufferSpecs;
 		frameBufferSpecs.attachments = { 
 			FramebufferTextureFormat::RGBA8,
@@ -71,9 +74,6 @@ namespace L3gion
 			m_ActiveScene->onViewportResize((uint32_t)m_ViewPortSize.x, (uint32_t)m_ViewPortSize.y);
 		}
 
-		if (m_ViewPortHovered)
-			m_EditorCamera.onUpdate(ts);
-
 		// Render
 		Renderer2D::resetStats();
 		m_FrameBuffer->bind();
@@ -84,7 +84,23 @@ namespace L3gion
 		m_FrameBuffer->clearTexColor(1, -1);
 		
 		// Update Scene
-		m_ActiveScene->onUptdateEditor(ts, m_EditorCamera);
+
+		switch (m_SceneState)
+		{
+			case L3gion::EditorLayer::SceneState::Edit:
+			{	
+				m_EditorCamera.onUpdate(ts);
+				m_ActiveScene->onUptdateEditor(ts, m_EditorCamera);
+
+				break;
+			}
+			case L3gion::EditorLayer::SceneState::Play:
+			{
+				m_ActiveScene->onUptdateRuntime(ts);
+
+				break;
+			}
+		}
 
 		m_FrameBuffer->unbind();
 	}
@@ -141,26 +157,27 @@ namespace L3gion
 		}
 		style.WindowMinSize.x = minWindowSizeX;
 
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::MenuItem("New", "CTRL+N"))
-					newScene();
-				if (ImGui::MenuItem("Open...", "CTRL+O"))
-					openScene();
-				if (ImGui::MenuItem("Save as...", "CTRL+SHIFT+S"))
-					saveSceneAs();
-				if (ImGui::MenuItem("Exit")) Application::get().close();
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenuBar();
-		}
+// End of ImGui dockspace code -------------------------------------------------------
 
 		m_SceneHierarchyPanel.onImGuiRender();
 		m_ContentBrowserPanel.onImGuiRender();
 
-//-------------------------------VIEWPORT--------------------------
+		UI_Viewport([&]()
+		{
+			if (m_SceneState == SceneState::Edit)
+				UI_Gizmos();
+		});
+
+		UI_Settings();
+		UI_Toolbar();
+		UI_Header();
+
+		ImGui::End();
+	}
+
+	template<typename Func>
+	void EditorLayer::UI_Viewport(Func func)
+	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoNav);
 		{
@@ -180,9 +197,27 @@ namespace L3gion
 
 			uint32_t viewPort = m_FrameBuffer->getColorAttachmentRendererID(0);
 			ImGui::Image((void*)(uint64_t)viewPort, viewportPanelSize, ImVec2{ 0,1 }, ImVec2{ 1, 0 });
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					std::string path = *(std::string*)payload->Data;
+					openScene(path);
+				}
+
+				ImGui::EndDragDropTarget();
+			}
 		}
 
-		// Gizmos
+		func();
+
+		ImGui::End();
+		ImGui::PopStyleVar();
+	}
+
+	void EditorLayer::UI_Gizmos()
+	{
 		Entity selectedEntity = m_SceneHierarchyPanel.getSelectedEntity();
 		if (selectedEntity && m_GizmoType != -1)
 		{
@@ -190,12 +225,6 @@ namespace L3gion
 			ImGuizmo::SetDrawlist();
 
 			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
-
-			// Camera runtime
-			//auto cameraEntity = m_ActiveScene->getPrimaryCameraEntity();
-			//const auto& camera = cameraEntity.getComponent<CameraComponent>().camera;
-			//const glm::mat4& cameraProjection = camera.getProjection();
-			//glm::mat4 cameraView = glm::inverse(cameraEntity.getComponent<TransformComponent>().getTransform());
 
 			// EditorCamera
 			const glm::mat4& cameraProjection = m_EditorCamera.getProjection();
@@ -214,17 +243,17 @@ namespace L3gion
 			glm::mat4 transform = tc.getTransform();
 
 			ImGuizmo::Manipulate(
-				glm::value_ptr(cameraView), 
+				glm::value_ptr(cameraView),
 				glm::value_ptr(cameraProjection),
 				(ImGuizmo::OPERATION)m_GizmoType,
-				ImGuizmo::LOCAL, 
+				ImGuizmo::LOCAL,
 				glm::value_ptr(transform),
 				nullptr,
 				snap ? snapValues : nullptr);
 
 			if (ImGuizmo::IsUsing() && !Input::isKeyPressed(LgKeys::LG_KEY_LEFT_ALT))
 			{
-				glm::vec3 translation{0.0f}, rotation{0.0f}, scale{1.0f};
+				glm::vec3 translation{ 0.0f }, rotation{ 0.0f }, scale{ 1.0f };
 				Math::decomposeTransform(transform, translation, rotation, scale);
 
 				glm::vec3 deltaRotation = rotation - tc.rotation;
@@ -233,11 +262,9 @@ namespace L3gion
 				tc.scale = scale;
 			}
 		}
-
-		ImGui::End();
-		ImGui::PopStyleVar();
-//--------------------------------------------------------------------
-		
+	}
+	void EditorLayer::UI_Settings()
+	{
 		ImGui::Begin("Settings: ");
 		ImGui::Text("Timestep: %.2fms \n%d fps", m_Timesep, (int)(1000 / m_Timesep));
 		ImGui::Text("Profiling: %d", LG_PROFILE_IS_ACTIVE());
@@ -249,8 +276,48 @@ namespace L3gion
 		ImGui::Text("Index Count: %d", Renderer2D::getStats().getTotalIndexCount());
 		ImGui::Separator();
 		ImGui::End();
+	}
+	void EditorLayer::UI_Toolbar()
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 2 });
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, { 0, 0 });
+		ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
 
+		ImGui::Begin("##Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+		float size = ImGui::GetWindowHeight() - 4.0f;
+		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+		ref<SubTexture2D> icon = m_SceneState == SceneState::Edit ? m_PlayIcon : m_StopIcon;
+
+		if (ImGui::ImageButton((ImTextureID)icon->getTexture()->getRendererID(), {size, size}, {0,0}, {1, 1}, 0))
+		{
+			if (m_SceneState == SceneState::Edit)
+				onScenePlay();
+			else if (m_SceneState == SceneState::Play)
+				onSceneStop();
+		}
+
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor();
 		ImGui::End();
+	}
+	void EditorLayer::UI_Header()
+	{
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("New", "CTRL+N"))
+					newScene();
+				if (ImGui::MenuItem("Open...", "CTRL+O"))
+					openScene();
+				if (ImGui::MenuItem("Save as...", "CTRL+SHIFT+S"))
+					saveSceneAs();
+				if (ImGui::MenuItem("Exit")) Application::get().close();
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
 	}
 
 	void EditorLayer::onEvent(Event& e)
@@ -262,28 +329,31 @@ namespace L3gion
 	}
 	bool EditorLayer::onMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
-		bool control = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_CONTROL);
-		bool alt = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_ALT) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_ALT);
-		if (e.getMouseButton() == LG_MOUSE_BUTTON_LEFT && !control && !alt)
+		if (m_SceneState == SceneState::Edit)
 		{
-			auto [mx, my] = ImGui::GetMousePos();
-			mx -= m_ViewportBounds[0].x;
-			my -= m_ViewportBounds[0].y;
-			glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-			my = viewportSize.y - my;
-
-			int mouseX = (int)mx;
-			int mouseY = (int)my;
-
-			if (mouseX >= 0 && mouseY >= 0 && mouseX <= (int)viewportSize.x && (int)mouseY <= viewportSize.y && !ImGuizmo::IsOver())
+			bool control = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_CONTROL);
+			bool alt = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_ALT) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_ALT);
+			if (e.getMouseButton() == LG_MOUSE_BUTTON_LEFT && !control && !alt)
 			{
-				m_FrameBuffer->bind();
-				int pixelData = m_FrameBuffer->readPixel(1, mouseX, mouseY);
-				
-				if (pixelData > -1)
-					m_SceneHierarchyPanel.setSelectedEntity({(entt::entity)pixelData, m_ActiveScene.get()});
+				auto [mx, my] = ImGui::GetMousePos();
+				mx -= m_ViewportBounds[0].x;
+				my -= m_ViewportBounds[0].y;
+				glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+				my = viewportSize.y - my;
 
-				m_FrameBuffer->unbind();
+				int mouseX = (int)mx;
+				int mouseY = (int)my;
+
+				if (mouseX >= 0 && mouseY >= 0 && mouseX <= (int)viewportSize.x && (int)mouseY <= viewportSize.y && !ImGuizmo::IsOver())
+				{
+					m_FrameBuffer->bind();
+					int pixelData = m_FrameBuffer->readPixel(1, mouseX, mouseY);
+
+					if (pixelData > -1)
+						m_SceneHierarchyPanel.setSelectedEntity({ (entt::entity)pixelData, m_ActiveScene.get() });
+
+					m_FrameBuffer->unbind();
+				}
 			}
 		}
 
@@ -367,14 +437,17 @@ namespace L3gion
 	{
 		std::string filepath = FileDialogs::openFile("L3gion Scene (*.lg)\0*.lg\0");
 		if (!filepath.empty())
-		{
-			m_ActiveScene = createRef<Scene>();
-			m_SceneHierarchyPanel.setContext(m_ActiveScene);
-
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.deserialize(filepath);
-		}
+			openScene(filepath);
 	}
+	void EditorLayer::openScene(const std::string& path)
+	{
+		m_ActiveScene = createRef<Scene>();
+		m_SceneHierarchyPanel.setContext(m_ActiveScene);
+
+		SceneSerializer serializer(m_ActiveScene);
+		serializer.deserialize(path);
+	}
+	
 	void EditorLayer::saveSceneAs()
 	{
 		std::string filepath = FileDialogs::saveFile("L3gion Scene (*.lg)\0*.lg\0");
@@ -383,5 +456,14 @@ namespace L3gion
 			SceneSerializer serializer(m_ActiveScene);
 			serializer.serialize(filepath);
 		}
+	}
+
+	void EditorLayer::onScenePlay()
+	{
+		m_SceneState = SceneState::Play;
+	}
+	void EditorLayer::onSceneStop()
+	{
+		m_SceneState = SceneState::Edit;
 	}
 }

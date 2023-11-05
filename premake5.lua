@@ -23,6 +23,7 @@ group "Dependencies"
 	include "L3gion/vendor/Glad"
 	include "L3gion/vendor/imgui"
 	include "L3gion/vendor/yaml_cpp"
+	include "L3gion/vendor/box2d"
 
 group ""
 

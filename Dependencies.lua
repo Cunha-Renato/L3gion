@@ -13,6 +13,7 @@ IncludeDir["EnTT"] = "%{wks.location}/L3gion/vendor/EnTT/include"
 IncludeDir["yaml_cpp"] = "%{wks.location}/L3gion/vendor/yaml_cpp/include"
 IncludeDir["ImGuizmo"] = "%{wks.location}/L3gion/vendor/ImGuizmo"
 IncludeDir["VulkanSDK"] = "%{wks.location}/L3gion/vendor/VulkanSDK/include"
+IncludeDir["box2d"] = "%{wks.location}/L3gion/vendor/box2d/include"
 
 LibraryDir = {}
 

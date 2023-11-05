@@ -38,6 +38,7 @@ namespace L3gion
 		uint32_t quadIndexCount = 0;
 		QuadVertex* quadVertexBufferBase = nullptr; // TODO: Realy dont like this raw pointer
 		QuadVertex* quadVertexBufferPtr = nullptr;  // TODO: Realy dont like this raw pointer
+		std::vector<Renderer2D::QuadSpecs> preBuffer;
 
 		std::array<ref<Texture2D>, maxtextureSlots> textureSlots;
 		uint32_t textureSlotIndex = 1;
@@ -80,7 +81,8 @@ namespace L3gion
 		s_Data.quadVertexArray->addVertexBuffer(s_Data.quadVertexBuffer);
 
 		s_Data.quadVertexBufferBase = new QuadVertex[s_Data.maxVertices];
-		
+		s_Data.preBuffer.reserve(s_Data.maxVertices);
+
 		uint32_t* quadIndices = new uint32_t[s_Data.maxIndices];
 
 		uint32_t offset = 0;
@@ -167,6 +169,8 @@ namespace L3gion
 		if (s_Data.quadIndexCount == 0)
 			return; // Nothing to draw
 
+		fillBuffer();
+		s_Data.preBuffer.clear();
 
 		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.quadVertexBufferPtr - (uint8_t*)s_Data.quadVertexBufferBase);
 		s_Data.quadVertexBuffer->setData(s_Data.quadVertexBufferBase, dataSize);
@@ -188,19 +192,44 @@ namespace L3gion
 
 	void Renderer2D::drawQuad(const QuadSpecs& specs)
 	{
+		// TODO: Fix rendering order!!!
+
 		LG_PROFILE_FUNCTION();
 
 		if (s_Data.quadIndexCount >= Renderer2DData::maxIndices)
 			flushAndReset();
 
-		int textureIndex = 0;
-		glm::vec2 texCoords[4] = {
-			{ 0.0f, 0.0f, },
-			{ 1.0f, 0.0f, },
-			{ 1.0f, 1.0f, },
-			{ 0.0f, 1.0f, }};
+		if (s_Data.textureSlotIndex >= Renderer2DData::maxtextureSlots)
+			flushAndReset();
+
+		QuadSpecs quad = specs;
+
+		auto inverseVP = glm::inverse(s_Data.cameraBuffer.viewProjection);
+
+		quad.distanceFromCamera = glm::distance(inverseVP[3], quad.transform[3]);
+		s_Data.preBuffer.push_back(quad);
+
+		s_Data.quadIndexCount += 6;
+		s_Data.stats.quadCount++;
+	}
+
+	bool compareDepth(const Renderer2D::QuadSpecs& a, Renderer2D::QuadSpecs& b)
+	{
+		return a.distanceFromCamera > b.distanceFromCamera;
+	}
+
+	void Renderer2D::fillBuffer()
+	{
+		std::sort(s_Data.preBuffer.begin(), s_Data.preBuffer.end(), compareDepth);
+
+		for (auto& specs : s_Data.preBuffer)
 		{
-			LG_PROFILE_SCOPE("Texture IFs");
+			int textureIndex = 0;
+			glm::vec2 texCoords[4] = {
+				{ 0.0f, 0.0f, },
+				{ 1.0f, 0.0f, },
+				{ 1.0f, 1.0f, },
+				{ 0.0f, 1.0f, } };
 
 			if (specs.subTexture != nullptr)
 			{
@@ -215,9 +244,6 @@ namespace L3gion
 
 				if (textureIndex == 0)
 				{
-					if (s_Data.textureSlotIndex >= Renderer2DData::maxtextureSlots)
-						flushAndReset();
-
 					textureIndex = s_Data.textureSlotIndex;
 					s_Data.textureSlots[s_Data.textureSlotIndex] = specs.subTexture->getTexture();
 					s_Data.textureSlotIndex++;
@@ -228,22 +254,19 @@ namespace L3gion
 				texCoords[2] = specs.subTexture->getTexCoords()[2];
 				texCoords[3] = specs.subTexture->getTexCoords()[3];
 			}
+
+
+			for (int i = 0; i < 4; i++)
+			{
+				s_Data.quadVertexBufferPtr->position = specs.transform * s_Data.quadVertexPositions[i];
+				s_Data.quadVertexBufferPtr->color = specs.color;
+				s_Data.quadVertexBufferPtr->texCoord = texCoords[i];
+				s_Data.quadVertexBufferPtr->texIndex = textureIndex;
+				s_Data.quadVertexBufferPtr->tilingFactor = specs.tiling;
+				s_Data.quadVertexBufferPtr->entityId = specs.id;
+				s_Data.quadVertexBufferPtr++;
+			}
 		}
-
-		for (int i = 0; i < 4; i++)
-		{
-			s_Data.quadVertexBufferPtr->position = specs.transform * s_Data.quadVertexPositions[i];
-			s_Data.quadVertexBufferPtr->color = specs.color;
-			s_Data.quadVertexBufferPtr->texCoord = texCoords[i];
-			s_Data.quadVertexBufferPtr->texIndex = textureIndex;
-			s_Data.quadVertexBufferPtr->tilingFactor = specs.tiling;
-			s_Data.quadVertexBufferPtr->entityId = specs.id;
-			s_Data.quadVertexBufferPtr++;
-		}
-
-		s_Data.quadIndexCount += 6;
-
-		s_Data.stats.quadCount++;
 	}
 
 	void Renderer2D::resetStats()

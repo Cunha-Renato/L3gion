@@ -30,8 +30,22 @@ namespace L3gion
 			
 		void newScene();
 		void openScene();
+		void openScene(const std::string& path);
 		void saveSceneAs();
 
+		void onScenePlay();
+		void onSceneStop();
+
+		//UI Functions
+		void UI_Toolbar();
+		void UI_Settings();
+		void UI_Gizmos();
+		void UI_Header();
+
+		template<typename Func>
+		void UI_Viewport(Func func);
+
+	private:
 		ref<Framebuffer> m_FrameBuffer;
 
 		ref<Scene> m_ActiveScene = nullptr;
@@ -43,10 +57,19 @@ namespace L3gion
 
 		int m_GizmoType = -1;
 
-		double m_Timesep = 0;
-
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
+
+		enum class SceneState
+		{
+			Edit = 0,
+			Play = 1
+		};
+
+		SceneState m_SceneState = SceneState::Edit;
+		ref <SubTexture2D> m_PlayIcon, m_StopIcon;
+		
+		double m_Timesep = 0;
 	};
 
 }

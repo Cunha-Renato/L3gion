@@ -81,6 +81,7 @@
     <None Include="..\..\L3gion\vendor\GLFW\premake5.lua" />
     <None Include="..\..\L3gion\vendor\Glad\premake5.lua" />
     <None Include="..\..\L3gion\vendor\ImGui\premake5.lua" />
+    <None Include="..\..\L3gion\vendor\box2d\premake5.lua" />
     <None Include="..\..\L3gion\vendor\yaml_cpp\premake5.lua" />
     <None Include="..\..\L3gion_Editor\premake5.lua" />
     <None Include="..\..\Sandbox\premake5.lua" />

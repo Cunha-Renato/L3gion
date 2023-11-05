@@ -19,7 +19,7 @@ namespace L3gion
 			else
 				flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-			if (ImGui::TreeNodeEx(dir.filenameStr.c_str(), flags, dir.filenameStr.c_str()))
+			if (ImGui::TreeNodeEx(dir.relativePathStr.c_str(), flags, dir.relativePathStr.c_str()))
 			{
 				drawTree(tree, dir.path, selected);
 				ImGui::TreePop();
@@ -42,7 +42,7 @@ namespace L3gion
 
 		m_RootDir.path = "assets";
 		m_RootDir.isDir = true;
-		m_RootDir.filenameStr = "assets";
+		m_RootDir.relativePathStr = "assets";
 
 		m_CurrentDirPath = m_RootDir.path;
 		m_SelectedDirPath = m_RootDir.path;
@@ -53,7 +53,6 @@ namespace L3gion
 	void ContentBrowserPanel::onImGuiRender()
 	{
 		ImGui::Begin("Content Browser");
-		ImGui::ShowDemoWindow();
 
 		if (ImGui::BeginTable("ContentBrowserFilesistem", 2, ImGuiTableFlags_ScrollY | ImGuiTableFlags_BordersInnerV))
 		{
@@ -112,16 +111,34 @@ namespace L3gion
 
 				for (auto& dir : currentDir)
 				{
+					ImGui::PushID(dir.relativePathStr.c_str());
+
 					ref<SubTexture2D> icon = dir.isDir ? m_FolderIcon : m_FileIcon;
 
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 					ImGui::ImageButton((ImTextureID)icon->getTexture()->getRendererID(), { thumbNailSize, thumbNailSize }, { 0, 1 }, { 1, 0 });
+					ImGui::PopStyleColor();
+					
+					if (ImGui::BeginDragDropSource())
+					{
+						ImGui::SetDragDropPayload(
+							"CONTENT_BROWSER_ITEM", 
+							(const void*)&dir.pathStr, sizeof(dir.pathStr),
+							ImGuiCond_Once
+						);
+
+						ImGui::EndDragDropSource();
+					}
+					
 					if (dir.isDir)
 					{
 						if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 							m_CurrentDirPath = dir.path;
 					}
-					ImGui::TextWrapped(dir.filenameStr.c_str());
+					ImGui::TextWrapped(dir.relativePathStr.c_str());
 					ImGui::TableNextColumn();
+
+					ImGui::PopID();
 				}
 			
 				ImGui::EndTable();
