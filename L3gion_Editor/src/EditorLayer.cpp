@@ -4,6 +4,7 @@
 #include <ImGui/imgui.h>
 #include <chrono>
 
+#include "L3gion/Core/Timer.h"
 #include "L3gion/Scene/Components.h"
 #include "L3gion/Scene/SceneSerializer.h"
 #include "L3gion/Utils/PlatformUtils.h"
@@ -61,7 +62,7 @@ namespace L3gion
 	{
 		LG_PROFILE_FUNCTION();
 
-		m_Timesep = ts.getMiliSeconds();
+		m_Timestep = ts.getMiliSeconds();
 
 		// Resize
 		if (L3gion::FramebufferSpecs spec = m_FrameBuffer->getSpecification();
@@ -89,7 +90,8 @@ namespace L3gion
 		{
 			case L3gion::EditorLayer::SceneState::Edit:
 			{	
-				m_EditorCamera.onUpdate(ts);
+				if (m_ViewPortHovered)
+					m_EditorCamera.onUpdate(ts);
 				m_ActiveScene->onUptdateEditor(ts, m_EditorCamera);
 
 				break;
@@ -190,7 +192,8 @@ namespace L3gion
 			m_ViewPortFocused = ImGui::IsWindowFocused();
 			m_ViewPortHovered = ImGui::IsWindowHovered();
 
-			Application::get().getImGui()->blockEvents(!m_ViewPortFocused && !m_ViewPortHovered);
+			Application::get().getImGui()->blockKeyEvents(!m_ViewPortFocused);
+			Application::get().getImGui()->blockMouseEvents(!m_ViewPortHovered);
 
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 			m_ViewPortSize = { viewportPanelSize.x, viewportPanelSize.y };
@@ -202,7 +205,8 @@ namespace L3gion
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 				{
-					std::string path = *(std::string*)payload->Data;
+					std::filesystem::path path = *(std::filesystem::path*)payload->Data;
+					
 					openScene(path);
 				}
 
@@ -265,8 +269,52 @@ namespace L3gion
 	}
 	void EditorLayer::UI_Settings()
 	{
+		int fps = (int)(1000.0f / m_Timestep);
+
+		static Timer timer;
+		static int index = 0;
+		static float frametimeBank[100] = {0.0f};
+
+		int averageFps = 0;
+		float averageFrametime = 0.0f;
+		static int avfps = 0;
+		static float avft = 0.0f;
+		static int lowestFps = 5000;
+		static float highestFrametime = 0.0f;
+
+		if (index >= 100) index = 0;
+
+		frametimeBank[index] = m_Timestep;
+
+		for (int i = 0; i < 100; i++)
+			averageFrametime += frametimeBank[i];
+
+		averageFrametime /= 100;
+		averageFps = (int)(1000.0f / averageFrametime);
+		index++;
+
+
+		int timeElapsed = (int)timer.elapsedMillis();
+		if (timeElapsed % 500 == 0 && timeElapsed > 0)
+		{
+			avfps = averageFps;
+			avft = averageFrametime;
+			timer.reset();
+		}
+
+		if (m_Timestep > highestFrametime)
+		{
+			highestFrametime = m_Timestep;
+			lowestFps = fps;
+		}
+
 		ImGui::Begin("Settings: ");
-		ImGui::Text("Timestep: %.2fms \n%d fps", m_Timesep, (int)(1000 / m_Timesep));
+		ImGui::Text("Frametime: %.2fms", m_Timestep);
+		ImGui::Text("Average Frametime: %.2fms", avft);
+		ImGui::Text("Highest Frametime: %.2fms", highestFrametime);
+		ImGui::Text("FPS: %d", fps);
+		ImGui::Text("Average FPS: %d", avfps);
+		ImGui::Text("Lowest FPS: %d", lowestFps);
 		ImGui::Text("Profiling: %d", LG_PROFILE_IS_ACTIVE());
 		ImGui::Separator();
 		ImGui::Text("Renderer2D:");
@@ -381,6 +429,12 @@ namespace L3gion
 				}
 				break;
 			}
+			case LgKeys::LG_KEY_D:
+			{
+				if (control)
+					onDuplicateEntity();
+					break;
+			}
 			case LgKeys::LG_KEY_N:
 			{
 				if (control)
@@ -397,6 +451,8 @@ namespace L3gion
 			{
 				if (shift)
 					saveSceneAs();
+				else if (control)
+					saveScene();
 				break;
 			}
 			
@@ -430,8 +486,10 @@ namespace L3gion
 
 	void EditorLayer::newScene()
 	{
+		onSceneStop();
 		m_ActiveScene = createRef<Scene>();
 		m_SceneHierarchyPanel.setContext(m_ActiveScene);
+		m_EditorScenePath.clear();
 	}
 	void EditorLayer::openScene()
 	{
@@ -439,13 +497,29 @@ namespace L3gion
 		if (!filepath.empty())
 			openScene(filepath);
 	}
-	void EditorLayer::openScene(const std::string& path)
+	void EditorLayer::openScene(const std::filesystem::path& path)
 	{
-		m_ActiveScene = createRef<Scene>();
-		m_SceneHierarchyPanel.setContext(m_ActiveScene);
+		if (m_SceneState == SceneState::Play)
+			onSceneStop();
 
-		SceneSerializer serializer(m_ActiveScene);
-		serializer.deserialize(path);
+		if (path.extension().string() != ".lg")
+		{
+			LG_CORE_WARN("Could not load {0}: Is not a scene file!", path.filename().string().c_str());
+			return;
+		}
+
+		ref<Scene> newScene = createRef<Scene>();
+
+		SceneSerializer serializer(newScene);
+		if (serializer.deserialize(path.string()))
+		{
+			m_ActiveScene = newScene;
+
+			m_SceneHierarchyPanel.setContext(m_ActiveScene);
+
+			m_EditorScene = m_ActiveScene;
+			m_EditorScenePath = path;
+		}
 	}
 	
 	void EditorLayer::saveSceneAs()
@@ -453,17 +527,52 @@ namespace L3gion
 		std::string filepath = FileDialogs::saveFile("L3gion Scene (*.lg)\0*.lg\0");
 		if (!filepath.empty())
 		{
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.serialize(filepath);
+			m_EditorScenePath = filepath;
+			saveScene();
 		}
+	}
+	void EditorLayer::saveScene()
+	{
+		if (!m_EditorScenePath.empty())
+		{
+			serializeScene(m_ActiveScene, m_EditorScenePath);
+		}
+		else
+			saveSceneAs();
+
+		m_ContentBrowserPanel.refresh();
+	}
+	void EditorLayer::serializeScene(ref<Scene> scene, const std::filesystem::path& path)
+	{
+		SceneSerializer serializer(scene);
+		serializer.serialize(path.string());
 	}
 
 	void EditorLayer::onScenePlay()
 	{
 		m_SceneState = SceneState::Play;
+
+		m_ActiveScene = Scene::copy(m_EditorScene);
+		m_ActiveScene->onRuntimeStart();
+
+		m_SceneHierarchyPanel.setContext(m_ActiveScene);
 	}
 	void EditorLayer::onSceneStop()
 	{
 		m_SceneState = SceneState::Edit;
+		m_ActiveScene->onRuntimeStop();
+
+		m_ActiveScene = m_EditorScene;
+		m_SceneHierarchyPanel.setContext(m_ActiveScene);
+	}
+
+	void EditorLayer::onDuplicateEntity()
+	{
+		if (m_SceneState != SceneState::Edit)
+			return;
+
+		Entity selected = m_SceneHierarchyPanel.getSelectedEntity();
+		if (selected)
+			m_EditorScene->duplicateEntity(selected);
 	}
 }

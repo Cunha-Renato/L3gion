@@ -99,7 +99,7 @@ namespace L3gion
 			compileOrGetVulkanBinaries(shaderSrcs);
 			compileOrGetOpenGLBinaries();
 			createProgram();
-			LG_CORE_WARN("Shader creation took {0} ms", timer.ElapsedMillis());
+			LG_CORE_WARN("Shader creation took {0} ms", timer.elapsedMillis());
 		}
 	
 		auto lastSlash = filePath.find_last_of("/\\");

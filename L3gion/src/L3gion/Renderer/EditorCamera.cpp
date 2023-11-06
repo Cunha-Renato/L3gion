@@ -88,7 +88,6 @@ namespace L3gion
 	{
 		float delta = e.getYOffset() * 0.1f;
 		mouseZoom(delta);
-		updateView();
 		return false;
 	}
 

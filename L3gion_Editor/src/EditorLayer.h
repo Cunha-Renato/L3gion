@@ -30,11 +30,16 @@ namespace L3gion
 			
 		void newScene();
 		void openScene();
-		void openScene(const std::string& path);
+		void openScene(const std::filesystem::path& path);
 		void saveSceneAs();
+		void saveScene();
+
+		void serializeScene(ref<Scene> scene, const std::filesystem::path& path);
 
 		void onScenePlay();
 		void onSceneStop();
+
+		void onDuplicateEntity();
 
 		//UI Functions
 		void UI_Toolbar();
@@ -48,7 +53,11 @@ namespace L3gion
 	private:
 		ref<Framebuffer> m_FrameBuffer;
 
-		ref<Scene> m_ActiveScene = nullptr;
+		ref<Scene> m_ActiveScene;
+		ref<Scene> m_EditorScene;
+
+		std::filesystem::path m_EditorScenePath;
+
 		EditorCamera m_EditorCamera;
 
 		bool m_ViewPortFocused = false, m_ViewPortHovered = false;
@@ -69,7 +78,7 @@ namespace L3gion
 		SceneState m_SceneState = SceneState::Edit;
 		ref <SubTexture2D> m_PlayIcon, m_StopIcon;
 		
-		double m_Timesep = 0;
+		double m_Timestep = 0;
 	};
 
 }

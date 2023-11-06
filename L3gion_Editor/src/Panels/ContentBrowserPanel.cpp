@@ -1,5 +1,6 @@
 #include "lgpch.h"
 #include "ContentBrowserPanel.h"
+#include "L3gion/Core/Timer.h"
 
 #include "L3gion/Core/Input.h"
 
@@ -50,8 +51,18 @@ namespace L3gion
 		refresh();
 	}
 
+	static Timer timer;
+
 	void ContentBrowserPanel::onImGuiRender()
 	{
+		int timeElapsed = (int)timer.elapsedMillis();
+
+		if (timeElapsed % 3000 == 0 && timeElapsed > 0)
+		{
+			refresh();
+			timer.reset();
+		}
+
 		ImGui::Begin("Content Browser");
 
 		if (ImGui::BeginTable("ContentBrowserFilesistem", 2, ImGuiTableFlags_ScrollY | ImGuiTableFlags_BordersInnerV))
@@ -117,13 +128,13 @@ namespace L3gion
 
 					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 					ImGui::ImageButton((ImTextureID)icon->getTexture()->getRendererID(), { thumbNailSize, thumbNailSize }, { 0, 1 }, { 1, 0 });
-					ImGui::PopStyleColor();
 					
 					if (ImGui::BeginDragDropSource())
 					{
+						m_PayloadPath = dir.path;
 						ImGui::SetDragDropPayload(
-							"CONTENT_BROWSER_ITEM", 
-							(const void*)&dir.pathStr, sizeof(dir.pathStr),
+							"CONTENT_BROWSER_ITEM",
+							(const void*)&m_PayloadPath, sizeof(m_PayloadPath),
 							ImGuiCond_Once
 						);
 
@@ -135,6 +146,7 @@ namespace L3gion
 						if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 							m_CurrentDirPath = dir.path;
 					}
+					ImGui::PopStyleColor();
 					ImGui::TextWrapped(dir.relativePathStr.c_str());
 					ImGui::TableNextColumn();
 

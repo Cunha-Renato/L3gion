@@ -17,11 +17,13 @@ namespace L3gion
 		void begin();
 		void end();
 
-		void blockEvents(bool block) { m_BlockEvents = block; }
+		void blockKeyEvents(bool block) { m_BlockKeyEvents = block; }
+		void blockMouseEvents(bool block) { m_BlockMouseEvents = block; }
 	
 		void setDarkTheme();
 	private:
-		bool m_BlockEvents = true;
+		bool m_BlockKeyEvents = true;
+		bool m_BlockMouseEvents = true;
 		float m_Time = 0.0f;
 	};
 }

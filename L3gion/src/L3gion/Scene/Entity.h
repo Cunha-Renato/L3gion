@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene.h"
+#include "L3gion/Scene/Components.h"
 
 #include <entt.hpp>
 
@@ -19,6 +20,12 @@ namespace L3gion
 		{
 			LG_CORE_ASSERT(!hasComponent<Component>(), "Entity already has component!");
 			return m_Scene->m_Registry.emplace<Component>(m_EntityHandle, std::forward<Args>(args)...);
+		}
+
+		template<typename Component, typename... Args>
+		Component& addOrReplaceComponent(Args&&... args)
+		{
+			return m_Scene->m_Registry.emplace_or_replace<Component>(m_EntityHandle, std::forward<Args>(args)...);
 		}
 
 		template<typename Component>
@@ -42,8 +49,8 @@ namespace L3gion
 		}
 
 		operator bool() const { return m_EntityHandle != entt::null; }
-		operator uint32_t() const { return (uint32_t)m_EntityHandle; }
 		operator entt::entity() const { return m_EntityHandle; }
+		operator uint32_t() const { return (uint32_t)m_EntityHandle; }
 		bool operator==(const Entity& other) const
 		{
 			return m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene;
@@ -53,6 +60,8 @@ namespace L3gion
 			return !(*this == other);
 		}
 
+		UUID getUUID() { return getComponent<IDComponent>().id; }
+		const std::string& getName() { return getComponent<TagComponent>().tag; }
 	private:
 		entt::entity m_EntityHandle = { entt::null };
 		Scene* m_Scene = nullptr;

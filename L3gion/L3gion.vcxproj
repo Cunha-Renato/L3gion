@@ -151,6 +151,7 @@
     <ClInclude Include="src\L3gion\Core\Application.h" />
     <ClInclude Include="src\L3gion\Core\Core.h" />
     <ClInclude Include="src\L3gion\Core\EntryPoint.h" />
+    <ClInclude Include="src\L3gion\Core\UUID.h" />
     <ClInclude Include="src\L3gion\Core\Input.h" />
     <ClInclude Include="src\L3gion\Core\KeyCodes.h" />
     <ClInclude Include="src\L3gion\Core\Layer.h" />
@@ -623,6 +624,7 @@
     <ClCompile Include="src\L3gion\Core\Layer.cpp" />
     <ClCompile Include="src\L3gion\Core\LayerStack.cpp" />
     <ClCompile Include="src\L3gion\Core\Log.cpp" />
+    <ClCompile Include="src\L3gion\Core\UUID.cpp" />
     <ClCompile Include="src\L3gion\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\L3gion\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\L3gion\Maths\Math.cpp" />

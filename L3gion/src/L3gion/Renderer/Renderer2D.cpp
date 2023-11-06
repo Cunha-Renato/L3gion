@@ -161,11 +161,12 @@ namespace L3gion
 	{
 		LG_PROFILE_FUNCTION();
 
-		flush();
+		flushAndReset();
 	}
 
 	void Renderer2D::flush()
 	{
+		LG_PROFILE_FUNCTION();
 		if (s_Data.quadIndexCount == 0)
 			return; // Nothing to draw
 
@@ -220,7 +221,11 @@ namespace L3gion
 
 	void Renderer2D::fillBuffer()
 	{
-		std::sort(s_Data.preBuffer.begin(), s_Data.preBuffer.end(), compareDepth);
+		LG_PROFILE_FUNCTION();
+		{
+			LG_PROFILE_SCOPE("Sorting prebuffer");
+			std::sort(s_Data.preBuffer.begin(), s_Data.preBuffer.end(), compareDepth);
+		}
 
 		for (auto& specs : s_Data.preBuffer)
 		{

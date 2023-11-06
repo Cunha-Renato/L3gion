@@ -1,5 +1,9 @@
 #pragma once
 
+#include "L3gion/Core/UUID.h"
+#include "L3gion/Scene/SceneCamera.h"
+//#include "L3gion/Scene/ScriptableEntity.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <string>
@@ -7,11 +11,17 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
-#include "L3gion/Scene/SceneCamera.h"
-#include "L3gion/Scene/ScriptableEntity.h"
-
 namespace L3gion
 {
+	struct IDComponent
+	{
+		UUID id;
+
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
+		IDComponent(UUID uuid) : id(uuid) {}
+	};
+
 	struct TagComponent
 	{
 		std::string tag;
@@ -63,6 +73,7 @@ namespace L3gion
 		CameraComponent(const CameraComponent&) = default;
 	};
 
+	class ScriptableEntity;
 	struct NativeScriptComponent
 	{
 		ScriptableEntity* instance = nullptr;
@@ -76,5 +87,37 @@ namespace L3gion
 			instantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
 			destroyScript = [](NativeScriptComponent* nsc) { delete nsc->instance; nsc->instance = nullptr; };
 		}
+	};
+
+	// Physics
+	struct RigidBody2DComponent
+	{
+		enum class BodyType { Static = 0, Dynamic, Kinematic };
+		BodyType type = BodyType::Static;
+
+		bool fixedRotation = false;
+
+		// Storage for runtime
+		void* runtimeBody = nullptr;
+
+		RigidBody2DComponent() = default;
+		RigidBody2DComponent(const RigidBody2DComponent&) = default;
+	};
+
+	struct BoxColliderComponent
+	{
+		glm::vec2 offset = { 0.0f, 0.0f };
+		glm::vec2 size = { 0.5f, 0.5f };
+
+		float density = 1.0f;
+		float friction = 0.5f;
+		float restitution = 0.0f;
+		float restitutionThreshold = 0.4f;
+
+		// Storage for runtime
+		void* runtimeFixture = nullptr;
+
+		BoxColliderComponent() = default;
+		BoxColliderComponent(const BoxColliderComponent&) = default;
 	};
 }

@@ -25,27 +25,29 @@ namespace L3gion
 	{
 		ImGui::Begin("Scene Hierarchy", nullptr, ImGuiWindowFlags_NoNav);
 
-		// Only on empty spaces
-		if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
+		if (m_Context)
 		{
-			if (ImGui::MenuItem("New Empty Entity"))
-				m_Context->createEntity("Empty Entity");
+			// Only on empty spaces
+			if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
+			{
+				if (ImGui::MenuItem("New Empty Entity"))
+					m_Context->createEntity("Empty Entity");
 
-			ImGui::EndPopup();
+				ImGui::EndPopup();
+			}
+
+			for (auto [entityID, ref] : m_Context->m_Registry.storage<TagComponent>().each())
+			{
+				Entity entity{ entityID, m_Context.get() };
+				drawEntityNode(entity);
+			}
 		}
-
-		for (auto [entityID, ref] : m_Context->m_Registry.storage<TagComponent>().each())
-		{
-			Entity entity{ entityID, m_Context.get()};
-			drawEntityNode(entity);
-		}
-
 		ImGui::End();
 
 		ImGui::Begin("Components");
 		if (m_SelectionContext)
 			drawComponents(m_SelectionContext);
-
+		
 		ImGui::End();
 	}
 
@@ -242,6 +244,23 @@ namespace L3gion
 				}
 			}
 
+			if (!entity.hasComponent<RigidBody2DComponent>())
+			{
+				if (ImGui::MenuItem("Rigidbody 2D"))
+				{
+					m_SelectionContext.addComponent<RigidBody2DComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+			if (!entity.hasComponent<BoxColliderComponent>())
+			{
+				if (ImGui::MenuItem("Box Collider"))
+				{
+					m_SelectionContext.addComponent<BoxColliderComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
 			ImGui::EndPopup();
 		}
 		ImGui::PopItemWidth();
@@ -340,6 +359,43 @@ namespace L3gion
 			}
 
 			ImGui::SliderInt("Tiling Factor", (int*)&component.tilingFactor, 1, 100);
+		});
+
+		drawComponent<RigidBody2DComponent>(entity, "Rigidbody 2D", [](auto& component)
+		{
+			const char* bodyTypeStr[] = { "Static", "Dynamic", "Kinematic" };
+			const char* currentBodyTypeStr = bodyTypeStr[(int)component.type];
+
+			if (ImGui::BeginCombo("Body Type", currentBodyTypeStr))
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					bool isSelected = currentBodyTypeStr == bodyTypeStr[i];
+
+					if (ImGui::Selectable(bodyTypeStr[i], isSelected))
+					{
+						currentBodyTypeStr = bodyTypeStr[i];
+						component.type = (RigidBody2DComponent::BodyType)i;
+					}
+
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+
+			ImGui::Checkbox("Fixed Rotation", &component.fixedRotation);
+		});
+
+		drawComponent<BoxColliderComponent>(entity, "Box Collider", [](auto& component)
+		{
+			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
+			ImGui::DragFloat2("Size", glm::value_ptr(component.size));
+			ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution Threshold", &component.restitutionThreshold, 0.1f, 0.0f, 1.0f);
 		});
 	}
 }

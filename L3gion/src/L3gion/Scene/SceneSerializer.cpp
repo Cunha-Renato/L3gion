@@ -9,6 +9,27 @@
 namespace YAML
 {
 	template<>
+	struct convert<glm::vec2>
+	{
+		static Node encode(const glm::vec2& v)
+		{
+			Node node;
+			node.push_back(v.x);
+			node.push_back(v.y);
+			return node;
+		}
+
+		static bool decode(const Node& node, glm::vec2& v)
+		{
+			if (!node.IsSequence() || node.size() != 2)
+				return false;
+
+			v.x = node[0].as<float>();
+			v.y = node[1].as<float>();
+			return true;
+		}
+	};
+	template<>
 	struct convert<glm::vec3>
 	{
 		static Node encode(const glm::vec3& v)
@@ -60,6 +81,13 @@ namespace YAML
 
 namespace L3gion
 {
+	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
+
+		return out;
+	}
 	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
 	{
 		out << YAML::Flow;
@@ -75,11 +103,34 @@ namespace L3gion
 		return out;
 	}
 
-	SceneSerializer::SceneSerializer(const ref<Scene>& scene)
-		: m_Scene(scene)
+	static std::string rigidbody2DtypeToString(RigidBody2DComponent::BodyType type)
 	{
+		switch (type)
+		{
+			case RigidBody2DComponent::BodyType::Static: return "Static";
+			case RigidBody2DComponent::BodyType::Dynamic: return "Dynamic";
+			case RigidBody2DComponent::BodyType::Kinematic: return "Kinematic";
+		}
 
+		LG_CORE_ASSERT(false, "Unknown BodyType!");
+		return {};
 	}
+
+	static RigidBody2DComponent::BodyType rigidbody2DtypeFromString(std::string type)
+	{
+		if (type == "Static")
+			return RigidBody2DComponent::BodyType::Static;
+		else if (type == "Dynamic")
+			return RigidBody2DComponent::BodyType::Dynamic;
+		else if (type == "Kinematic")
+			return RigidBody2DComponent::BodyType::Kinematic;
+
+		LG_CORE_ASSERT(false, "Unknown BodyType!");
+		return RigidBody2DComponent::BodyType::Static;
+	}
+
+	SceneSerializer::SceneSerializer(const ref<Scene>& scene)
+		: m_Scene(scene) {}
 
 	template<typename T, typename Func>
 	static void serializeComponent(Entity& entity, YAML::Emitter& out, const std::string& componentKey, Func func)
@@ -97,8 +148,10 @@ namespace L3gion
 
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
+		LG_CORE_ASSERT(entity.hasComponent<IDComponent>(), " ");
+
 		out << YAML::BeginMap; // Entity
-		out << YAML::Key << "Entity" << YAML::Value << "12837192831273"; // TODO: Entity ID
+		out << YAML::Key << "Entity" << YAML::Value << entity.getUUID();
 
 		serializeComponent<TagComponent>(entity, out, "TagComponent", [&]()
 		{
@@ -139,6 +192,25 @@ namespace L3gion
 		{
 			auto& spr = entity.getComponent<SpriteRendererComponent>();
 			out << YAML::Key << "color" << YAML::Value << spr.color;
+		});
+
+		serializeComponent<RigidBody2DComponent>(entity, out, "RigidBody2DComponent", [&]()
+		{
+			auto& rb2d = entity.getComponent<RigidBody2DComponent>();
+			out << YAML::Key << "type" << YAML::Value << rigidbody2DtypeToString(rb2d.type);
+			out << YAML::Key << "fixedRotation" << YAML::Value << rb2d.fixedRotation;
+		});
+
+		serializeComponent<BoxColliderComponent>(entity, out, "BoxColliderComponent", [&]()
+		{
+			auto& boxCollider = entity.getComponent<BoxColliderComponent>();
+			out << YAML::Key << "offset" << YAML::Value << boxCollider.offset;
+			out << YAML::Key << "size" << YAML::Value << boxCollider.size;
+			out << YAML::Key << "density" << YAML::Value << boxCollider.density;
+			out << YAML::Key << "friction" << YAML::Value << boxCollider.friction;
+			out << YAML::Key << "restitution" << YAML::Value << boxCollider.restitution;
+			out << YAML::Key << "restitutionThreshold" << YAML::Value << boxCollider.restitutionThreshold;
+		
 		});
 
 		out << YAML::EndMap; // Entity
@@ -185,14 +257,14 @@ namespace L3gion
 		{
 			for (auto entity : entities)
 			{
-				//uint64_t uuid = entity["Entity"].as<uint32_t>(); // TODO
+				uint64_t uuid = entity["Entity"].as<uint64_t>();
 
 				std::string name;
 				auto tagComponent = entity["TagComponent"];
 				if (tagComponent)
 					name = tagComponent["tag"].as<std::string>();
 
-				Entity deserializedEntity = m_Scene->createEntity(name);
+				Entity deserializedEntity = m_Scene->createEntityWithUUID(UUID(uuid), name);
 
 				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)
@@ -228,6 +300,26 @@ namespace L3gion
 				{
 					auto& spriteComponent = deserializedEntity.addComponent<SpriteRendererComponent>();
 					spriteComponent.color = src["color"].as<glm::vec4>();
+				}
+				
+				auto rb2dComponent = entity["RigidBody2DComponent"];
+				if (rb2dComponent)
+				{
+					auto& rb2d = deserializedEntity.addComponent<RigidBody2DComponent>();
+					rb2d.type = rigidbody2DtypeFromString(rb2dComponent["type"].as<std::string>());
+					rb2d.fixedRotation = rb2dComponent["fixedRotation"].as<bool>();
+				}
+
+				auto bcComponent = entity["BoxColliderComponent"];
+				if (bcComponent)
+				{
+					auto& bc = deserializedEntity.addComponent<BoxColliderComponent>();
+					bc.offset = bcComponent["offset"].as<glm::vec2>();
+					bc.size = bcComponent["size"].as<glm::vec2>();
+					bc.density = bcComponent["density"].as<float>();
+					bc.friction = bcComponent["friction"].as<float>();
+					bc.restitution = bcComponent["restitution"].as<float>();
+					bc.restitutionThreshold = bcComponent["restitutionThreshold"].as<float>();
 				}
 			}
 		}

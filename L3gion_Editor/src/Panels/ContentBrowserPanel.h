@@ -12,20 +12,19 @@ namespace L3gion
 
 		void onImGuiRender();
 
-	private:
+		void refresh();
 
+	private:
 		bool m_SetRefresh = false;
 		
 		std::filesystem::path m_CurrentDirPath;
 		std::filesystem::path m_SelectedDirPath;
+		std::filesystem::path m_PayloadPath;
 
 		Directory m_RootDir;
 		DirectoryTree tree;
 
 		ref<SubTexture2D> m_FolderIcon;
 		ref<SubTexture2D> m_FileIcon;
-	
-	private:
-		void refresh();
 	};
 }
