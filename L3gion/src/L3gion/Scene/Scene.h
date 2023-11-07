@@ -41,6 +41,7 @@ namespace L3gion
 		entt::registry m_Registry;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 		Renderer2D::QuadSpecs m_QuadSpecs;
+		Renderer2D::CircleSpecs m_CircleSpecs;
 
 		b2World* m_World = nullptr;
 

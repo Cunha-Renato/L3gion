@@ -23,6 +23,18 @@ namespace L3gion
 		int entityId;
 	};
 
+	struct CircleVertex
+	{
+		glm::vec3 worldPosition;
+		glm::vec3 localPosition;
+		glm::vec4 color;
+		float thickness;
+		float smoothness;
+
+		// Editor Only
+		int entityId;
+	};
+
 	struct Renderer2DData
 	{
 		static const uint32_t maxQuads = 10'000;
@@ -32,13 +44,23 @@ namespace L3gion
 
 		ref<VertexArray> quadVertexArray;
 		ref<VertexBuffer> quadVertexBuffer;
-		ref<Shader> textureShader;
+		ref<Shader> quadShader;
 		ref<Texture2D> whiteTexture;
+
+		ref<VertexArray> circleVertexArray;
+		ref<VertexBuffer> circleVertexBuffer;
+		ref<Shader> circleShader;
 
 		uint32_t quadIndexCount = 0;
 		QuadVertex* quadVertexBufferBase = nullptr; // TODO: Realy dont like this raw pointer
 		QuadVertex* quadVertexBufferPtr = nullptr;  // TODO: Realy dont like this raw pointer
-		std::vector<Renderer2D::QuadSpecs> preBuffer;
+		
+		uint32_t circleIndexCount = 0;
+		CircleVertex* circleVertexBufferBase = nullptr; // TODO: Realy dont like this raw pointer
+		CircleVertex* circleVertexBufferPtr = nullptr;  // TODO: Realy dont like this raw pointer
+		
+		std::vector<Renderer2D::QuadSpecs> quadsPreBuffer;
+		std::vector<Renderer2D::CircleSpecs> circlesPreBuffer;
 
 		std::array<ref<Texture2D>, maxtextureSlots> textureSlots;
 		uint32_t textureSlotIndex = 1;
@@ -81,7 +103,8 @@ namespace L3gion
 		s_Data.quadVertexArray->addVertexBuffer(s_Data.quadVertexBuffer);
 
 		s_Data.quadVertexBufferBase = new QuadVertex[s_Data.maxVertices];
-		s_Data.preBuffer.reserve(s_Data.maxVertices);
+		s_Data.quadsPreBuffer.reserve(s_Data.maxVertices);
+		s_Data.circlesPreBuffer.reserve(s_Data.maxVertices);
 
 		uint32_t* quadIndices = new uint32_t[s_Data.maxIndices];
 
@@ -103,6 +126,24 @@ namespace L3gion
 		s_Data.quadVertexArray->setIndexBuffer(quadIB);
 		delete[] quadIndices;
 
+		// Circles
+		s_Data.circleVertexArray = VertexArray::create();
+		s_Data.circleVertexBuffer = VertexBuffer::create(s_Data.maxVertices * sizeof(CircleVertex));
+
+		s_Data.circleVertexBuffer->setLayout({
+			{ShaderDataType::Float3, "a_WorldPosition"	},
+			{ShaderDataType::Float3, "a_LocalPosition"	},
+			{ShaderDataType::Float4, "a_Color"			},
+			{ShaderDataType::Float,  "a_Thickness"		},
+			{ShaderDataType::Float,  "a_Smoothness"		},
+			{ShaderDataType::Int,    "a_EntityID"		}
+		});
+		s_Data.circleVertexArray->addVertexBuffer(s_Data.circleVertexBuffer);
+		s_Data.circleVertexArray->setIndexBuffer(quadIB); // Using quad IB
+		s_Data.circleVertexBufferBase = new CircleVertex[s_Data.maxVertices];
+		
+		// End Circles
+
 		s_Data.whiteTexture = Texture2D::create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.whiteTexture->setData(&whiteTextureData, sizeof(uint32_t));
@@ -111,7 +152,8 @@ namespace L3gion
 		for (uint32_t i = 0; i < s_Data.maxtextureSlots; i++)
 			samplers[i] = i;
 
-		s_Data.textureShader = Shader::create("resources/shaders/Texture.glsl");
+		s_Data.quadShader = Shader::create("resources/shaders/Renderer2D_Quad.glsl");
+		s_Data.circleShader = Shader::create("resources/shaders/Renderer2D_Circle.glsl");
 
 		s_Data.textureSlots[0] = s_Data.whiteTexture;
 
@@ -131,6 +173,10 @@ namespace L3gion
 	{
 		s_Data.quadIndexCount = 0;
 		s_Data.quadVertexBufferPtr = s_Data.quadVertexBufferBase;
+
+		// TODO: move to a separate function
+		s_Data.circleIndexCount = 0;
+		s_Data.circleVertexBufferPtr = s_Data.circleVertexBufferBase;
 
 		s_Data.textureSlotIndex = 1;
 	}
@@ -167,22 +213,36 @@ namespace L3gion
 	void Renderer2D::flush()
 	{
 		LG_PROFILE_FUNCTION();
-		if (s_Data.quadIndexCount == 0)
-			return; // Nothing to draw
-
 		fillBuffer();
-		s_Data.preBuffer.clear();
+		if (s_Data.quadIndexCount)
+		{
+			s_Data.quadsPreBuffer.clear();
+			
 
-		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.quadVertexBufferPtr - (uint8_t*)s_Data.quadVertexBufferBase);
-		s_Data.quadVertexBuffer->setData(s_Data.quadVertexBufferBase, dataSize);
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.quadVertexBufferPtr - (uint8_t*)s_Data.quadVertexBufferBase);
+			s_Data.quadVertexBuffer->setData(s_Data.quadVertexBufferBase, dataSize);
 
-		for (uint32_t i = 0; i < s_Data.textureSlotIndex; i++)
-			s_Data.textureSlots[i]->bind(i);
+			for (uint32_t i = 0; i < s_Data.textureSlotIndex; i++)
+				s_Data.textureSlots[i]->bind(i);
 
-		s_Data.textureShader->bind();
-		RenderCommand::drawIndexed(s_Data.quadVertexArray, s_Data.quadIndexCount);
+			s_Data.quadShader->bind();
+			RenderCommand::drawIndexed(s_Data.quadVertexArray, s_Data.quadIndexCount);
 
-		s_Data.stats.drawCalls++;
+			s_Data.stats.drawCalls++;
+		}
+
+		if (s_Data.circleIndexCount)
+		{	
+			s_Data.circlesPreBuffer.clear();
+
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.circleVertexBufferPtr - (uint8_t*)s_Data.circleVertexBufferBase);
+			s_Data.circleVertexBuffer->setData(s_Data.circleVertexBufferBase, dataSize);
+
+			s_Data.circleShader->bind();
+			RenderCommand::drawIndexed(s_Data.circleVertexArray, s_Data.circleIndexCount);
+
+			s_Data.stats.drawCalls++;
+		}
 	}
 
 	void Renderer2D::flushAndReset()
@@ -191,10 +251,17 @@ namespace L3gion
 		prepareBuffers();
 	}
 
+	void Renderer2D::draw(const QuadSpecs& specs)
+	{
+		drawQuad(specs);
+	}
+	void Renderer2D::draw(const CircleSpecs& specs)
+	{
+		drawCircle(specs);
+	}
+
 	void Renderer2D::drawQuad(const QuadSpecs& specs)
 	{
-		// TODO: Fix rendering order!!!
-
 		LG_PROFILE_FUNCTION();
 
 		if (s_Data.quadIndexCount >= Renderer2DData::maxIndices)
@@ -208,13 +275,35 @@ namespace L3gion
 		auto inverseVP = glm::inverse(s_Data.cameraBuffer.viewProjection);
 
 		quad.distanceFromCamera = glm::distance(inverseVP[3], quad.transform[3]);
-		s_Data.preBuffer.push_back(quad);
+		s_Data.quadsPreBuffer.push_back(quad);
 
 		s_Data.quadIndexCount += 6;
 		s_Data.stats.quadCount++;
 	}
 
-	bool compareDepth(const Renderer2D::QuadSpecs& a, Renderer2D::QuadSpecs& b)
+	void Renderer2D::drawCircle(const CircleSpecs& specs)
+	{
+		LG_PROFILE_FUNCTION();
+
+		if (s_Data.circleIndexCount >= Renderer2DData::maxIndices)
+			flushAndReset(); // TODO: different flush for quads and circles
+
+		CircleSpecs circle = specs;
+
+		auto inverseVP = glm::inverse(s_Data.cameraBuffer.viewProjection);
+
+		circle.distanceFromCamera = glm::distance(inverseVP[3], circle.transform[3]);
+		s_Data.circlesPreBuffer.push_back(circle);
+
+		s_Data.circleIndexCount += 6;
+		s_Data.stats.circleCount++;
+	}
+
+	bool compareDepthQuad(const Renderer2D::QuadSpecs& a, Renderer2D::QuadSpecs& b)
+	{
+		return a.distanceFromCamera > b.distanceFromCamera;
+	}
+	bool compareDepthCircle(const Renderer2D::CircleSpecs& a, Renderer2D::CircleSpecs& b)
 	{
 		return a.distanceFromCamera > b.distanceFromCamera;
 	}
@@ -223,11 +312,13 @@ namespace L3gion
 	{
 		LG_PROFILE_FUNCTION();
 		{
-			LG_PROFILE_SCOPE("Sorting prebuffer");
-			std::sort(s_Data.preBuffer.begin(), s_Data.preBuffer.end(), compareDepth);
+			LG_PROFILE_SCOPE("Sorting prebuffers");
+			std::sort(s_Data.quadsPreBuffer.begin(), s_Data.quadsPreBuffer.end(), compareDepthQuad);
+			std::sort(s_Data.circlesPreBuffer.begin(), s_Data.circlesPreBuffer.end(), compareDepthCircle);
 		}
 
-		for (auto& specs : s_Data.preBuffer)
+		// Quads
+		for (auto& specs : s_Data.quadsPreBuffer)
 		{
 			int textureIndex = 0;
 			glm::vec2 texCoords[4] = {
@@ -270,6 +361,21 @@ namespace L3gion
 				s_Data.quadVertexBufferPtr->tilingFactor = specs.tiling;
 				s_Data.quadVertexBufferPtr->entityId = specs.id;
 				s_Data.quadVertexBufferPtr++;
+			}
+		}
+	
+		// Circles
+		for (auto& specs : s_Data.circlesPreBuffer)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				s_Data.circleVertexBufferPtr->worldPosition = specs.transform * s_Data.quadVertexPositions[i];
+				s_Data.circleVertexBufferPtr->localPosition = s_Data.quadVertexPositions[i] * 2.0f;
+				s_Data.circleVertexBufferPtr->color = specs.color;
+				s_Data.circleVertexBufferPtr->thickness = specs.thickness;
+				s_Data.circleVertexBufferPtr->smoothness = specs.smoothness;
+				s_Data.circleVertexBufferPtr->entityId = specs.id;
+				s_Data.circleVertexBufferPtr++;
 			}
 		}
 	}

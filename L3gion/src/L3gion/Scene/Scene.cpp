@@ -83,6 +83,7 @@ namespace L3gion
 		// Copy components
 		copyComponent<TransformComponent>(destRegistry, srcRegistry, enttMap);
 		copyComponent<SpriteRendererComponent>(destRegistry, srcRegistry, enttMap);
+		copyComponent<CircleRendererComponent>(destRegistry, srcRegistry, enttMap);
 		copyComponent<CameraComponent>(destRegistry, srcRegistry, enttMap);
 		copyComponent<NativeScriptComponent>(destRegistry, srcRegistry, enttMap);
 		copyComponent<RigidBody2DComponent>(destRegistry, srcRegistry, enttMap);
@@ -236,17 +237,38 @@ namespace L3gion
 		{
 			Renderer2D::beginScene(*mainCamera, cameraTransform);
 
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-
-			for (auto entity : group)
+			// Sprites
 			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 
-				m_QuadSpecs.transform = transform.getTransform();
-				m_QuadSpecs.color = sprite.color;
-				m_QuadSpecs.tiling = sprite.tilingFactor;
-				m_QuadSpecs.subTexture = sprite.texture;
-				Renderer2D::drawQuad(m_QuadSpecs);
+				for (auto entity : group)
+				{
+					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+					m_QuadSpecs.transform = transform.getTransform();
+					m_QuadSpecs.color = sprite.color;
+					m_QuadSpecs.id = (int)entity;
+					m_QuadSpecs.tiling = sprite.tilingFactor;
+					m_QuadSpecs.subTexture = sprite.texture;
+					Renderer2D::drawQuad(m_QuadSpecs);
+				}
+			}
+
+			// Circles
+			{
+				auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+				for (auto entity : view)
+				{
+					auto& transform = view.get<TransformComponent>(entity);
+					auto& circleComponent = view.get<CircleRendererComponent>(entity);
+
+					m_CircleSpecs.transform = transform.getTransform();
+					m_CircleSpecs.color = circleComponent.color;
+					m_CircleSpecs.thickness = circleComponent.thickness;
+					m_CircleSpecs.smoothness = circleComponent.smoothness;
+					m_CircleSpecs.id = (int)entity;
+					Renderer2D::drawCircle(m_CircleSpecs);
+				}
 			}
 
 			Renderer2D::endScene();
@@ -257,18 +279,38 @@ namespace L3gion
 		LG_PROFILE_FUNCTION();
 		Renderer2D::beginScene(editorCamera);
 
-		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-
-		for (auto entity : group)
+		// Sprites
 		{
-			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 
-			m_QuadSpecs.transform = transform.getTransform();
-			m_QuadSpecs.color = sprite.color;
-			m_QuadSpecs.id = (int)entity;
-			m_QuadSpecs.tiling = sprite.tilingFactor;
-			m_QuadSpecs.subTexture = sprite.texture;
-			Renderer2D::drawQuad(m_QuadSpecs);
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+				m_QuadSpecs.transform = transform.getTransform();
+				m_QuadSpecs.color = sprite.color;
+				m_QuadSpecs.id = (int)entity;
+				m_QuadSpecs.tiling = sprite.tilingFactor;
+				m_QuadSpecs.subTexture = sprite.texture;
+				Renderer2D::drawQuad(m_QuadSpecs);
+			}
+		}
+
+		// Circles
+		{
+			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+			for (auto entity : view)
+			{
+				auto& transform = view.get<TransformComponent>(entity);
+				auto& circleComponent = view.get<CircleRendererComponent>(entity);
+
+				m_CircleSpecs.transform = transform.getTransform();
+				m_CircleSpecs.color = circleComponent.color;
+				m_CircleSpecs.thickness = circleComponent.thickness;
+				m_CircleSpecs.smoothness = circleComponent.smoothness;
+				m_CircleSpecs.id = (int)entity;
+				Renderer2D::drawCircle(m_CircleSpecs);
+			}
 		}
 
 		Renderer2D::endScene();
@@ -298,6 +340,7 @@ namespace L3gion
 		// Copy components
 		copyComponentIfExists<TransformComponent>(newEntity, entity);
 		copyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
+		copyComponentIfExists<CircleRendererComponent>(newEntity, entity);
 		copyComponentIfExists<CameraComponent>(newEntity, entity);
 		copyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 		copyComponentIfExists<RigidBody2DComponent>(newEntity, entity);

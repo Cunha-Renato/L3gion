@@ -59,6 +59,7 @@ namespace L3gion
 	void OpenGLRendererAPI::drawIndexed(const ref<VertexArray>& vertexArray, uint32_t indexCount)
 	{
 		uint32_t count = (indexCount == 0) ? vertexArray->getIndexBuffer()->getCount() : indexCount;
+		vertexArray->bind();
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 	}
 }

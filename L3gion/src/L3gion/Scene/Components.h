@@ -63,6 +63,16 @@ namespace L3gion
 		SpriteRendererComponent(const glm::vec4& Color) : color(Color) {}
 	};
 
+	struct CircleRendererComponent
+	{
+		glm::vec4 color{ 1.0f };
+		float thickness = 1.0f;
+		float smoothness = 0.005f;
+
+		CircleRendererComponent() = default;
+		CircleRendererComponent(const CircleRendererComponent&) = default;
+	};
+
 	struct CameraComponent
 	{
 		SceneCamera camera;

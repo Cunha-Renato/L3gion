@@ -194,6 +194,14 @@ namespace L3gion
 			out << YAML::Key << "color" << YAML::Value << spr.color;
 		});
 
+		serializeComponent<CircleRendererComponent>(entity, out, "CircleRendererComponent", [&]()
+		{
+			auto& crc = entity.getComponent<CircleRendererComponent>();
+			out << YAML::Key << "color" << YAML::Value << crc.color;
+			out << YAML::Key << "thickness" << YAML::Value << crc.thickness;
+			out << YAML::Key << "smoothness" << YAML::Value << crc.smoothness;
+		});
+
 		serializeComponent<RigidBody2DComponent>(entity, out, "RigidBody2DComponent", [&]()
 		{
 			auto& rb2d = entity.getComponent<RigidBody2DComponent>();
@@ -302,6 +310,15 @@ namespace L3gion
 					spriteComponent.color = src["color"].as<glm::vec4>();
 				}
 				
+				auto crc = entity["CircleRendererComponent"];
+				if (crc)
+				{
+					auto& circleComponent = deserializedEntity.addComponent<CircleRendererComponent>();
+					circleComponent.color = crc["color"].as<glm::vec4>();
+					circleComponent.thickness = crc["thickness"].as<float>();
+					circleComponent.smoothness = crc["smoothness"].as<float>();
+				}
+
 				auto rb2dComponent = entity["RigidBody2DComponent"];
 				if (rb2dComponent)
 				{

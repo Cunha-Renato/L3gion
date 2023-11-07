@@ -1,23 +1,32 @@
 Scene: Untitled Scene
 Entities:
-  - Entity: 11383121237622944029
+  - Entity: 11332951762310750726
     TagComponent:
-      tag: Green Square
+      tag: Empty Entity
     TransformComponent:
-      translation: [0, 0, 0.200000003]
+      translation: [0, 0, 0.902519822]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+    CircleRendererComponent:
+      color: [1, 1, 1, 1]
+      thickness: 1
+      smoothness: 0.00499999989
+  - Entity: 6460960813270881235
+    TagComponent:
+      tag: Empty Entity
+    TransformComponent:
+      translation: [0, 0, 0]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+  - Entity: 2437891400969952659
+    TagComponent:
+      tag: Red Square
+    TransformComponent:
+      translation: [0, 0, 0]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
     SpriteRendererComponent:
-      color: [0.113725491, 1, 0, 0.392156869]
-  - Entity: 12348705714339280505
-    TagComponent:
-      tag: Blue Square
-    TransformComponent:
-      translation: [0, 0, 0.400000006]
-      rotation: [0, 0, 0]
-      scale: [1, 1, 0.980000019]
-    SpriteRendererComponent:
-      color: [0.200000003, 0, 1, 0.392156869]
+      color: [1, 0, 0, 0.392156869]
   - Entity: 1880919267797843503
     TagComponent:
       tag: Camera Entity
@@ -36,19 +45,21 @@ Entities:
         orthographicFarClip: 1
       primary: true
       staticAspectRatio: false
-  - Entity: 2437891400969952659
+  - Entity: 12348705714339280505
     TagComponent:
-      tag: Red Square
+      tag: Blue Square
     TransformComponent:
-      translation: [0, 0, 0]
+      translation: [0, 0, 0.400000006]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 0.980000019]
+    SpriteRendererComponent:
+      color: [0.200000003, 0, 1, 0.392156869]
+  - Entity: 11383121237622944029
+    TagComponent:
+      tag: Green Square
+    TransformComponent:
+      translation: [0, 0, 0.200000003]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
     SpriteRendererComponent:
-      color: [1, 0, 0, 0.392156869]
-  - Entity: 6460960813270881235
-    TagComponent:
-      tag: Empty Entity
-    TransformComponent:
-      translation: [0, 0, 0]
-      rotation: [0, 0, 0]
-      scale: [1, 1, 1]
+      color: [0.113725491, 1, 0, 0.392156869]

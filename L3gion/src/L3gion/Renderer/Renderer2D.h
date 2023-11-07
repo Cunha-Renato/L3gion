@@ -21,24 +21,41 @@ namespace L3gion
 		// Primitives
 		struct QuadSpecs
 		{
+			int id = -1; // Editor Only
+			
 			glm::mat4 transform = glm::mat4(1.0f);
 			glm::vec4 color = glm::vec4(1.0f);
-			int id = -1; // Editor Only
 			ref<SubTexture2D> subTexture = nullptr;
 			float tiling = 1.0f;
 
 			float distanceFromCamera = 0.0f;
 		};
 
+		struct CircleSpecs
+		{
+			int id = -1; // Editor Only
+
+			glm::mat4 transform = glm::mat4(1.0f);
+			glm::vec4 color = glm::vec4(1.0f);
+			float thickness;
+			float smoothness;
+
+			float distanceFromCamera = 0.0f;
+		};
+
+		static void draw(const QuadSpecs& specs);
+		static void draw(const CircleSpecs& specs);
 		static void drawQuad(const QuadSpecs& specs);
+		static void drawCircle(const CircleSpecs& specs);
 
 		struct Statistics
 		{
 			uint32_t drawCalls = 0;
 			uint32_t quadCount = 0;
+			uint32_t circleCount = 0;
 
-			uint32_t getTotalVertexCount() const { return quadCount * 4; }
-			uint32_t getTotalIndexCount() const { return quadCount * 6; }
+			uint32_t getTotalVertexCount() const { return (quadCount + circleCount) * 4; }
+			uint32_t getTotalIndexCount() const { return (quadCount + circleCount) * 6; }
 		};
 
 		static Statistics getStats();
