@@ -25,10 +25,13 @@ namespace L3gion
 
 		void onRuntimeStart();
 		void onRuntimeStop();
+		void onSimulationStart();
+		void onSimulationStop();
 
 		Entity getPrimaryCameraEntity();
 
 		void onUptdateRuntime(Timestep ts);
+		void onUpdateSimulation(Timestep, EditorCamera& editorCamera);
 		void onUptdateEditor(Timestep ts, EditorCamera& editorCamera);
 		void onViewportResize(uint32_t width, uint32_t height);
 	
@@ -41,6 +44,10 @@ namespace L3gion
 		}
 
 	private:
+		void renderEditorScene(EditorCamera& camera);
+		
+		void initializePhysics();
+		void stopPhysics();
 		void updatePhysics(Timestep ts);
 	
 	private:

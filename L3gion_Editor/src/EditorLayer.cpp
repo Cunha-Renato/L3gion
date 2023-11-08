@@ -26,6 +26,7 @@ namespace L3gion
 
 		m_PlayIcon = SubTexture2D::create("resources/icons/PlayButtonIcon.png");
 		m_StopIcon = SubTexture2D::create("resources/icons/StopButtonIcon.png");
+		m_SimulateIcon = SubTexture2D::create("resources/icons/PlaySimulationButtonIcon.png");
 
 		FramebufferSpecs frameBufferSpecs;
 		frameBufferSpecs.attachments = { 
@@ -39,6 +40,7 @@ namespace L3gion
 
 		// Entity
 		m_ActiveScene = createRef<Scene>();
+		m_EditorScene = m_ActiveScene;
 
 		auto commandLineArgs = Application::get().getCommandLineArgs();
 		if (commandLineArgs.count > 1)
@@ -93,6 +95,14 @@ namespace L3gion
 				if (m_ViewPortHovered)
 					m_EditorCamera.onUpdate(ts);
 				m_ActiveScene->onUptdateEditor(ts, m_EditorCamera);
+
+				break;
+			}
+			case L3gion::EditorLayer::SceneState::Simulate:
+			{
+				//if (m_ViewPortHovered)
+				m_EditorCamera.onUpdate(ts);
+				m_ActiveScene->onUpdateSimulation(ts, m_EditorCamera);
 
 				break;
 			}
@@ -407,15 +417,29 @@ namespace L3gion
 		ImGui::Begin("##Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoNav);
 
 		float size = ImGui::GetWindowHeight() - 4.0f;
-		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-		ref<SubTexture2D> icon = m_SceneState == SceneState::Edit ? m_PlayIcon : m_StopIcon;
 
-		if (ImGui::ImageButton((ImTextureID)icon->getTexture()->getRendererID(), {size, size}, {0,0}, {1, 1}, 0))
 		{
-			if (m_SceneState == SceneState::Edit)
-				onScenePlay();
-			else if (m_SceneState == SceneState::Play)
-				onSceneStop();
+			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+			ref<SubTexture2D> icon = m_SceneState != SceneState::Play ? m_PlayIcon : m_StopIcon;
+			if (ImGui::ImageButton((ImTextureID)icon->getID(), { size, size }, { 0,0 }, { 1, 1 }, 0))
+			{
+				if (m_SceneState != SceneState::Play)
+					onScenePlay();
+				else if (m_SceneState == SceneState::Play)
+					onSceneStop();
+			}
+		}
+
+		{
+			ImGui::SameLine();
+			ref<SubTexture2D> icon = m_SceneState != SceneState::Simulate ? m_SimulateIcon : m_StopIcon;
+			if (ImGui::ImageButton((ImTextureID)icon->getID(), { size, size }, { 0,0 }, { 1, 1 }, 0))
+			{
+				if (m_SceneState != SceneState::Simulate)
+					onSimutalionScenePlay();
+				else if (m_SceneState == SceneState::Simulate)
+					onSceneStop();
+			}
 		}
 
 		ImGui::PopStyleVar(2);
@@ -630,6 +654,9 @@ namespace L3gion
 
 	void EditorLayer::onScenePlay()
 	{
+		if (m_SceneState != SceneState::Edit)
+			onSceneStop();
+
 		if (m_EditorScene)
 		{
 			m_ActiveScene = Scene::copy(m_EditorScene);
@@ -642,11 +669,32 @@ namespace L3gion
 	}
 	void EditorLayer::onSceneStop()
 	{
-		m_SceneState = SceneState::Edit;
-		m_ActiveScene->onRuntimeStop();
+		LG_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, " ");
 
+		if (m_SceneState == SceneState::Play)
+			m_ActiveScene->onRuntimeStop();
+		else if (m_SceneState == SceneState::Simulate)
+			m_ActiveScene->onSimulationStop();
+
+		m_SceneState = SceneState::Edit;
 		m_ActiveScene = m_EditorScene;
 		m_SceneHierarchyPanel.setContext(m_ActiveScene);
+	}
+
+	void EditorLayer::onSimutalionScenePlay()
+	{
+		if (m_SceneState != SceneState::Edit)
+			onSceneStop();
+
+		if (m_EditorScene)
+		{
+			m_ActiveScene = Scene::copy(m_EditorScene);
+			m_ActiveScene->onSimulationStart();
+
+			m_SceneHierarchyPanel.setContext(m_ActiveScene);
+
+			m_SceneState = SceneState::Simulate;
+		}
 	}
 
 	void EditorLayer::onDuplicateEntity()

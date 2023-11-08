@@ -117,6 +117,24 @@ namespace L3gion
 
 	void Scene::onRuntimeStart()
 	{
+		initializePhysics();
+	}
+	void Scene::onRuntimeStop()
+	{
+		stopPhysics();
+	}
+
+	void Scene::onSimulationStart()
+	{
+		initializePhysics();
+	}
+	void Scene::onSimulationStop()
+	{
+		stopPhysics();
+	}
+
+	void Scene::initializePhysics()
+	{
 		m_World = new b2World({ 0.0f, -9.8 });
 		auto view = m_Registry.view<RigidBody2DComponent>();
 
@@ -136,11 +154,11 @@ namespace L3gion
 				b2FixtureDef fixtureDef;
 				b2PolygonShape boxShape;
 				b2CircleShape circleShape;
-				
+
 				auto& colider2D = entity.getComponent<Collider2DComponent>();
 				if (colider2D.type == Collider2DComponent::Type::Box)
 				{
-					boxShape.SetAsBox(colider2D.size.x * transform.scale.x, colider2D.size.y * transform.scale.y, {colider2D.offset.x, colider2D.offset.y}, 0.0f);
+					boxShape.SetAsBox(colider2D.size.x * transform.scale.x, colider2D.size.y * transform.scale.y, { colider2D.offset.x, colider2D.offset.y }, 0.0f);
 
 					fixtureDef.shape = &boxShape;
 				}
@@ -166,12 +184,11 @@ namespace L3gion
 			}
 		}
 	}
-	void Scene::onRuntimeStop()
+	void Scene::stopPhysics()
 	{
 		delete m_World;
 		m_World = nullptr;
 	}
-
 	void Scene::updatePhysics(Timestep ts)
 	{
 		LG_PROFILE_FUNCTION();
@@ -311,10 +328,11 @@ namespace L3gion
 			Renderer2D::endScene();
 		}
 	}
-	void Scene::onUptdateEditor(Timestep ts, EditorCamera& editorCamera)
+	
+	void Scene::renderEditorScene(EditorCamera& camera)
 	{
 		LG_PROFILE_FUNCTION();
-		Renderer2D::beginScene(editorCamera);
+		Renderer2D::beginScene(camera);
 
 		// Sprites
 		{
@@ -353,6 +371,18 @@ namespace L3gion
 		Renderer2D::endScene();
 	}
 
+	void Scene::onUptdateEditor(Timestep ts, EditorCamera& editorCamera)
+	{
+		// Render
+		renderEditorScene(editorCamera);
+	}
+	void Scene::onUpdateSimulation(Timestep ts, EditorCamera& editorCamera)
+	{
+		updatePhysics(ts);
+
+		// Render
+		renderEditorScene(editorCamera);
+	}
 	void Scene::onViewportResize(uint32_t width, uint32_t height)
 	{
 		m_ViewportWidth = width;

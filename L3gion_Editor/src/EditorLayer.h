@@ -39,6 +39,8 @@ namespace L3gion
 		void onScenePlay();
 		void onSceneStop();
 
+		void onSimutalionScenePlay();
+
 		void onOverlayRender();
 
 		void onDuplicateEntity();
@@ -73,11 +75,12 @@ namespace L3gion
 		enum class SceneState
 		{
 			Edit = 0,
-			Play = 1
+			Play = 1,
+			Simulate = 2,
 		};
 
 		SceneState m_SceneState = SceneState::Edit;
-		ref <SubTexture2D> m_PlayIcon, m_StopIcon;
+		ref <SubTexture2D> m_PlayIcon, m_StopIcon, m_SimulateIcon;
 		
 		int m_GizmoType = -1;
 		double m_Timestep = 0;
