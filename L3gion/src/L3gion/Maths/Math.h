@@ -1,6 +1,7 @@
 #pragma once
 
 #include<glm/glm.hpp>
+#include<math.h>
 
 namespace L3gion::Math
 {

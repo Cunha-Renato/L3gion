@@ -15,5 +15,7 @@ namespace L3gion
 		virtual void clear() override;
 
 		virtual void drawIndexed(const ref<VertexArray>& vertexArray, uint32_t indexCount = 0) override;
+		virtual void drawLines(const ref<VertexArray>& vertexArray, uint32_t vertexCount) override;
+		virtual void setLineThickness(float thickness) override;
 	};
 }

@@ -104,7 +104,61 @@ namespace L3gion
 			}
 		}
 
+		if (m_ShowColliders)
+			onOverlayRender();
+
 		m_FrameBuffer->unbind();
+	}
+
+	void EditorLayer::onOverlayRender()
+	{
+		LG_PROFILE_FUNCTION();
+		
+		auto view = m_ActiveScene->getAllEntitiesWith<Collider2DComponent, TransformComponent>();
+		
+		if (m_SceneState == SceneState::Play)
+		{
+			Entity camera = m_ActiveScene->getPrimaryCameraEntity();
+			if (!camera) return;
+			Renderer2D::beginScene(camera.getComponent<CameraComponent>().camera, camera.getComponent<TransformComponent>().getTransform());
+		}
+		else
+			Renderer2D::beginScene(m_EditorCamera);
+		
+
+		for (auto entity : view)
+		{
+			auto [tc, collider2D] = view.get<TransformComponent, Collider2DComponent>(entity);
+
+			float angle = collider2D.angle + std::atan2(collider2D.offset.y, collider2D.offset.x);
+			float radius = glm::distance(glm::vec2(tc.translation.x, tc.translation.y), glm::vec2(collider2D.offset.x + tc.translation.x, collider2D.offset.y + tc.translation.y));
+			glm::vec3 translation = glm::vec3(tc.translation.x + radius * cos(angle), tc.translation.y + radius * sin(angle), 0.005f);
+
+			if (collider2D.type == Collider2DComponent::Type::Box)
+			{
+				glm::vec3 scale = tc.scale * glm::vec3(collider2D.radius * 2.0f);
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation) * glm::rotate(glm::mat4(1.0f), tc.rotation.z, { 0, 0, 1 }) * glm::scale(glm::mat4(1.0f), scale);
+			
+				Renderer2D::drawRect({
+					.useTransform = true,
+					.transform = transform,
+					.color = glm::vec4(0.1f, 1.0f, 0.1f, 1.0f)
+				});
+			}
+			else if (collider2D.type == Collider2DComponent::Type::Circle)
+			{
+				glm::vec3 scale = tc.scale * glm::vec3(collider2D.radius * 2.0f);
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation) * glm::scale(glm::mat4(1.0f), scale);
+
+				Renderer2D::drawCircle({
+					.transform = transform,
+					.color = glm::vec4(0.1f, 1.0f, 0.1f, 1.0f),
+					.thickness = 0.05f
+				});
+			}
+		}
+
+		Renderer2D::endScene();
 	}
 
 	void EditorLayer::onImGuiRender()
@@ -118,7 +172,7 @@ namespace L3gion
 
 		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
 		// because it would be confusing to have two docking targets within each others.
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoNav;
 		if (opt_fullscreen)
 		{
 			ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -166,10 +220,10 @@ namespace L3gion
 
 		UI_Viewport([&]()
 		{
-			if (m_SceneState == SceneState::Edit)
-				UI_Gizmos();
+			UI_Gizmos();
 		});
 
+		UI_Stats();
 		UI_Settings();
 		UI_Toolbar();
 		UI_Header();
@@ -231,8 +285,20 @@ namespace L3gion
 			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
 
 			// EditorCamera
-			const glm::mat4& cameraProjection = m_EditorCamera.getProjection();
-			glm::mat4 cameraView = m_EditorCamera.getViewMatrix();
+			glm::mat4 cameraProjection = glm::mat4(1.0f);
+			glm::mat4 cameraView;
+			
+			if (m_SceneState != SceneState::Play)
+			{
+				cameraProjection = m_EditorCamera.getProjection();
+				cameraView = m_EditorCamera.getViewMatrix();
+			}
+			else if (m_SceneState == SceneState::Play)
+			{
+				//auto [transform, camera] = m_ActiveScene->getPrimaryCameraEntity().getComponent<TransformComponent, CameraComponent>();
+				//cameraProjection = camera.camera.getProjection();
+				//cameraView = transform.getTransform();
+			}
 
 			// Snapping
 			bool snap = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL);
@@ -267,7 +333,7 @@ namespace L3gion
 			}
 		}
 	}
-	void EditorLayer::UI_Settings()
+	void EditorLayer::UI_Stats()
 	{
 		int fps = (int)(1000.0f / m_Timestep);
 
@@ -308,7 +374,7 @@ namespace L3gion
 			lowestFps = fps;
 		}
 
-		ImGui::Begin("Settings: ");
+		ImGui::Begin("Statistics:", 0, ImGuiWindowFlags_NoNav);
 		ImGui::Text("Frametime: %.2fms", m_Timestep);
 		ImGui::Text("Average Frametime: %.2fms", avft);
 		ImGui::Text("Highest Frametime: %.2fms", highestFrametime);
@@ -320,9 +386,16 @@ namespace L3gion
 		ImGui::Text("Renderer2D:");
 		ImGui::Text("Draw Calls: %d", Renderer2D::getStats().drawCalls);
 		ImGui::Text("Quad Count: %d", Renderer2D::getStats().quadCount);
+		ImGui::Text("Circle Count: %d", Renderer2D::getStats().circleCount);
 		ImGui::Text("Vertex Count: %d", Renderer2D::getStats().getTotalVertexCount());
 		ImGui::Text("Index Count: %d", Renderer2D::getStats().getTotalIndexCount());
 		ImGui::Separator();
+		ImGui::End();
+	}
+	void EditorLayer::UI_Settings()
+	{
+		ImGui::Begin("Editor Settings");
+		ImGui::Checkbox("Show Colliders", &m_ShowColliders);
 		ImGui::End();
 	}
 	void EditorLayer::UI_Toolbar()
@@ -331,7 +404,7 @@ namespace L3gion
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, { 0, 0 });
 		ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
 
-		ImGui::Begin("##Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		ImGui::Begin("##Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoNav);
 
 		float size = ImGui::GetWindowHeight() - 4.0f;
 		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
@@ -447,12 +520,19 @@ namespace L3gion
 					openScene();
 				break;
 			}
+
+			// Commands
 			case LgKeys::LG_KEY_S:
 			{
 				if (shift)
 					saveSceneAs();
 				else if (control)
 					saveScene();
+				break;
+			}
+			case LgKeys::LG_KEY_DELETE:
+			{
+				m_SceneHierarchyPanel.deleteMarkedEntity();
 				break;
 			}
 			
@@ -513,11 +593,11 @@ namespace L3gion
 		SceneSerializer serializer(newScene);
 		if (serializer.deserialize(path.string()))
 		{
-			m_ActiveScene = newScene;
+			m_EditorScene = newScene;
 
-			m_SceneHierarchyPanel.setContext(m_ActiveScene);
+			m_SceneHierarchyPanel.setContext(m_EditorScene);
 
-			m_EditorScene = m_ActiveScene;
+			m_ActiveScene = m_EditorScene;
 			m_EditorScenePath = path;
 		}
 	}
@@ -550,12 +630,15 @@ namespace L3gion
 
 	void EditorLayer::onScenePlay()
 	{
-		m_SceneState = SceneState::Play;
+		if (m_EditorScene)
+		{
+			m_ActiveScene = Scene::copy(m_EditorScene);
+			m_ActiveScene->onRuntimeStart();
 
-		m_ActiveScene = Scene::copy(m_EditorScene);
-		m_ActiveScene->onRuntimeStart();
+			m_SceneHierarchyPanel.setContext(m_ActiveScene);
 
-		m_SceneHierarchyPanel.setContext(m_ActiveScene);
+			m_SceneState = SceneState::Play;
+		}
 	}
 	void EditorLayer::onSceneStop()
 	{

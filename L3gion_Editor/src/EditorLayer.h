@@ -39,10 +39,13 @@ namespace L3gion
 		void onScenePlay();
 		void onSceneStop();
 
+		void onOverlayRender();
+
 		void onDuplicateEntity();
 
 		//UI Functions
 		void UI_Toolbar();
+		void UI_Stats();
 		void UI_Settings();
 		void UI_Gizmos();
 		void UI_Header();
@@ -64,8 +67,6 @@ namespace L3gion
 		glm::vec2 m_ViewPortSize = { 0, 0 };
 		glm::vec2 m_ViewportBounds[2];
 
-		int m_GizmoType = -1;
-
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
 
@@ -78,7 +79,9 @@ namespace L3gion
 		SceneState m_SceneState = SceneState::Edit;
 		ref <SubTexture2D> m_PlayIcon, m_StopIcon;
 		
+		int m_GizmoType = -1;
 		double m_Timestep = 0;
+		bool m_ShowColliders = false;
 	};
 
 }

@@ -82,6 +82,12 @@ namespace L3gion
 			ImGui::EndPopup();
 		}
 
+		if (m_DeleteMarkedEntity && m_SelectionContext == entity)
+		{
+			deleteEntity = true;
+			m_DeleteMarkedEntity = false;
+		}
+
 		if (opened)
 			ImGui::TreePop();
 
@@ -164,8 +170,7 @@ namespace L3gion
 	{
 		if (entity.hasComponent<T>())
 		{
-			auto flags = ImGuiTreeNodeFlags_DefaultOpen |
-			ImGuiTreeNodeFlags_AllowItemOverlap | 
+			auto flags = ImGuiTreeNodeFlags_AllowItemOverlap | 
 			ImGuiTreeNodeFlags_Framed |
 			ImGuiTreeNodeFlags_SpanAvailWidth |
 			ImGuiTreeNodeFlags_FramePadding;
@@ -261,11 +266,11 @@ namespace L3gion
 					ImGui::CloseCurrentPopup();
 				}
 			}
-			if (!entity.hasComponent<BoxColliderComponent>())
+			if (!entity.hasComponent<Collider2DComponent>())
 			{
-				if (ImGui::MenuItem("Box Collider"))
+				if (ImGui::MenuItem("Collider2D"))
 				{
-					m_SelectionContext.addComponent<BoxColliderComponent>();
+					m_SelectionContext.addComponent<Collider2DComponent>();
 					ImGui::CloseCurrentPopup();
 				}
 			}
@@ -404,10 +409,36 @@ namespace L3gion
 			ImGui::Checkbox("Fixed Rotation", &component.fixedRotation);
 		});
 
-		drawComponent<BoxColliderComponent>(entity, "Box Collider", [](auto& component)
+		drawComponent<Collider2DComponent>(entity, "Collider2D", [](auto& component)
 		{
-			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
-			ImGui::DragFloat2("Size", glm::value_ptr(component.size));
+			const char* colliderTypeStr[] = { "Box", "Circle" };
+			const char* currentcolliderTypeStr = colliderTypeStr[(int)component.type];
+
+			if (ImGui::BeginCombo("Collider Type", currentcolliderTypeStr))
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					bool isSelected = currentcolliderTypeStr == colliderTypeStr[i];
+
+					if (ImGui::Selectable(colliderTypeStr[i], isSelected))
+					{
+						currentcolliderTypeStr = colliderTypeStr[i];
+						component.type = (Collider2DComponent::Type)i;
+					}
+
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+
+			if (component.type == Collider2DComponent::Type::Circle)
+				ImGui::DragFloat("radius", &component.radius, 0.05f, 0.0f);
+
+			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset), 0.05f);
+			if (component.type == Collider2DComponent::Type::Box)
+				ImGui::DragFloat2("Size", glm::value_ptr(component.size), 0.05f);
 			ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);

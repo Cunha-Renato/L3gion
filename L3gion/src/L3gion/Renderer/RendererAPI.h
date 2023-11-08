@@ -24,9 +24,13 @@ namespace L3gion
 		virtual void clear() = 0;
 
 		virtual void drawIndexed(const ref<VertexArray>& vertexArray, uint32_t indexCount = 0) = 0;
+		virtual void drawLines(const ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
+
+		virtual void setLineThickness(float thickness) = 0;
 
 		inline static API getAPI() { return s_API; }
 		static scope<RendererAPI> create();
+	
 	private:
 		static API s_API;
 	};

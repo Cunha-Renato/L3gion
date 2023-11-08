@@ -34,6 +34,12 @@ namespace L3gion
 	
 		void duplicateEntity(Entity entity);
 
+		template<typename... Components>
+		auto getAllEntitiesWith()
+		{
+			return m_Registry.view<Components...>();
+		}
+
 	private:
 		void updatePhysics(Timestep ts);
 	

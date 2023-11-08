@@ -35,9 +35,18 @@ namespace L3gion
 		int entityId;
 	};
 
+	struct LineVertex
+	{
+		glm::vec3 position;
+		glm::vec4 color;
+
+		// Editor Only
+		int entityId;
+	};
+
 	struct Renderer2DData
 	{
-		static const uint32_t maxQuads = 10'000;
+		static const uint32_t maxQuads = 1'000;
 		static const uint32_t maxVertices = maxQuads * 4;
 		static const uint32_t maxIndices = maxQuads * 6;
 		static const uint32_t maxtextureSlots = 32;
@@ -51,14 +60,24 @@ namespace L3gion
 		ref<VertexBuffer> circleVertexBuffer;
 		ref<Shader> circleShader;
 
+		ref<VertexArray> lineVertexArray;
+		ref<VertexBuffer> lineVertexBuffer;
+		ref<Shader> lineShader;
+
 		uint32_t quadIndexCount = 0;
-		QuadVertex* quadVertexBufferBase = nullptr; // TODO: Realy dont like this raw pointer
-		QuadVertex* quadVertexBufferPtr = nullptr;  // TODO: Realy dont like this raw pointer
+		QuadVertex* quadVertexBufferBase = nullptr;
+		QuadVertex* quadVertexBufferPtr = nullptr;  
 		
 		uint32_t circleIndexCount = 0;
-		CircleVertex* circleVertexBufferBase = nullptr; // TODO: Realy dont like this raw pointer
-		CircleVertex* circleVertexBufferPtr = nullptr;  // TODO: Realy dont like this raw pointer
+		CircleVertex* circleVertexBufferBase = nullptr; 
+		CircleVertex* circleVertexBufferPtr = nullptr;  
 		
+		uint32_t lineVertexCount = 0;
+		LineVertex* lineVertexBufferBase = nullptr;
+		LineVertex* lineVertexBufferPtr = nullptr;
+
+		float lineThickness = 2.0f;
+
 		std::vector<Renderer2D::QuadSpecs> quadsPreBuffer;
 		std::vector<Renderer2D::CircleSpecs> circlesPreBuffer;
 
@@ -80,6 +99,19 @@ namespace L3gion
 		{
 			if(quadVertexBufferBase)
 				delete[] quadVertexBufferBase;
+
+			if (circleVertexBufferBase)
+				delete[] circleVertexBufferBase;
+
+			if (lineVertexBufferBase)
+				delete[] lineVertexBufferBase;
+
+			QuadVertex* quadVertexBufferBase = nullptr;
+			QuadVertex* quadVertexBufferPtr = nullptr;
+			CircleVertex* circleVertexBufferBase = nullptr;
+			CircleVertex* circleVertexBufferPtr = nullptr;
+			CircleVertex* lineVertexBufferBase = nullptr;
+			CircleVertex* lineVertexBufferPtr = nullptr;
 		}
 	};
 
@@ -144,6 +176,20 @@ namespace L3gion
 		
 		// End Circles
 
+		// Circles
+		s_Data.lineVertexArray = VertexArray::create();
+		s_Data.lineVertexBuffer = VertexBuffer::create(s_Data.maxVertices * sizeof(LineVertex));
+
+		s_Data.lineVertexBuffer->setLayout({
+			{ShaderDataType::Float3, "a_Position"	},
+			{ShaderDataType::Float4, "a_Color"		},
+			{ShaderDataType::Int,    "a_EntityID"	}
+		});
+		s_Data.lineVertexArray->addVertexBuffer(s_Data.lineVertexBuffer);
+		s_Data.lineVertexBufferBase = new LineVertex[s_Data.maxVertices];
+
+		// End Circles
+
 		s_Data.whiteTexture = Texture2D::create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.whiteTexture->setData(&whiteTextureData, sizeof(uint32_t));
@@ -154,6 +200,7 @@ namespace L3gion
 
 		s_Data.quadShader = Shader::create("resources/shaders/Renderer2D_Quad.glsl");
 		s_Data.circleShader = Shader::create("resources/shaders/Renderer2D_Circle.glsl");
+		s_Data.lineShader = Shader::create("resources/shaders/Renderer2D_Line.glsl");
 
 		s_Data.textureSlots[0] = s_Data.whiteTexture;
 
@@ -177,6 +224,9 @@ namespace L3gion
 		// TODO: move to a separate function
 		s_Data.circleIndexCount = 0;
 		s_Data.circleVertexBufferPtr = s_Data.circleVertexBufferBase;
+
+		s_Data.lineVertexCount = 0;
+		s_Data.lineVertexBufferPtr = s_Data.lineVertexBufferBase;
 
 		s_Data.textureSlotIndex = 1;
 	}
@@ -213,11 +263,11 @@ namespace L3gion
 	void Renderer2D::flush()
 	{
 		LG_PROFILE_FUNCTION();
-		fillBuffer();
+		
 		if (s_Data.quadIndexCount)
 		{
+			fillQuadBuffer();
 			s_Data.quadsPreBuffer.clear();
-			
 
 			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.quadVertexBufferPtr - (uint8_t*)s_Data.quadVertexBufferBase);
 			s_Data.quadVertexBuffer->setData(s_Data.quadVertexBufferBase, dataSize);
@@ -233,6 +283,7 @@ namespace L3gion
 
 		if (s_Data.circleIndexCount)
 		{	
+			fillCircleBuffer();
 			s_Data.circlesPreBuffer.clear();
 
 			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.circleVertexBufferPtr - (uint8_t*)s_Data.circleVertexBufferBase);
@@ -243,21 +294,26 @@ namespace L3gion
 
 			s_Data.stats.drawCalls++;
 		}
+
+		if (s_Data.lineVertexCount)
+		{
+			s_Data.circlesPreBuffer.clear();
+
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.lineVertexBufferPtr - (uint8_t*)s_Data.lineVertexBufferBase);
+			s_Data.lineVertexBuffer->setData(s_Data.lineVertexBufferBase, dataSize);
+
+			s_Data.lineShader->bind();
+			RenderCommand::setLineThickness(s_Data.lineThickness);
+			RenderCommand::drawLines(s_Data.lineVertexArray, s_Data.lineVertexCount);
+
+			s_Data.stats.drawCalls++;
+		}
 	}
 
 	void Renderer2D::flushAndReset()
 	{
 		flush();
 		prepareBuffers();
-	}
-
-	void Renderer2D::draw(const QuadSpecs& specs)
-	{
-		drawQuad(specs);
-	}
-	void Renderer2D::draw(const CircleSpecs& specs)
-	{
-		drawCircle(specs);
 	}
 
 	void Renderer2D::drawQuad(const QuadSpecs& specs)
@@ -299,6 +355,69 @@ namespace L3gion
 		s_Data.stats.circleCount++;
 	}
 
+	void Renderer2D::drawLine(const LineSpecs& specs)
+	{
+		s_Data.lineVertexBufferPtr->position = specs.p0;
+		s_Data.lineVertexBufferPtr->color = specs.color;
+		s_Data.lineVertexBufferPtr->entityId = specs.id;
+		s_Data.lineVertexBufferPtr++;
+
+		s_Data.lineVertexBufferPtr->position = specs.p1;
+		s_Data.lineVertexBufferPtr->color = specs.color;
+		s_Data.lineVertexBufferPtr->entityId = specs.id;
+		s_Data.lineVertexBufferPtr++;
+	
+		s_Data.lineVertexCount += 2;
+	}
+
+	void Renderer2D::drawRect(const RectSpecs& specs)
+	{
+		LineSpecs line;
+		line.id = specs.id;
+		line.color = specs.color;
+
+		glm::vec3 ps[4] = {glm::vec3(0.0f)};
+
+		if (specs.useTransform)
+		{
+			for (size_t i = 0; i < 4; i++)
+				ps[i] = specs.transform * s_Data.quadVertexPositions[i];
+		}
+		else
+		{
+			glm::vec3 position = specs.position;
+			ps[0] = glm::vec3(position.x - specs.size.x * 0.5f, position.y - specs.size.y * 0.5f, position.z);
+			ps[1] = glm::vec3(position.x + specs.size.x * 0.5f, position.y - specs.size.y * 0.5f, position.z);
+			ps[2] = glm::vec3(position.x + specs.size.x * 0.5f, position.y + specs.size.y * 0.5f, position.z);
+			ps[3] = glm::vec3(position.x - specs.size.x * 0.5f, position.y + specs.size.y * 0.5f, position.z);
+		}
+
+		line.p0 = ps[0];
+		line.p1 = ps[1];
+		drawLine(line);
+
+		line.p0 = ps[1];
+		line.p1 = ps[2];
+		drawLine(line);
+
+		line.p0 = ps[2];
+		line.p1 = ps[3];
+		drawLine(line);
+
+		line.p0 = ps[3];
+		line.p1 = ps[0];
+		drawLine(line);
+	}
+
+	float Renderer2D::getLineThickness()
+	{
+		return s_Data.lineThickness;
+	}
+	void Renderer2D::setLineThickness(float thickness)
+	{
+		s_Data.lineThickness = thickness;
+	}
+
 	bool compareDepthQuad(const Renderer2D::QuadSpecs& a, Renderer2D::QuadSpecs& b)
 	{
 		return a.distanceFromCamera > b.distanceFromCamera;
@@ -308,14 +427,10 @@ namespace L3gion
 		return a.distanceFromCamera > b.distanceFromCamera;
 	}
 
-	void Renderer2D::fillBuffer()
+	void Renderer2D::fillQuadBuffer()
 	{
 		LG_PROFILE_FUNCTION();
-		{
-			LG_PROFILE_SCOPE("Sorting prebuffers");
-			std::sort(s_Data.quadsPreBuffer.begin(), s_Data.quadsPreBuffer.end(), compareDepthQuad);
-			std::sort(s_Data.circlesPreBuffer.begin(), s_Data.circlesPreBuffer.end(), compareDepthCircle);
-		}
+		std::sort(s_Data.quadsPreBuffer.begin(), s_Data.quadsPreBuffer.end(), compareDepthQuad);
 
 		// Quads
 		for (auto& specs : s_Data.quadsPreBuffer)
@@ -363,7 +478,13 @@ namespace L3gion
 				s_Data.quadVertexBufferPtr++;
 			}
 		}
-	
+	}
+
+	void Renderer2D::fillCircleBuffer()
+	{
+		LG_PROFILE_FUNCTION();
+		std::sort(s_Data.circlesPreBuffer.begin(), s_Data.circlesPreBuffer.end(), compareDepthCircle);
+
 		// Circles
 		for (auto& specs : s_Data.circlesPreBuffer)
 		{

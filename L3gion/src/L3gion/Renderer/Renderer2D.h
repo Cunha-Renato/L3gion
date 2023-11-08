@@ -37,16 +37,45 @@ namespace L3gion
 
 			glm::mat4 transform = glm::mat4(1.0f);
 			glm::vec4 color = glm::vec4(1.0f);
-			float thickness;
-			float smoothness;
+			float thickness = 0.1f;
+			float smoothness = 0.005f;
 
 			float distanceFromCamera = 0.0f;
 		};
 
-		static void draw(const QuadSpecs& specs);
-		static void draw(const CircleSpecs& specs);
+		struct LineSpecs
+		{
+			int id = -1; // Editor Only
+
+			glm::vec3 p0 = glm::vec3(0.0f);
+			glm::vec3 p1 = glm::vec3(0.0f);
+			glm::vec4 color = glm::vec4(1.0f);
+		};
+
+		struct RectSpecs
+		{
+			int id = -1; // Editor Only
+
+			bool useTransform = false;
+
+			glm::mat4 transform = glm::mat4(0.0f);
+			glm::vec3 position = glm::vec3(0.0f);
+			glm::vec2 size = glm::vec2(1.0f);
+			glm::vec4 color = glm::vec4(1.0f);
+		};
+
+		static void draw(const QuadSpecs& specs) { drawQuad(specs); }
+		static void draw(const CircleSpecs& specs) { drawCircle(specs); }
+		static void draw(const LineSpecs& specs) { drawLine(specs); }
+		static void draw(const RectSpecs& specs) { drawRect(specs); }
+
 		static void drawQuad(const QuadSpecs& specs);
 		static void drawCircle(const CircleSpecs& specs);
+		static void drawLine(const LineSpecs& specs);
+		static void drawRect(const RectSpecs& specs);
+
+		static float getLineThickness();
+		static void setLineThickness(float thickness);
 
 		struct Statistics
 		{
@@ -63,6 +92,7 @@ namespace L3gion
 
 	private:
 		static void flushAndReset();
-		static void fillBuffer();
+		static void fillQuadBuffer();
+		static void fillCircleBuffer();
 	};
 }

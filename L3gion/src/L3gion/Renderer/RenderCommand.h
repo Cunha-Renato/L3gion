@@ -31,6 +31,15 @@ namespace L3gion
 		{
 			s_RendererAPI->drawIndexed(vertexArray, indexCount);
 		}
+		inline static void drawLines(const ref<VertexArray>& vertexArray, uint32_t vertexCount)
+		{
+			s_RendererAPI->drawLines(vertexArray, vertexCount);
+		}
+		inline static void setLineThickness(float thickness)
+		{
+			s_RendererAPI->setLineThickness(thickness);
+		}
+
 	private:
 		static scope<RendererAPI> s_RendererAPI;
 	};

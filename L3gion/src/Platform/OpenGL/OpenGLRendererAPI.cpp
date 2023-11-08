@@ -42,6 +42,7 @@ namespace L3gion
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LINE_SMOOTH);
 	}
 	void OpenGLRendererAPI::setViewPort(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
@@ -61,5 +62,16 @@ namespace L3gion
 		uint32_t count = (indexCount == 0) ? vertexArray->getIndexBuffer()->getCount() : indexCount;
 		vertexArray->bind();
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+	}
+
+	void OpenGLRendererAPI::drawLines(const ref<VertexArray>& vertexArray, uint32_t vertexCount)
+	{
+		vertexArray->bind();
+		glDrawArrays(GL_LINES, 0, vertexCount);
+	}
+
+	void OpenGLRendererAPI::setLineThickness(float thickness)
+	{
+		glLineWidth(thickness);
 	}
 }

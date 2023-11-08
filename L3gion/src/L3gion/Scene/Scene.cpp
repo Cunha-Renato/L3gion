@@ -12,6 +12,7 @@
 #include <box2d/b2_body.h>
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_polygon_shape.h>
+#include <box2d/b2_circle_shape.h>
 
 namespace L3gion
 {
@@ -87,7 +88,7 @@ namespace L3gion
 		copyComponent<CameraComponent>(destRegistry, srcRegistry, enttMap);
 		copyComponent<NativeScriptComponent>(destRegistry, srcRegistry, enttMap);
 		copyComponent<RigidBody2DComponent>(destRegistry, srcRegistry, enttMap);
-		copyComponent<BoxColliderComponent>(destRegistry, srcRegistry, enttMap);
+		copyComponent<Collider2DComponent>(destRegistry, srcRegistry, enttMap);
 	
 		return newScene;
 	}
@@ -130,26 +131,38 @@ namespace L3gion
 			bodyDef.position.Set(transform.translation.x, transform.translation.y);
 			bodyDef.angle = transform.rotation.z;
 
-			b2Body* body = m_World->CreateBody(&bodyDef);
-			body->SetFixedRotation(rb2d.fixedRotation);
-			rb2d.runtimeBody = body;
-
-			if (entity.hasComponent<BoxColliderComponent>())
+			if (entity.hasComponent<Collider2DComponent>())
 			{
-				auto& bc = entity.getComponent<BoxColliderComponent>();
-
-				b2PolygonShape polyShape;
-				glm::vec2 boxSize = { bc.size.x * transform.scale.x, bc.size.y * transform.scale.y };
-				polyShape.SetAsBox(boxSize.x, boxSize.y);
-
 				b2FixtureDef fixtureDef;
-				fixtureDef.shape = &polyShape;
-				fixtureDef.density = bc.density;
-				fixtureDef.friction = bc.friction;
-				fixtureDef.restitution = bc.restitution;
-				fixtureDef.restitutionThreshold = bc.restitutionThreshold;
+				b2PolygonShape boxShape;
+				b2CircleShape circleShape;
+				
+				auto& colider2D = entity.getComponent<Collider2DComponent>();
+				if (colider2D.type == Collider2DComponent::Type::Box)
+				{
+					boxShape.SetAsBox(colider2D.size.x * transform.scale.x, colider2D.size.y * transform.scale.y, {colider2D.offset.x, colider2D.offset.y}, 0.0f);
 
+					fixtureDef.shape = &boxShape;
+				}
+				else
+				{
+					circleShape.m_p.Set(colider2D.offset.x, colider2D.offset.y);
+					circleShape.m_radius = colider2D.radius * transform.scale.x;
+
+					fixtureDef.shape = &circleShape;
+				}
+
+				fixtureDef.density = colider2D.density;
+				fixtureDef.friction = colider2D.friction;
+				fixtureDef.restitution = colider2D.restitution;
+				fixtureDef.restitutionThreshold = colider2D.restitutionThreshold;
+
+				b2Body* body = m_World->CreateBody(&bodyDef);
+				body->SetFixedRotation(rb2d.fixedRotation);
+				rb2d.runtimeBody = body;
 				body->CreateFixture(&fixtureDef);
+
+				colider2D.angle = body->GetAngle();
 			}
 		}
 	}
@@ -178,20 +191,44 @@ namespace L3gion
 			b2Body* body = (b2Body*)rb2d.runtimeBody;
 			body->SetType(rigidbody2DTypeToBox2D(rb2d.type));
 
-			if (entity.hasComponent<BoxColliderComponent>())
+			if (entity.hasComponent<Collider2DComponent>())
 			{
-				auto& bc = entity.getComponent<BoxColliderComponent>();
+				auto& bc = entity.getComponent<Collider2DComponent>();
 
 				auto fixture = body->GetFixtureList();
-				fixture->SetDensity(bc.density);
-				fixture->SetFriction(bc.friction);
-				fixture->SetRestitution(bc.restitution);
-				fixture->SetRestitutionThreshold(bc.restitutionThreshold);
+				body->DestroyFixture(fixture);
+				
+				b2FixtureDef newFixture;
+				b2PolygonShape boxShape;
+				b2CircleShape circleShape;
+
+				auto& colider2D = entity.getComponent<Collider2DComponent>();
+				if (colider2D.type == Collider2DComponent::Type::Box)
+				{
+					boxShape.SetAsBox(colider2D.size.x * transform.scale.x, colider2D.size.y * transform.scale.y, { colider2D.offset.x, colider2D.offset.y }, 0.0f);
+
+					newFixture.shape = &boxShape;
+				}
+				else
+				{
+					circleShape.m_p.Set(colider2D.offset.x, colider2D.offset.y);
+					circleShape.m_radius = colider2D.radius * transform.scale.x;
+
+					newFixture.shape = &circleShape;
+				}
+
+				newFixture.density = bc.density;
+				newFixture.friction = bc.friction;
+				newFixture.restitution = bc.restitution;
+				newFixture.restitutionThreshold = bc.restitutionThreshold;
+				body->CreateFixture(&newFixture);
 
 				const auto& position = body->GetPosition();
 				transform.translation.x = position.x;
 				transform.translation.y = position.y;
 				transform.rotation.z = body->GetAngle();
+
+				colider2D.angle = body->GetAngle();
 			}
 		}
 	}
@@ -199,7 +236,7 @@ namespace L3gion
 	void Scene::onUptdateRuntime(Timestep ts)
 	{
 		LG_PROFILE_FUNCTION();
-		// Update Scripts
+		//Update Scripts
 		m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 		{
 			if (!nsc.instance)
@@ -250,7 +287,7 @@ namespace L3gion
 					m_QuadSpecs.id = (int)entity;
 					m_QuadSpecs.tiling = sprite.tilingFactor;
 					m_QuadSpecs.subTexture = sprite.texture;
-					Renderer2D::drawQuad(m_QuadSpecs);
+					Renderer2D::draw(m_QuadSpecs);
 				}
 			}
 
@@ -267,7 +304,7 @@ namespace L3gion
 					m_CircleSpecs.thickness = circleComponent.thickness;
 					m_CircleSpecs.smoothness = circleComponent.smoothness;
 					m_CircleSpecs.id = (int)entity;
-					Renderer2D::drawCircle(m_CircleSpecs);
+					Renderer2D::draw(m_CircleSpecs);
 				}
 			}
 
@@ -292,7 +329,7 @@ namespace L3gion
 				m_QuadSpecs.id = (int)entity;
 				m_QuadSpecs.tiling = sprite.tilingFactor;
 				m_QuadSpecs.subTexture = sprite.texture;
-				Renderer2D::drawQuad(m_QuadSpecs);
+				Renderer2D::draw(m_QuadSpecs);
 			}
 		}
 
@@ -309,7 +346,7 @@ namespace L3gion
 				m_CircleSpecs.thickness = circleComponent.thickness;
 				m_CircleSpecs.smoothness = circleComponent.smoothness;
 				m_CircleSpecs.id = (int)entity;
-				Renderer2D::drawCircle(m_CircleSpecs);
+				Renderer2D::draw(m_CircleSpecs);
 			}
 		}
 
@@ -344,7 +381,7 @@ namespace L3gion
 		copyComponentIfExists<CameraComponent>(newEntity, entity);
 		copyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 		copyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
-		copyComponentIfExists<BoxColliderComponent>(newEntity, entity);
+		copyComponentIfExists<Collider2DComponent>(newEntity, entity);
 	}
 
 	Entity Scene::getPrimaryCameraEntity()

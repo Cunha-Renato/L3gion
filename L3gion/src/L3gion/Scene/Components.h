@@ -114,10 +114,19 @@ namespace L3gion
 		RigidBody2DComponent(const RigidBody2DComponent&) = default;
 	};
 
-	struct BoxColliderComponent
+	struct Collider2DComponent
 	{
+		enum class Type { Box = 0, Circle };
+
+		Type type = Type::Box;
+
+		float angle = 0.0f;
+
 		glm::vec2 offset = { 0.0f, 0.0f };
 		glm::vec2 size = { 0.5f, 0.5f };
+
+		// Circle
+		float radius = 0.5f;
 
 		float density = 1.0f;
 		float friction = 0.5f;
@@ -127,7 +136,7 @@ namespace L3gion
 		// Storage for runtime
 		void* runtimeFixture = nullptr;
 
-		BoxColliderComponent() = default;
-		BoxColliderComponent(const BoxColliderComponent&) = default;
+		Collider2DComponent() = default;
+		Collider2DComponent(const Collider2DComponent&) = default;
 	};
 }

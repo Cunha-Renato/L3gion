@@ -129,6 +129,29 @@ namespace L3gion
 		return RigidBody2DComponent::BodyType::Static;
 	}
 
+	static std::string colliderTypeToString(Collider2DComponent::Type type)
+	{
+		switch (type)
+		{
+			case Collider2DComponent::Type::Box: return "Box";
+			case Collider2DComponent::Type::Circle: return "Circle";
+		}
+
+		LG_CORE_ASSERT(false, "Unknown Collider type!");
+		return {};
+	}
+
+	Collider2DComponent::Type colliderTypeFromString(const std::string& type)
+	{
+		if (type == "Box")
+			return Collider2DComponent::Type::Box;
+		else if (type == "Circle")
+			return Collider2DComponent::Type::Circle;
+
+		LG_CORE_ASSERT(false, "Unknown Collider type!");
+		return Collider2DComponent::Type::Box;
+	}
+
 	SceneSerializer::SceneSerializer(const ref<Scene>& scene)
 		: m_Scene(scene) {}
 
@@ -209,15 +232,17 @@ namespace L3gion
 			out << YAML::Key << "fixedRotation" << YAML::Value << rb2d.fixedRotation;
 		});
 
-		serializeComponent<BoxColliderComponent>(entity, out, "BoxColliderComponent", [&]()
+		serializeComponent<Collider2DComponent>(entity, out, "Collider2DComponent", [&]()
 		{
-			auto& boxCollider = entity.getComponent<BoxColliderComponent>();
-			out << YAML::Key << "offset" << YAML::Value << boxCollider.offset;
-			out << YAML::Key << "size" << YAML::Value << boxCollider.size;
-			out << YAML::Key << "density" << YAML::Value << boxCollider.density;
-			out << YAML::Key << "friction" << YAML::Value << boxCollider.friction;
-			out << YAML::Key << "restitution" << YAML::Value << boxCollider.restitution;
-			out << YAML::Key << "restitutionThreshold" << YAML::Value << boxCollider.restitutionThreshold;
+			auto& collider = entity.getComponent<Collider2DComponent>();
+			out << YAML::Key << "type" << YAML::Value << colliderTypeToString(collider.type);
+			out << YAML::Key << "radius" << YAML::Value << collider.radius;
+			out << YAML::Key << "offset" << YAML::Value << collider.offset;
+			out << YAML::Key << "size" << YAML::Value << collider.size;
+			out << YAML::Key << "density" << YAML::Value << collider.density;
+			out << YAML::Key << "friction" << YAML::Value << collider.friction;
+			out << YAML::Key << "restitution" << YAML::Value << collider.restitution;
+			out << YAML::Key << "restitutionThreshold" << YAML::Value << collider.restitutionThreshold;
 		
 		});
 
@@ -327,16 +352,18 @@ namespace L3gion
 					rb2d.fixedRotation = rb2dComponent["fixedRotation"].as<bool>();
 				}
 
-				auto bcComponent = entity["BoxColliderComponent"];
-				if (bcComponent)
+				auto colliderComponent = entity["Collider2DComponent"];
+				if (colliderComponent)
 				{
-					auto& bc = deserializedEntity.addComponent<BoxColliderComponent>();
-					bc.offset = bcComponent["offset"].as<glm::vec2>();
-					bc.size = bcComponent["size"].as<glm::vec2>();
-					bc.density = bcComponent["density"].as<float>();
-					bc.friction = bcComponent["friction"].as<float>();
-					bc.restitution = bcComponent["restitution"].as<float>();
-					bc.restitutionThreshold = bcComponent["restitutionThreshold"].as<float>();
+					auto& collider = deserializedEntity.addComponent<Collider2DComponent>();
+					collider.type = colliderTypeFromString(colliderComponent["type"].as<std::string>());
+					collider.radius = colliderComponent["radius"].as<float>();
+					collider.offset = colliderComponent["offset"].as<glm::vec2>();
+					collider.size = colliderComponent["size"].as<glm::vec2>();
+					collider.density = colliderComponent["density"].as<float>();
+					collider.friction = colliderComponent["friction"].as<float>();
+					collider.restitution = colliderComponent["restitution"].as<float>();
+					collider.restitutionThreshold = colliderComponent["restitutionThreshold"].as<float>();
 				}
 			}
 		}

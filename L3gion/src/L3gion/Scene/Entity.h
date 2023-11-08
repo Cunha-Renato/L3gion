@@ -34,6 +34,12 @@ namespace L3gion
 			LG_CORE_ASSERT(hasComponent<Component>(), "Entity doesn't have the component!");
 			return m_Scene->m_Registry.get<Component>(m_EntityHandle);
 		}
+
+		//template<typename... Components>
+		//auto getComponent()
+		//{
+		//	return m_Scene->m_Registry.get<Components...>(m_EntityHandle);
+		//}
 		
 		template<typename Component>
 		void removeComponent()
