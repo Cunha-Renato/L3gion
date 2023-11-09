@@ -101,7 +101,8 @@ private:
 class Sandbox : public L3gion::Application
 {
 public:
-	Sandbox()
+	Sandbox(const L3gion::ApplicationSpecs& specs)
+		: Application(specs)
 	{
 		pushLayer(new Sandbox2D("Sandbox 2D Layer"));
 		setVsync(false);
@@ -112,8 +113,13 @@ public:
 	}
 };
 
-L3gion::Application* L3gion::createApplication()
+L3gion::Application* L3gion::createApplication(L3gion::ApplicationCommandLineArgs args)
 {
-	auto app = new Sandbox();
+	L3gion::ApplicationSpecs specs;
+	specs.name = "Sandbox";
+	specs.workingDir = "../L3gion_Editor";
+	specs.commandArgs = args;
+
+	auto app = new Sandbox(specs);
 	return app;
 }

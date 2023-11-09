@@ -42,7 +42,7 @@ void Sandbox2D::onUpdate(L3gion::Timestep& ts)
 
 	{
 		LG_PROFILE_SCOPE("Renderer drawQuads: ");
-		L3gion::Renderer2D::beginScene(m_CameraController.getCamera());
+		L3gion::Renderer2D::beginScene(m_CameraController.getCamera()., m_CameraController.getCamera().getViewProjectionMatrix());
 
 		L3gion::Renderer2D::drawQuad({
 			.position = { 0.0f, 0.0f, -0.1f },

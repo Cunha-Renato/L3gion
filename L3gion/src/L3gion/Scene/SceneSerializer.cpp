@@ -215,6 +215,9 @@ namespace L3gion
 		{
 			auto& spr = entity.getComponent<SpriteRendererComponent>();
 			out << YAML::Key << "color" << YAML::Value << spr.color;
+			if (spr.texture)
+				out << YAML::Key << "texturePath" << YAML::Value << spr.texture->getPath();
+			out << YAML::Key << "tilingFactor" << YAML::Value << spr.tilingFactor;
 		});
 
 		serializeComponent<CircleRendererComponent>(entity, out, "CircleRendererComponent", [&]()
@@ -278,9 +281,17 @@ namespace L3gion
 
 	bool SceneSerializer::deserialize(const std::string& filepath)
 	{
-		std::ifstream stream(filepath);
-		
-		YAML::Node data = YAML::Load(stream);
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(filepath);
+		}
+		catch (YAML::ParserException e)
+		{
+			LG_CORE_ERROR("Failed to load .lg file '{0}'\n     {1}", filepath, e.what());
+			return false;
+		}
+
 		if (!data["Scene"])
 			return false;
 
@@ -333,6 +344,9 @@ namespace L3gion
 				{
 					auto& spriteComponent = deserializedEntity.addComponent<SpriteRendererComponent>();
 					spriteComponent.color = src["color"].as<glm::vec4>();
+					if (src["texturePath"])
+						spriteComponent.texture = SubTexture2D::create(src["texturePath"].as<std::string>());
+					spriteComponent.tilingFactor = src["tilingFactor"].as<uint32_t>();
 				}
 				
 				auto crc = entity["CircleRendererComponent"];

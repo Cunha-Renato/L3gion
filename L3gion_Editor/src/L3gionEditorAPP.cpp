@@ -8,8 +8,8 @@ namespace L3gion
 	class L3gionEditorApp : public Application
 	{
 	public:
-		L3gionEditorApp(L3gion::ApplicationCommandLineArgs args)
-			: Application("L3gion Editor", args)
+		L3gionEditorApp(const ApplicationSpecs& specs)
+			: Application(specs)
 		{
 			pushLayer(new EditorLayer("Editor Layer"));
 			setVsync(false);
@@ -22,6 +22,10 @@ namespace L3gion
 
 	Application* createApplication(L3gion::ApplicationCommandLineArgs args)
 	{
-		return new L3gionEditorApp(args);
+		ApplicationSpecs specs;
+		specs.name = "L3gion Editor";
+		specs.commandArgs = args;
+
+		return new L3gionEditorApp(specs);
 	}
 }

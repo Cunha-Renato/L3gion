@@ -32,10 +32,18 @@ namespace L3gion
 		}
 	};
 
+
+	struct ApplicationSpecs
+	{
+		std::string name = "L3gion App";
+		ApplicationCommandLineArgs commandArgs = ApplicationCommandLineArgs();
+		std::string workingDir;
+	};
+
 	class Application
 	{
 	public:
-		Application(const std::string& name = "L3gion App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
+		Application(const ApplicationSpecs& specs);
 		virtual ~Application();
 
 		inline void close() { m_Running = false; }
@@ -51,7 +59,7 @@ namespace L3gion
 		inline Window& getWindow() { return *m_Window; }
 		inline static Application& get() { return *s_Instance; }
 
-		ApplicationCommandLineArgs getCommandLineArgs() const { return m_CommandLineArgs; }
+		ApplicationSpecs getSpecs() const { return m_Specs; }
 
 	private:
 		void run();
@@ -59,7 +67,7 @@ namespace L3gion
 		bool onWindowResize(WindowResizeEvent& e);
 
 	private:
-		ApplicationCommandLineArgs m_CommandLineArgs;
+		ApplicationSpecs m_Specs;
 		scope<Window> m_Window;
 		bool m_Running = false;
 		bool m_Minimized = false;

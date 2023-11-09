@@ -42,7 +42,7 @@ namespace L3gion
 		m_ActiveScene = createRef<Scene>();
 		m_EditorScene = m_ActiveScene;
 
-		auto commandLineArgs = Application::get().getCommandLineArgs();
+		auto commandLineArgs = Application::get().getSpecs().commandArgs;
 		if (commandLineArgs.count > 1)
 		{
 			auto sceneFilePath = commandLineArgs[1];
@@ -100,8 +100,9 @@ namespace L3gion
 			}
 			case L3gion::EditorLayer::SceneState::Simulate:
 			{
-				//if (m_ViewPortHovered)
-				m_EditorCamera.onUpdate(ts);
+				if (m_ViewPortHovered)
+					m_EditorCamera.onUpdate(ts);
+
 				m_ActiveScene->onUpdateSimulation(ts, m_EditorCamera);
 
 				break;
@@ -113,9 +114,8 @@ namespace L3gion
 				break;
 			}
 		}
-
-		if (m_ShowColliders)
-			onOverlayRender();
+		
+		onOverlayRender();
 
 		m_FrameBuffer->unbind();
 	}
@@ -135,36 +135,54 @@ namespace L3gion
 		else
 			Renderer2D::beginScene(m_EditorCamera);
 		
+		// Selected Component outline
+		auto selectedEntity = m_SceneHierarchyPanel.getSelectedEntity();
 
-		for (auto entity : view)
+		if (selectedEntity)
 		{
-			auto [tc, collider2D] = view.get<TransformComponent, Collider2DComponent>(entity);
+			auto selectedTransform = selectedEntity.getComponent<TransformComponent>().getTransform();
+			selectedTransform[3].z += 0.009f;
+		
+			Renderer2D::drawRect({
+				.useTransform = true,
+				.transform = selectedTransform,
+				.color = {1.0f, 0.4f, 0.2f, 1.0f},
+			});
+		}
 
-			float angle = collider2D.angle + std::atan2(collider2D.offset.y, collider2D.offset.x);
-			float radius = glm::distance(glm::vec2(tc.translation.x, tc.translation.y), glm::vec2(collider2D.offset.x + tc.translation.x, collider2D.offset.y + tc.translation.y));
-			glm::vec3 translation = glm::vec3(tc.translation.x + radius * cos(angle), tc.translation.y + radius * sin(angle), 0.005f);
-
-			if (collider2D.type == Collider2DComponent::Type::Box)
+		// Colliders
+		if (m_ShowColliders)
+		{
+			for (auto entity : view)
 			{
-				glm::vec3 scale = tc.scale * glm::vec3(collider2D.radius * 2.0f);
-				glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation) * glm::rotate(glm::mat4(1.0f), tc.rotation.z, { 0, 0, 1 }) * glm::scale(glm::mat4(1.0f), scale);
-			
-				Renderer2D::drawRect({
-					.useTransform = true,
-					.transform = transform,
-					.color = glm::vec4(0.1f, 1.0f, 0.1f, 1.0f)
-				});
-			}
-			else if (collider2D.type == Collider2DComponent::Type::Circle)
-			{
-				glm::vec3 scale = tc.scale * glm::vec3(collider2D.radius * 2.0f);
-				glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation) * glm::scale(glm::mat4(1.0f), scale);
+				auto [tc, collider2D] = view.get<TransformComponent, Collider2DComponent>(entity);
 
-				Renderer2D::drawCircle({
-					.transform = transform,
-					.color = glm::vec4(0.1f, 1.0f, 0.1f, 1.0f),
-					.thickness = 0.05f
-				});
+				float angle = collider2D.angle + std::atan2(collider2D.offset.y, collider2D.offset.x);
+				float radius = glm::distance(glm::vec2(tc.translation.x, tc.translation.y), glm::vec2(collider2D.offset.x + tc.translation.x, collider2D.offset.y + tc.translation.y));
+				glm::vec3 translation = glm::vec3(tc.translation.x + radius * cos(angle), tc.translation.y + radius * sin(angle), 0.005f);
+
+				if (collider2D.type == Collider2DComponent::Type::Box)
+				{
+					glm::vec3 scale = tc.scale * glm::vec3(collider2D.radius * 2.0f);
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation) * glm::rotate(glm::mat4(1.0f), tc.rotation.z, { 0, 0, 1 }) * glm::scale(glm::mat4(1.0f), scale);
+
+					Renderer2D::drawRect({
+						.useTransform = true,
+						.transform = transform,
+						.color = glm::vec4(0.1f, 1.0f, 0.1f, 1.0f)
+						});
+				}
+				else if (collider2D.type == Collider2DComponent::Type::Circle)
+				{
+					glm::vec3 scale = tc.scale * glm::vec3(collider2D.radius * 2.0f);
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation) * glm::scale(glm::mat4(1.0f), scale);
+
+					Renderer2D::drawCircle({
+						.transform = transform,
+						.color = glm::vec4(0.1f, 1.0f, 0.1f, 1.0f),
+						.thickness = 0.05f
+						});
+				}
 			}
 		}
 
@@ -456,6 +474,8 @@ namespace L3gion
 					newScene();
 				if (ImGui::MenuItem("Open...", "CTRL+O"))
 					openScene();
+				if (ImGui::MenuItem("Save", "CTRL+S"))
+					saveScene();
 				if (ImGui::MenuItem("Save as...", "CTRL+SHIFT+S"))
 					saveSceneAs();
 				if (ImGui::MenuItem("Exit")) Application::get().close();
@@ -474,7 +494,7 @@ namespace L3gion
 	}
 	bool EditorLayer::onMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
-		if (m_SceneState == SceneState::Edit)
+		if (m_SceneState != SceneState::Play)
 		{
 			bool control = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_CONTROL);
 			bool alt = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_ALT) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_ALT);
@@ -526,12 +546,6 @@ namespace L3gion
 				}
 				break;
 			}
-			case LgKeys::LG_KEY_D:
-			{
-				if (control)
-					onDuplicateEntity();
-					break;
-			}
 			case LgKeys::LG_KEY_N:
 			{
 				if (control)
@@ -552,6 +566,12 @@ namespace L3gion
 					saveSceneAs();
 				else if (control)
 					saveScene();
+				break;
+			}
+			case LgKeys::LG_KEY_D:
+			{
+				if (control)
+					onDuplicateEntity();
 				break;
 			}
 			case LgKeys::LG_KEY_DELETE:
@@ -592,6 +612,7 @@ namespace L3gion
 	{
 		onSceneStop();
 		m_ActiveScene = createRef<Scene>();
+		m_EditorScene = m_ActiveScene;
 		m_SceneHierarchyPanel.setContext(m_ActiveScene);
 		m_EditorScenePath.clear();
 	}
@@ -603,7 +624,7 @@ namespace L3gion
 	}
 	void EditorLayer::openScene(const std::filesystem::path& path)
 	{
-		if (m_SceneState == SceneState::Play)
+		if (m_SceneState != SceneState::Edit)
 			onSceneStop();
 
 		if (path.extension().string() != ".lg")
@@ -669,7 +690,7 @@ namespace L3gion
 	}
 	void EditorLayer::onSceneStop()
 	{
-		LG_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, " ");
+		//LG_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, " ");
 
 		if (m_SceneState == SceneState::Play)
 			m_ActiveScene->onRuntimeStop();
@@ -680,7 +701,6 @@ namespace L3gion
 		m_ActiveScene = m_EditorScene;
 		m_SceneHierarchyPanel.setContext(m_ActiveScene);
 	}
-
 	void EditorLayer::onSimutalionScenePlay()
 	{
 		if (m_SceneState != SceneState::Edit)
@@ -699,7 +719,7 @@ namespace L3gion
 
 	void EditorLayer::onDuplicateEntity()
 	{
-		if (m_SceneState != SceneState::Edit)
+		if (m_SceneState != SceneState::Play)
 			return;
 
 		Entity selected = m_SceneHierarchyPanel.getSelectedEntity();

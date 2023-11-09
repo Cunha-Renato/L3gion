@@ -13,6 +13,7 @@ namespace L3gion
 		const ref<Texture2D> getTexture() const { return m_Texture; }
 		const glm::vec2* getTexCoords() const { return m_TexCoords; }
 		const uint32_t getID() const { return m_Texture->getRendererID(); }
+		const std::string& getPath() const { return m_Texture->getPath(); }
 
 		static ref<SubTexture2D> create(const std::string& path);
 		static ref<SubTexture2D> create(const ref<Texture2D>& texture);

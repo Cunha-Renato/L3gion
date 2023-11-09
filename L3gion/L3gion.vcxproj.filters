@@ -1480,6 +1480,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Core\UUID.h" />
+    <ClInclude Include="src\L3gion\Utils\GenaralUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Core\Application.cpp">

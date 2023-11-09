@@ -368,8 +368,8 @@ namespace L3gion
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 				{
-					std::string path = *(std::string*)payload->Data;
-					component.texture = SubTexture2D::create(path);
+					std::filesystem::path path = *(std::filesystem::path*)payload->Data;
+					component.texture = SubTexture2D::create(path.string());
 				}
 
 				ImGui::EndDragDropTarget();

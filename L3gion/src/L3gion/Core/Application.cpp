@@ -1,27 +1,28 @@
 #include "lgpch.h"
 #include "L3gion/Core/Application.h"
 
+#include "L3gion/Utils/GenaralUtils.h"
+#include "L3gion/Renderer/Renderer.h"
 #include "L3gion/Events/MouseEvent.h"
 #include "L3gion/Core/Input.h"
-
-#include <glad/glad.h>
-#include "L3gion/Renderer/Renderer.h"
-
-#include "GLFW/glfw3.h"
 
 namespace L3gion
 {
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application(const std::string& name, ApplicationCommandLineArgs args)
-		: m_CommandLineArgs(args)
+	Application::Application(const ApplicationSpecs& specs)
+		: m_Specs(specs)
 	{	
 		LG_PROFILE_FUNCTION();
 
 		LG_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
-		m_Window = Window::create(WindowProps(name));
+		// Setting working directory
+		if (!m_Specs.workingDir.empty())
+			std::filesystem::current_path(m_Specs.workingDir);
+
+		m_Window = Window::create(WindowProps(m_Specs.name));
 		m_Window->setEventCallback(BIND_EVENT_FN(Application::onEvent));
 
 		Renderer::init();
@@ -78,7 +79,9 @@ namespace L3gion
 		while (m_Running)
 		{
 			LG_PROFILE_SCOPE("Run Loop");
-			double time = glfwGetTime(); // Should be outside this class
+			
+			double time = Utils::Time::getTime(); // Should be outside this class
+			
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
