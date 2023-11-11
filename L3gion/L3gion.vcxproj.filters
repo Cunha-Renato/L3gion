@@ -28,6 +28,9 @@
     <Filter Include="src\L3gion\Scene">
       <UniqueIdentifier>{05D38FE4-F1CB-AE36-1AFE-93BB06568E42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\L3gion\Scripting">
+      <UniqueIdentifier>{EA8EAF5C-D61D-3926-7F3C-4D216BAA49CC}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\L3gion\Utils">
       <UniqueIdentifier>{4867BDE4-3460-DC36-5D92-C1BB49EABB42}</UniqueIdentifier>
     </Filter>
@@ -103,6 +106,9 @@
       <Filter>src\L3gion\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Core\Timestep.h">
+      <Filter>src\L3gion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Core\UUID.h">
       <Filter>src\L3gion\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Core\Window.h">
@@ -191,6 +197,12 @@
     </ClInclude>
     <ClInclude Include="src\L3gion\Scene\ScriptableEntity.h">
       <Filter>src\L3gion\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Scripting\ScriptEngine.h">
+      <Filter>src\L3gion\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Utils\GenaralUtils.h">
+      <Filter>src\L3gion\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Utils\PlatformUtils.h">
       <Filter>src\L3gion\Utils</Filter>
@@ -1479,8 +1491,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Core\UUID.h" />
-    <ClInclude Include="src\L3gion\Utils\GenaralUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Core\Application.cpp">
@@ -1493,6 +1503,9 @@
       <Filter>src\L3gion\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Core\Log.cpp">
+      <Filter>src\L3gion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Core\UUID.cpp">
       <Filter>src\L3gion\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\ImGui\ImGuiBuild.cpp">
@@ -1561,6 +1574,9 @@
     <ClCompile Include="src\L3gion\Scene\SceneSerializer.cpp">
       <Filter>src\L3gion\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\L3gion\Scripting\ScriptEngine.cpp">
+      <Filter>src\L3gion\Scripting</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1603,6 +1619,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\L3gion\Core\UUID.cpp" />
   </ItemGroup>
 </Project>

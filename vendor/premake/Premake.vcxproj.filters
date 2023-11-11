@@ -28,6 +28,9 @@
     <Filter Include="..\L3gion_Editor">
       <UniqueIdentifier>{8294A907-6E8D-C859-97BF-ADDE8317A865}</UniqueIdentifier>
     </Filter>
+    <Filter Include="..\L3gion_ScriptCore">
+      <UniqueIdentifier>{3962CBF9-25F1-54C3-CE0F-69BEBA7D6569}</UniqueIdentifier>
+    </Filter>
     <Filter Include="..\Sandbox">
       <UniqueIdentifier>{3F7B6B1D-2B33-AD6A-943A-86C68011485B}</UniqueIdentifier>
     </Filter>
@@ -53,6 +56,9 @@
     </None>
     <None Include="..\..\L3gion_Editor\premake5.lua">
       <Filter>..\L3gion_Editor</Filter>
+    </None>
+    <None Include="..\..\L3gion_ScriptCore\premake5.lua">
+      <Filter>..\L3gion_ScriptCore</Filter>
     </None>
     <None Include="..\..\Sandbox\premake5.lua">
       <Filter>..\Sandbox</Filter>

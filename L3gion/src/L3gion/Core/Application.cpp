@@ -3,6 +3,7 @@
 
 #include "L3gion/Utils/GenaralUtils.h"
 #include "L3gion/Renderer/Renderer.h"
+#include "L3gion/Scripting/ScriptEngine.h"
 #include "L3gion/Events/MouseEvent.h"
 #include "L3gion/Core/Input.h"
 
@@ -26,6 +27,7 @@ namespace L3gion
 		m_Window->setEventCallback(BIND_EVENT_FN(Application::onEvent));
 
 		Renderer::init();
+		ScriptEngine::init();
 
 		m_ImGuiLayer = new ImGuiLayer;
 		pushOverlay(m_ImGuiLayer);
@@ -36,7 +38,8 @@ namespace L3gion
 	Application::~Application()
 	{
 		LG_PROFILE_FUNCTION();
-
+		
+		ScriptEngine::shutdown();
 		Renderer::shutdown();
 	}
 
