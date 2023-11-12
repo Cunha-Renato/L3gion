@@ -7,11 +7,11 @@
 
 namespace L3gion
 {
-	bool Input::isKeyPressed(LgKeys keycode)
+	bool Input::isKeyPressed(LgKey keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
 
-		auto state = glfwGetKey(window, LG_LG_KEY_TO_GLFW(keycode));
+		auto state = glfwGetKey(window, LG_KEY_TO_GLFW(keycode));
 
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}

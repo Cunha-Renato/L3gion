@@ -26,7 +26,7 @@ namespace L3gion
 				ImGui::TreePop();
 			}
 
-			if (Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL) && Input::isMouseButtonPressed(LG_MOUSE_BUTTON_LEFT) && ImGui::IsItemHovered())
+			if (Input::isKeyPressed(LgKey::LEFT_CONTROL) && Input::isMouseButtonPressed(LG_MOUSE_BUTTON_LEFT) && ImGui::IsItemHovered())
 			{
 				if (dir.isDir)
 					selected = dir.path;

@@ -3,6 +3,7 @@
 #include "SceneHierarchyPanel.h"
 
 #include "L3gion/Scene/Components.h"
+#include "L3gion/Scripting/ScriptEngine.h"
 
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h>
@@ -212,6 +213,19 @@ namespace L3gion
 		}
 	}
 	
+	template<typename T>
+	void SceneHierarchyPanel::menuComponent(Entity entity, const std::string& displayName)
+	{
+		if (!entity.hasComponent<T>())
+		{
+			if (ImGui::MenuItem(displayName.c_str()))
+			{
+				m_SelectionContext.addComponent<T>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+	}
+
 	void SceneHierarchyPanel::drawComponents(Entity entity)
 	{
 		ImGui::PushItemWidth(220.0f);
@@ -234,49 +248,12 @@ namespace L3gion
 
 		if (ImGui::BeginPopup("NewComponent"))
 		{
-			if (!entity.hasComponent<CameraComponent>())
-			{
-				if (ImGui::MenuItem("Camera"))
-				{
-					m_SelectionContext.addComponent<CameraComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!entity.hasComponent<SpriteRendererComponent>())
-			{
-				if (ImGui::MenuItem("Sprite Renderer"))
-				{
-					m_SelectionContext.addComponent<SpriteRendererComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!entity.hasComponent<CircleRendererComponent>())
-			{
-				if (ImGui::MenuItem("Circle Renderer"))
-				{
-					m_SelectionContext.addComponent<CircleRendererComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!entity.hasComponent<RigidBody2DComponent>())
-			{
-				if (ImGui::MenuItem("Rigidbody 2D"))
-				{
-					m_SelectionContext.addComponent<RigidBody2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-			if (!entity.hasComponent<Collider2DComponent>())
-			{
-				if (ImGui::MenuItem("Collider2D"))
-				{
-					m_SelectionContext.addComponent<Collider2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
+			menuComponent<ScriptComponent>(entity, "Script");
+			menuComponent<CameraComponent>(entity, "Camera");
+			menuComponent<SpriteRendererComponent>(entity, "Sprite Renderer");
+			menuComponent<CircleRendererComponent>(entity, "Circle Renderer");
+			menuComponent<RigidBody2DComponent>(entity, "RigidBody 2D");
+			menuComponent<Collider2DComponent>(entity, "Collider 2D");
 
 			ImGui::EndPopup();
 		}
@@ -297,6 +274,24 @@ namespace L3gion
 			tc.rotation = glm::radians(rotation);
 			drawVec3Control("Scale", tc.scale, 1.0f);
 			ImGui::Spacing();
+		});
+
+		drawComponent<ScriptComponent>(entity, "Script", [](auto& component)
+		{
+			bool scriptExists = ScriptEngine::entityClassExists(component.name);
+
+			static char buffer[64];
+			strcpy(buffer, component.name.c_str());
+				
+			if (!scriptExists)
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.2f, 1.0f));
+
+			if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+				component.name = buffer;
+		
+
+			if (!scriptExists)
+				ImGui::PopStyleColor();
 		});
 
 		drawComponent<CameraComponent>(entity, "Camera", [](auto& cameraComponent)

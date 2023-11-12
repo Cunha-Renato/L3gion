@@ -11,7 +11,7 @@ namespace L3gion
 	{
 	public:
 		// Keycodes will be send as LG_KEY
-		static bool isKeyPressed(LgKeys keycode);
+		static bool isKeyPressed(LgKey keycode);
 
 		static bool isMouseButtonPressed(int button);
 		static glm::vec2 getMousePos();

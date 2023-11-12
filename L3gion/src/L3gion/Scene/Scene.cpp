@@ -4,6 +4,7 @@
 #include "L3gion/Scene/Entity.h"
 #include "L3gion/Scene/ScriptableEntity.h"
 #include "L3gion/Scene/Components.h"
+#include "L3gion/Scripting/ScriptEngine.h"
 
 #include <glm/glm.hpp>
 
@@ -86,6 +87,7 @@ namespace L3gion
 		copyComponent<SpriteRendererComponent>(destRegistry, srcRegistry, enttMap);
 		copyComponent<CircleRendererComponent>(destRegistry, srcRegistry, enttMap);
 		copyComponent<CameraComponent>(destRegistry, srcRegistry, enttMap);
+		copyComponent<ScriptComponent>(destRegistry, srcRegistry, enttMap);
 		copyComponent<NativeScriptComponent>(destRegistry, srcRegistry, enttMap);
 		copyComponent<RigidBody2DComponent>(destRegistry, srcRegistry, enttMap);
 		copyComponent<Collider2DComponent>(destRegistry, srcRegistry, enttMap);
@@ -106,6 +108,7 @@ namespace L3gion
 
 		tag.tag = name.empty() ? "Not named Entity" : name;
 
+		m_EntityMap[id] = entity;
 
 		return entity;
 	}
@@ -113,15 +116,28 @@ namespace L3gion
 	void Scene::deleteEntity(Entity entity)
 	{
 		m_Registry.destroy(entity);
+		m_EntityMap.erase(entity.getUUID());
 	}
 
 	void Scene::onRuntimeStart()
 	{
 		initializePhysics();
+
+		ScriptEngine::onRuntimeStart(this);
+
+		// Instantiate all ScriptEntities
+		auto view = m_Registry.view<ScriptComponent>();
+		for (auto e : view)
+		{
+			Entity entity = { e, this };
+			ScriptEngine::onCreateEntity(entity);
+		}
 	}
 	void Scene::onRuntimeStop()
 	{
 		stopPhysics();
+
+		ScriptEngine::onRuntimeStop();
 	}
 
 	void Scene::onSimulationStart()
@@ -250,21 +266,76 @@ namespace L3gion
 		}
 	}
 
+	
+	void Scene::renderEditorScene(EditorCamera& camera)
+	{
+		LG_PROFILE_FUNCTION();
+		Renderer2D::beginScene(camera);
+
+		// Sprites
+		{
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+				m_QuadSpecs.transform = transform.getTransform();
+				m_QuadSpecs.color = sprite.color;
+				m_QuadSpecs.id = (int)entity;
+				m_QuadSpecs.tiling = sprite.tilingFactor;
+				m_QuadSpecs.subTexture = sprite.texture;
+				Renderer2D::draw(m_QuadSpecs);
+			}
+		}
+
+		// Circles
+		{
+			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+			for (auto entity : view)
+			{
+				auto& transform = view.get<TransformComponent>(entity);
+				auto& circleComponent = view.get<CircleRendererComponent>(entity);
+
+				m_CircleSpecs.transform = transform.getTransform();
+				m_CircleSpecs.color = circleComponent.color;
+				m_CircleSpecs.thickness = circleComponent.thickness;
+				m_CircleSpecs.smoothness = circleComponent.smoothness;
+				m_CircleSpecs.id = (int)entity;
+				Renderer2D::draw(m_CircleSpecs);
+			}
+		}
+
+		Renderer2D::endScene();
+	}
+
 	void Scene::onUptdateRuntime(Timestep ts)
 	{
 		LG_PROFILE_FUNCTION();
 		//Update Scripts
-		m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+		
 		{
-			if (!nsc.instance)
+			// C# Scripting
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto e : view)
 			{
-				nsc.instance = nsc.instantiateScript();
-				nsc.instance->m_Entity = Entity{ entity, this };
-				nsc.instance->onCreate();
+				Entity entity = { e, this };
+				ScriptEngine::onUpdateEntity(entity, ts);
 			}
 
-			nsc.instance->onUpdate(ts);
-		});
+			// Native Scripting
+			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+				{
+					if (!nsc.instance)
+					{
+						nsc.instance = nsc.instantiateScript();
+						nsc.instance->m_Entity = Entity{ entity, this };
+						nsc.instance->onCreate();
+					}
+
+					nsc.instance->onUpdate(ts);
+				});
+		}
 
 		// Physics
 		updatePhysics(ts);
@@ -328,49 +399,6 @@ namespace L3gion
 			Renderer2D::endScene();
 		}
 	}
-	
-	void Scene::renderEditorScene(EditorCamera& camera)
-	{
-		LG_PROFILE_FUNCTION();
-		Renderer2D::beginScene(camera);
-
-		// Sprites
-		{
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-
-			for (auto entity : group)
-			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-				m_QuadSpecs.transform = transform.getTransform();
-				m_QuadSpecs.color = sprite.color;
-				m_QuadSpecs.id = (int)entity;
-				m_QuadSpecs.tiling = sprite.tilingFactor;
-				m_QuadSpecs.subTexture = sprite.texture;
-				Renderer2D::draw(m_QuadSpecs);
-			}
-		}
-
-		// Circles
-		{
-			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
-			for (auto entity : view)
-			{
-				auto& transform = view.get<TransformComponent>(entity);
-				auto& circleComponent = view.get<CircleRendererComponent>(entity);
-
-				m_CircleSpecs.transform = transform.getTransform();
-				m_CircleSpecs.color = circleComponent.color;
-				m_CircleSpecs.thickness = circleComponent.thickness;
-				m_CircleSpecs.smoothness = circleComponent.smoothness;
-				m_CircleSpecs.id = (int)entity;
-				Renderer2D::draw(m_CircleSpecs);
-			}
-		}
-
-		Renderer2D::endScene();
-	}
-
 	void Scene::onUptdateEditor(Timestep ts, EditorCamera& editorCamera)
 	{
 		// Render
@@ -409,11 +437,20 @@ namespace L3gion
 		copyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
 		copyComponentIfExists<CircleRendererComponent>(newEntity, entity);
 		copyComponentIfExists<CameraComponent>(newEntity, entity);
+		copyComponentIfExists<ScriptComponent>(newEntity, entity);
 		copyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 		copyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
 		copyComponentIfExists<Collider2DComponent>(newEntity, entity);
 	}
 
+	Entity Scene::getEntityByUUID(UUID id)
+	{
+		// TODO: ASSERT MAYBE
+		if (m_EntityMap.find(id) != m_EntityMap.end())
+			return { m_EntityMap[id], this};
+
+		return {};
+	}
 	Entity Scene::getPrimaryCameraEntity()
 	{
 		auto view = m_Registry.view<CameraComponent>();

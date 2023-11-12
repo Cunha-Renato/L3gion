@@ -8,15 +8,15 @@ namespace L3gion
 	class KeyEvent : public Event
 	{
 	public:
-		inline LgKeys getKeyCode() { return m_KeyCode; }
+		inline LgKey getKeyCode() { return m_KeyCode; }
 
 		EVENT_CLASS_CATEGORY(EC_Keyboard | EC_Input)
 
 	protected:
-		KeyEvent(LgKeys keyCode)
+		KeyEvent(LgKey keyCode)
 			: m_KeyCode(keyCode) {}
 
-		LgKeys m_KeyCode;
+		LgKey m_KeyCode;
 	};
 
 //----------------- KEY_PRESSED -------------------------
@@ -24,11 +24,11 @@ namespace L3gion
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(LgKeys keyCode, int repeatCount)
+		KeyPressedEvent(LgKey keyCode, int repeatCount)
 			: KeyEvent(keyCode), m_RepeatCount(repeatCount) {}
 
 		inline int getRepeatCount() const { return m_RepeatCount; }
-		inline LgKeys getKeyCode() { return m_KeyCode; }
+		inline LgKey getKeyCode() { return m_KeyCode; }
 
 		std::string toString() const override
 		{
@@ -47,7 +47,7 @@ namespace L3gion
 	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(LgKeys keyCode)
+		KeyReleasedEvent(LgKey keyCode)
 			: KeyEvent(keyCode) {}
 
 		std::string toString() const override
@@ -66,7 +66,7 @@ namespace L3gion
 	{
 	public:
 		KeyTypedEvent(unsigned int keyCode) // TODO: this is wrong
-			: KeyEvent((LgKeys)0) {}
+			: KeyEvent((LgKey)0) {}
 
 		std::string toString() const override
 		{

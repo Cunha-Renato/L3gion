@@ -28,6 +28,7 @@ namespace L3gion
 		void onSimulationStart();
 		void onSimulationStop();
 
+		Entity getEntityByUUID(UUID id);
 		Entity getPrimaryCameraEntity();
 
 		void onUptdateRuntime(Timestep ts);
@@ -57,6 +58,8 @@ namespace L3gion
 		Renderer2D::CircleSpecs m_CircleSpecs;
 
 		b2World* m_World = nullptr;
+
+		std::unordered_map<UUID, entt::entity> m_EntityMap;
 
 		friend class Entity;
 		friend class SceneSerializer;

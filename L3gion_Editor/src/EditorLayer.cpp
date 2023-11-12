@@ -329,7 +329,7 @@ namespace L3gion
 			}
 
 			// Snapping
-			bool snap = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL);
+			bool snap = Input::isKeyPressed(LgKey::LEFT_CONTROL);
 			float snapValue = 0.5f;
 			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
 				snapValue = 45.0f;
@@ -349,7 +349,7 @@ namespace L3gion
 				nullptr,
 				snap ? snapValues : nullptr);
 
-			if (ImGuizmo::IsUsing() && !Input::isKeyPressed(LgKeys::LG_KEY_LEFT_ALT))
+			if (ImGuizmo::IsUsing() && !Input::isKeyPressed(LgKey::LEFT_ALT))
 			{
 				glm::vec3 translation{ 0.0f }, rotation{ 0.0f }, scale{ 1.0f };
 				Math::decomposeTransform(transform, translation, rotation, scale);
@@ -496,8 +496,8 @@ namespace L3gion
 	{
 		if (m_SceneState != SceneState::Play)
 		{
-			bool control = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_CONTROL);
-			bool alt = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_ALT) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_ALT);
+			bool control = Input::isKeyPressed(LgKey::LEFT_CONTROL) || Input::isKeyPressed(LgKey::RIGHT_CONTROL);
+			bool alt = Input::isKeyPressed(LgKey::LEFT_ALT) || Input::isKeyPressed(LgKey::RIGHT_ALT);
 			if (e.getMouseButton() == LG_MOUSE_BUTTON_LEFT && !control && !alt)
 			{
 				auto [mx, my] = ImGui::GetMousePos();
@@ -529,12 +529,12 @@ namespace L3gion
 		if (e.getRepeatCount() > 0)
 			return false;
 
-		bool control = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_CONTROL);
-		bool shift = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_SHIFT) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_SHIFT);
+		bool control = Input::isKeyPressed(LgKey::LEFT_CONTROL) || Input::isKeyPressed(LgKey::RIGHT_CONTROL);
+		bool shift = Input::isKeyPressed(LgKey::LEFT_SHIFT) || Input::isKeyPressed(LgKey::RIGHT_SHIFT);
 
 		switch (e.getKeyCode())
 		{
-			case LgKeys::LG_KEY_I:
+			case LgKey::I:
 			{
 				if (LG_PROFILE_IS_ACTIVE())
 				{
@@ -546,13 +546,13 @@ namespace L3gion
 				}
 				break;
 			}
-			case LgKeys::LG_KEY_N:
+			case LgKey::N:
 			{
 				if (control)
 					newScene();
 				break;
 			}
-			case LgKeys::LG_KEY_O:
+			case LgKey::O:
 			{
 				if (control)
 					openScene();
@@ -560,7 +560,7 @@ namespace L3gion
 			}
 
 			// Commands
-			case LgKeys::LG_KEY_S:
+			case LgKey::S:
 			{
 				if (shift)
 					saveSceneAs();
@@ -568,35 +568,35 @@ namespace L3gion
 					saveScene();
 				break;
 			}
-			case LgKeys::LG_KEY_D:
+			case LgKey::D:
 			{
 				if (control)
 					onDuplicateEntity();
 				break;
 			}
-			case LgKeys::LG_KEY_DELETE:
+			case LgKey::DEL:
 			{
 				m_SceneHierarchyPanel.deleteMarkedEntity();
 				break;
 			}
 			
 			// Gizmos
-			case LgKeys::LG_KEY_Q:
+			case LgKey::Q:
 			{
 				m_GizmoType = -1;
 				break;
 			}
-			case LgKeys::LG_KEY_W:
+			case LgKey::W:
 			{
 				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 				break;
 			}
-			case LgKeys::LG_KEY_E:
+			case LgKey::E:
 			{
 				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 				break;
 			}
-			case LgKeys::LG_KEY_R:
+			case LgKey::R:
 			{
 				m_GizmoType = ImGuizmo::OPERATION::SCALE;
 				break;

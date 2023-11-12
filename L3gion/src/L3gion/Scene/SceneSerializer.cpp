@@ -191,6 +191,13 @@ namespace L3gion
 			out << YAML::Key << "scale" << YAML::Value << tc.scale;
 		});
 
+		serializeComponent<ScriptComponent>(entity, out, "ScriptComponent", [&]()
+		{
+			auto& sc = entity.getComponent<ScriptComponent>();
+
+			out << YAML::Key << "script" << YAML::Value << sc.name;
+		});
+
 		serializeComponent<CameraComponent>(entity, out, "CameraComponent", [&]()
 		{
 			auto& cameraComponent = entity.getComponent<CameraComponent>();
@@ -317,6 +324,13 @@ namespace L3gion
 					tc.translation = transformComponent["translation"].as<glm::vec3>();
 					tc.rotation = transformComponent["rotation"].as<glm::vec3>();
 					tc.scale = transformComponent["scale"].as<glm::vec3>();
+				}
+
+				auto scriptComponent = entity["ScriptComponent"];
+				if (scriptComponent)
+				{
+					auto& sc = deserializedEntity.addComponent<ScriptComponent>();
+					sc.name = scriptComponent["script"].as<std::string>();
 				}
 
 				auto cameraComponent = entity["CameraComponent"];

@@ -147,6 +147,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\L3gion\Scripting\ScriptGlue.h" />
     <ClInclude Include="src\L3gion.h" />
     <ClInclude Include="src\L3gion\Core\Application.h" />
     <ClInclude Include="src\L3gion\Core\Core.h" />
@@ -622,6 +623,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\L3gion\Scripting\ScriptGlue.cpp" />
     <ClCompile Include="src\L3gion\Core\Application.cpp" />
     <ClCompile Include="src\L3gion\Core\Layer.cpp" />
     <ClCompile Include="src\L3gion\Core\LayerStack.cpp" />

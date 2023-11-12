@@ -23,6 +23,9 @@ namespace L3gion
 		void deleteMarkedEntity() { m_DeleteMarkedEntity = true; }
 
 	private:
+
+		template<typename T>
+		void menuComponent(Entity entity, const std::string& displayName);
 		void drawEntityNode(Entity entity);
 		void drawComponents(Entity entity);
 

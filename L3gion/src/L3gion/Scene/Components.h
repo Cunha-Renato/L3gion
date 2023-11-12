@@ -84,6 +84,13 @@ namespace L3gion
 	};
 
 	class ScriptableEntity;
+	struct ScriptComponent
+	{
+		std::string name;
+
+		ScriptComponent() = default;
+		ScriptComponent(const ScriptComponent&) = default;
+	};
 	struct NativeScriptComponent
 	{
 		ScriptableEntity* instance = nullptr;
