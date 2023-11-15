@@ -37,6 +37,26 @@ namespace L3gion
 		entity.getUUID();
 		ScriptEngine::onCreateEntity(entity);
 	}
+	
+	static MonoObject* GetScriptInstance(UUID entityUUID)
+	{
+		return ScriptEngine::getManagedInstance(entityUUID);
+	}
+	
+	static uint64_t Entity_FindEntityByName(MonoString* name)
+	{
+		char* nameCStr = mono_string_to_utf8(name);
+
+		Scene* scene = ScriptEngine::getSceneContext();
+		LG_CORE_ASSERT(scene, "");
+		Entity entity = scene->getEntityByName(nameCStr);
+		mono_free(nameCStr);
+
+		if (!entity)
+			return 0;
+
+		return entity.getUUID();
+	}
 	static bool Entity_HasComponent(UUID entityUUID, MonoReflectionType* componentType)
 	{
 		Scene* scene = ScriptEngine::getSceneContext();
@@ -185,7 +205,9 @@ namespace L3gion
 
 	void ScriptGlue::registerFunctions()
 	{
+		LG_ADD_INTERNAL_CALL(GetScriptInstance);
 		
+		LG_ADD_INTERNAL_CALL(Entity_FindEntityByName);
 		LG_ADD_INTERNAL_CALL(Entity_CreateEntity);
 		LG_ADD_INTERNAL_CALL(Entity_DuplicateEntity);
 		LG_ADD_INTERNAL_CALL(Entity_HasComponent);

@@ -17,6 +17,8 @@ namespace L3gion
 		Scene();
 		~Scene();
 
+		bool isRunning() { return m_IsRunning; }
+
 		static ref<Scene> copy(ref<Scene> other);
 
 		Entity createEntity(const std::string& name = std::string());
@@ -29,6 +31,7 @@ namespace L3gion
 		void onSimulationStop();
 
 		Entity getEntityByUUID(UUID id);
+		Entity getEntityByName(const std::string_view& name);
 		Entity getPrimaryCameraEntity();
 
 		void onUptdateRuntime(Timestep ts);
@@ -58,6 +61,8 @@ namespace L3gion
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 		Renderer2D::QuadSpecs m_QuadSpecs;
 		Renderer2D::CircleSpecs m_CircleSpecs;
+
+		bool m_IsRunning = false;
 
 		b2World* m_World = nullptr;
 

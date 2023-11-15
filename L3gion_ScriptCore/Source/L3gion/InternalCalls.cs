@@ -6,6 +6,12 @@ namespace L3gion
     public static class InternalCalls
     {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static ulong Entity_FindEntityByName(string name);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static object GetScriptInstance(ulong entityID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static ulong Entity_CreateEntity();
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]

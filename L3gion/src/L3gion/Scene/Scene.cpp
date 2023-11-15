@@ -151,6 +151,7 @@ namespace L3gion
 
 	void Scene::onRuntimeStart()
 	{
+		m_IsRunning = true;
 		initializePhysics();
 
 		ScriptEngine::onRuntimeStart(this);
@@ -166,6 +167,7 @@ namespace L3gion
 	}
 	void Scene::onRuntimeStop()
 	{
+		m_IsRunning = false;
 		stopPhysics();
 
 		ScriptEngine::onRuntimeStop();
@@ -173,10 +175,12 @@ namespace L3gion
 
 	void Scene::onSimulationStart()
 	{
+		m_IsRunning = true;
 		initializePhysics();
 	}
 	void Scene::onSimulationStop()
 	{
+		m_IsRunning = false;
 		stopPhysics();
 	}
 
@@ -462,6 +466,18 @@ namespace L3gion
 		// TODO: ASSERT MAYBE
 		if (m_EntityMap.find(id) != m_EntityMap.end())
 			return { m_EntityMap[id], this};
+
+		return {};
+	}
+	Entity Scene::getEntityByName(const std::string_view& name)
+	{
+		auto view = m_Registry.view<TagComponent>();
+		for (auto entity : view)
+		{
+			const TagComponent& tc = view.get<TagComponent>(entity);
+			if (tc.tag == name)
+				return Entity{ entity, this };
+		}
 
 		return {};
 	}

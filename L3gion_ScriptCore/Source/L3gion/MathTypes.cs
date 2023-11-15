@@ -16,6 +16,11 @@
             x = _x;
             y = _y;
         }
+        public Vec2(Vec2 vec)
+        {
+            x = vec.x;
+            y = vec.y;
+        }
 
         public static Vec2 operator *(Vec2 vec, float scalar)
         {
@@ -50,6 +55,18 @@
             y = _y;
             z = _z;
         }
+        public Vec3(Vec3 vec)
+        {
+            x = vec.x;
+            y = vec.y;
+            z = vec.z;
+        }
+        public Vec3(Vec2 vec, float _z)
+        {
+            x = vec.x;
+            y = vec.y;
+            z = _z;
+        }
 
         public Vec2 xy
         {
@@ -58,6 +75,24 @@
             {
                 x = value.x;
                 y = value.y;
+            }
+        }
+        public Vec2 xz
+        {
+            get => new Vec2(x, z);
+            set
+            {
+                x = value.x;
+                z = value.y;
+            }
+        }
+        public Vec2 yz
+        {
+            get => new Vec2(y, z);
+            set
+            {
+                y = value.x;
+                z = value.y;
             }
         }
 
@@ -95,6 +130,130 @@
             y = _y;
             z = _z;
             w = _w;
+        }
+        public Vec4(Vec4 vec)
+        {
+            x = vec.x;
+            y = vec.y;
+            z = vec.z;
+            w = vec.w;
+        }
+        public Vec4(Vec3 vec, float _w)
+        {
+            x = vec.x;
+            y = vec.y;
+            z = vec.z;
+            w = _w;
+        }
+        public Vec4(Vec2 vec, float _z, float _w)
+        {
+            x = vec.x;
+            y = vec.y;
+            z = _z;
+            w = _w;
+        }
+        public Vec4(Vec2 vec1, Vec2 vec2)
+        {
+            x = vec1.x;
+            y = vec1.y;
+            z = vec2.x;
+            w = vec2.y;
+        }
+
+        public Vec3 xyz
+        {
+            get => new Vec3(x, y, z);
+            set
+            {
+                x = value.x;
+                y = value.y;
+                z = value.z;
+            }
+        }
+        public Vec3 xyw
+        {
+            get => new Vec3(x, y, w);
+            set
+            {
+                x = value.x;
+                y = value.y;
+                w = value.z;
+            }
+        }
+        public Vec3 xzw
+        {
+            get => new Vec3(x, z, w);
+            set
+            {
+                x = value.x;
+                z = value.y;
+                w = value.z;
+            }
+        }
+        public Vec3 yzw
+        {
+            get => new Vec3(y, z, w);
+            set
+            {
+                y = value.x;
+                z = value.y;
+                w = value.z;
+            }
+        }
+
+        public Vec2 xy
+        {
+            get => new Vec2(x, y);
+            set
+            {
+                x = value.x;
+                y = value.y;
+            }
+        }
+        public Vec2 xz
+        {
+            get => new Vec2(x, z);
+            set
+            {
+                x = value.x;
+                z = value.y;
+            }
+        }
+        public Vec2 xw
+        {
+            get => new Vec2(x, w);
+            set
+            {
+                x = value.x;
+                w = value.y;
+            }
+        }
+        public Vec2 yz
+        {
+            get => new Vec2(y, z);
+            set
+            {
+                y = value.x;
+                z = value.y;
+            }
+        }
+        public Vec2 yw
+        {
+            get => new Vec2(y, w);
+            set
+            {
+                y = value.x;
+                w = value.y;
+            }
+        }
+        public Vec2 zw
+        {
+            get => new Vec2(z, w);
+            set
+            {
+                z = value.x;
+                w = value.y;
+            }
         }
 
         public static Vec4 operator *(Vec4 vec, float scalar)

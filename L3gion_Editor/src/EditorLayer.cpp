@@ -19,7 +19,6 @@ namespace L3gion
 	{
 	}
 
-
 	void EditorLayer::onAttach()
 	{
 		LG_PROFILE_FUNCTION();
@@ -54,7 +53,6 @@ namespace L3gion
 
 		m_SceneHierarchyPanel.setContext(m_ActiveScene);
 	}
-
 	void EditorLayer::onDetach()
 	{
 		LG_PROFILE_FUNCTION();
@@ -188,7 +186,6 @@ namespace L3gion
 
 		Renderer2D::endScene();
 	}
-
 	void EditorLayer::onImGuiRender()
 	{
 		LG_PROFILE_FUNCTION();

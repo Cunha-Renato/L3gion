@@ -281,21 +281,36 @@ namespace L3gion
 		{
 			bool scriptExists = ScriptEngine::entityClassExists(component.name);
 
-			static char buffer[64];
-			strcpy(buffer, component.name.c_str());
+			const auto& classesNameStr = ScriptEngine::getEntityClassesName();
+			std::string currentNameStr = scriptExists ? component.name : "None";
 
-			if (!scriptExists)
-				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.2f, 1.0f));
-
-			if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+			if (ImGui::BeginCombo("Class", currentNameStr.c_str()))
 			{
-				component.name = buffer;
-				m_Context->refreshScripts();
+				for (auto& name : classesNameStr)
+				{
+					bool isSelected = currentNameStr == name;
+
+					if (ImGui::Selectable(name.c_str(), isSelected))
+					{
+						currentNameStr = name;
+						if (component.name != name)
+						{
+							component.name = name;
+							m_Context->refreshScripts();
+						}
+						else
+							component.name = name;
+					}
+
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
 			}
 		
 			// Fields
 			ref<ScriptInstance> scriptInstance = ScriptEngine::getEntityScriptInstance(entity.getUUID());
-
 			if (scriptInstance)
 			{
 				const auto& fields = scriptInstance->getScriptClass()->getFields();
@@ -304,16 +319,13 @@ namespace L3gion
 				{
 					if (field.type == ScriptFieldType::Float)
 					{
-						float data = scriptInstance->getFieldValue<float>(name);
+						float data = scriptInstance->getFieldValue<float>(name, !m_Context->isRunning());
 
 						if (ImGui::DragFloat(name.c_str(), &data, 0.01f))
-							scriptInstance->setFieldValue(name, data);						
+							scriptInstance->setFieldValue(name, data, !m_Context->isRunning());						
 					}
 				}
 			}
-
-			if (!scriptExists)
-				ImGui::PopStyleColor();
 		});
 
 		drawComponent<CameraComponent>(entity, "Camera", [](auto& cameraComponent)

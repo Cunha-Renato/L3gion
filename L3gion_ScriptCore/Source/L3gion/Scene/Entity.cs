@@ -4,21 +4,24 @@ namespace L3gion
 {
     public class Entity
     {
-        protected Entity() { ID = 0; } 
+        protected Entity() { ID = 0; }
         public Entity(ulong id)
         {
             ID = id;
         }
 
         public readonly ulong ID;
-
-        public ulong CreateEntity()
+        public Vec3 Translation
         {
-            return InternalCalls.Entity_CreateEntity();
-        }
-        public void DuplicateEntity(ulong id)
-        {
-            InternalCalls.Entity_DuplicateEntity(id);
+            get
+            {
+                InternalCalls.TransformComponent_GetTranslation(ID, out Vec3 result);
+                return result;
+            }
+            set
+            {
+                InternalCalls.TransformComponent_SetTranslation(ID, ref value);
+            }
         }
         public bool HasComponent<T>() where T : Component, new()
         {
@@ -29,11 +32,36 @@ namespace L3gion
         {
             if (!HasComponent<T>())
                 return null;
-            
+
             // TODO: Add caching for this
             T component = new T() { Entity = this };
-            
+
             return component;
+        }
+
+
+        public ulong CreateEntity()
+        {
+            return InternalCalls.Entity_CreateEntity();
+        }
+        public void DuplicateEntity(ulong id)
+        {
+            InternalCalls.Entity_DuplicateEntity(id);
+        }
+        public Entity FindEntityByName(string name)
+        {
+            ulong entityID = InternalCalls.Entity_FindEntityByName(name);
+
+            if (entityID == 0)
+                return null;
+
+            return new Entity(entityID);
+        }
+        public T As<T>() where T : Entity, new()
+        {
+            object instance = InternalCalls.GetScriptInstance(ID);
+            
+            return instance as T;
         }
     }
 }

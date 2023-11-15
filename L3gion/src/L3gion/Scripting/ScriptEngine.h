@@ -74,26 +74,27 @@ namespace L3gion
 		void invokeOnUpdate(float ts);
 
 		template<typename T>
-		T getFieldValue(const std::string& name)
+		T getFieldValue(const std::string& name, bool retainValue)
 		{
-			bool success = getFieldValueInternal(name);
+			bool success = getFieldValueInternal(name, retainValue);
 
 			if (!success)
 				return T();
 
-			return *(T*)s_FieldValues.at(name);
+			return retainValue ? *(T*)m_FieldValues.at(name) : *(T*)m_Buffer;
 		}
 		template<typename T>
-		void setFieldValue(const std::string& name, const T& value)
+		void setFieldValue(const std::string& name, const T& value, bool retainValue)
 		{
-			if (setFieldValueInternal(name, &value))
-				memcpy(s_FieldValues[name], &value, sizeof(T));
+			if (setFieldValueInternal(name, &value) && retainValue)
+				memcpy(m_FieldValues[name], &value, sizeof(T));
 		}
 
+		MonoObject* getManagedObject() { return m_Instance; }
 		ref<ScriptClass> getScriptClass() { return m_ScriptClass; }
 
 	private:
-		bool getFieldValueInternal(const std::string& name);
+		bool getFieldValueInternal(const std::string& name, bool retainValue);
 		bool setFieldValueInternal(const std::string& name, const void* value);
 
 	private:
@@ -104,7 +105,8 @@ namespace L3gion
 		MonoMethod* m_OnCreateMethod = nullptr;
 		MonoMethod* m_OnUpdateMethod = nullptr;
 
-		std::map<std::string, char[8]> s_FieldValues;
+		std::map<std::string, char[8]> m_FieldValues;
+		char m_Buffer[8];
 	};
 
 //------------------ SCRIPT_ENGINE ------------------
@@ -129,11 +131,13 @@ namespace L3gion
 		static ref<ScriptInstance> getEntityScriptInstance(UUID entityID);
 
 		static std::unordered_map<std::string, ref<ScriptClass>> getEntityClasses();
+		static const std::vector<std::string>& getEntityClassesName();
 
 		static MonoImage* getCoreAssemblyImage();
 
 		static void loadEntity(Entity entity);
 
+		static MonoObject* getManagedInstance(UUID entityUUID);
 	private:
 		static void initMono();
 		static void shutdownMono();

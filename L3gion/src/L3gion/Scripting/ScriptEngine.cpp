@@ -163,6 +163,7 @@ namespace L3gion
 		ScriptClass entityClass;
 
 		std::unordered_map<std::string, ref<ScriptClass>> entityClasses;
+		std::vector<std::string> entityClassesName;
 		std::unordered_map<UUID, ref<ScriptInstance>> entityInstances;
 
 		// Runtime
@@ -308,6 +309,13 @@ namespace L3gion
 		return s_Data->sceneContext;
 	}
 
+	MonoObject* ScriptEngine::getManagedInstance(UUID entityUUID)
+	{
+		LG_CORE_ASSERT(s_Data->entityInstances.find(entityUUID) != s_Data->entityInstances.end(), "");
+
+		return s_Data->entityInstances.at(entityUUID)->getManagedObject();
+	}
+
 	bool ScriptEngine::entityClassExists(const std::string& fullName)
 	{
 		return s_Data->entityClasses.find(fullName) != s_Data->entityClasses.end();
@@ -318,14 +326,21 @@ namespace L3gion
 		return s_Data->entityClasses;
 	}
 
+	const std::vector<std::string>& ScriptEngine::getEntityClassesName()
+	{
+		return s_Data->entityClassesName;
+	}
+
 	void ScriptEngine::loadAssemblyClasses()
 	{
 		s_Data->entityClasses.clear();
+		s_Data->entityClassesName.clear();
 
 		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(s_Data->appAssemblyImage, MONO_TABLE_TYPEDEF);
 		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
 		MonoClass* entityClass = mono_class_from_name(s_Data->coreAssemblyImage, "L3gion", "Entity");
 
+		s_Data->entityClassesName.reserve(numTypes);
 		for (int32_t i = 0; i < numTypes; i++)
 		{
 			uint32_t cols[MONO_TYPEDEF_SIZE];
@@ -352,6 +367,7 @@ namespace L3gion
 			
 			ref<ScriptClass> scriptClass = createRef<ScriptClass>(nameSpace, name);
 			s_Data->entityClasses[fullName] = scriptClass;
+			s_Data->entityClassesName.push_back(fullName);
 
 			LG_CORE_WARN("Class: {} has: ", name);
 			// Geting the field names and types from mono...
@@ -445,7 +461,7 @@ namespace L3gion
 		}
 	}
 
-	bool ScriptInstance::getFieldValueInternal(const std::string& name)
+	bool ScriptInstance::getFieldValueInternal(const std::string& name, bool retainValue)
 	{
 		const auto& fields = m_ScriptClass->getFields();
 		auto it = fields.find(name);
@@ -453,11 +469,13 @@ namespace L3gion
 		if (it == fields.end())
 			return false;
 
-		if (s_FieldValues.find(name) == s_FieldValues.end())
-		{
-			const ScriptField& field = it->second;
-			mono_field_get_value(m_Instance, field.classField, &s_FieldValues[name][0]);
-		}
+		const ScriptField& field = it->second;
+		
+		if (m_FieldValues.find(name) == m_FieldValues.end() && retainValue)
+			mono_field_get_value(m_Instance, field.classField, &m_FieldValues[name][0]);
+		else if (!retainValue)
+			mono_field_get_value(m_Instance, field.classField, &m_Buffer);
+			
 		
 		return true;
 	}

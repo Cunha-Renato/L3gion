@@ -1,16 +1,15 @@
 Scene: Untitled Scene
 Entities:
-  - Entity: 11098690360209268080
+  - Entity: 17338750535148243425
     TagComponent:
-      tag: Floor
+      tag: Wall
     TransformComponent:
-      translation: [0, -2.76208305, 0]
-      rotation: [0, 0, -0.22247681]
-      scale: [40.7089615, 0.55059278, 1]
+      translation: [-8.58306885e-06, 0, 0]
+      rotation: [0, 0, 0]
+      scale: [60.8056221, 1, 1]
     SpriteRendererComponent:
       color: [1, 1, 1, 1]
-      texturePath: assets\textures\Checkerboard.png
-      tilingFactor: 34
+      tilingFactor: 1
     RigidBody2DComponent:
       type: Static
       fixedRotation: false
@@ -23,15 +22,59 @@ Entities:
       friction: 0.5
       restitution: 0
       restitutionThreshold: 0.400000006
-  - Entity: 1773841276860009922
+  - Entity: 4037167702423104227
     TagComponent:
-      tag: Floor
+      tag: Wall
     TransformComponent:
-      translation: [20.0578308, -6.27100039, 1.77578897e-06]
-      rotation: [-2.34710988e-08, -2.89291169e-08, 1.08423841]
-      scale: [2.61692595, 0.550592244, 1]
+      translation: [-29.8764935, 29.9006138, 0]
+      rotation: [0, 0, 1.57079637]
+      scale: [60.7814827, 0.999623775, 1]
     SpriteRendererComponent:
-      color: [0, 0, 0, 1]
+      color: [1, 1, 1, 1]
+      tilingFactor: 1
+    RigidBody2DComponent:
+      type: Static
+      fixedRotation: false
+    Collider2DComponent:
+      type: Box
+      radius: 0.5
+      offset: [0, 0]
+      size: [0.5, 0.5]
+      density: 1
+      friction: 0.5
+      restitution: 0
+      restitutionThreshold: 0.400000006
+  - Entity: 3716712083789086596
+    TagComponent:
+      tag: Wall
+    TransformComponent:
+      translation: [0.10236454, 59.7660294, 0]
+      rotation: [0, 0, 0]
+      scale: [60.8056221, 1, 1]
+    SpriteRendererComponent:
+      color: [1, 1, 1, 1]
+      tilingFactor: 1
+    RigidBody2DComponent:
+      type: Static
+      fixedRotation: false
+    Collider2DComponent:
+      type: Box
+      radius: 0.5
+      offset: [0, 0]
+      size: [0.5, 0.5]
+      density: 1
+      friction: 0.5
+      restitution: 0
+      restitutionThreshold: 0.400000006
+  - Entity: 2877903089738848420
+    TagComponent:
+      tag: Wall
+    TransformComponent:
+      translation: [30.0125599, 29.9453278, 0]
+      rotation: [0, 0, 1.57079637]
+      scale: [60.7620926, 0.999320805, 1]
+    SpriteRendererComponent:
+      color: [1, 1, 1, 1]
       tilingFactor: 1
     RigidBody2DComponent:
       type: Static
@@ -77,6 +120,8 @@ Entities:
       translation: [2.66644406, 0, 27.8013439]
       rotation: [0, 0, 0]
       scale: [1, 1, 1]
+    ScriptComponent:
+      script: Sandbox.Camera
     CameraComponent:
       Camera:
         projectionType: 0
