@@ -719,7 +719,7 @@ namespace L3gion
 
 	void EditorLayer::onDuplicateEntity()
 	{
-		if (m_SceneState != SceneState::Play)
+		if (m_SceneState == SceneState::Play)
 			return;
 
 		Entity selected = m_SceneHierarchyPanel.getSelectedEntity();

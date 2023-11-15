@@ -19,6 +19,7 @@ namespace L3gion
 	void SceneHierarchyPanel::setContext(const ref<Scene>& scene)
 	{
 		m_Context = scene;
+		m_Context->refreshScripts();
 		m_SelectionContext = {};
 	}
 
@@ -276,19 +277,40 @@ namespace L3gion
 			ImGui::Spacing();
 		});
 
-		drawComponent<ScriptComponent>(entity, "Script", [](auto& component)
+		drawComponent<ScriptComponent>(entity, "Script", [&](auto& component) mutable
 		{
 			bool scriptExists = ScriptEngine::entityClassExists(component.name);
 
 			static char buffer[64];
 			strcpy(buffer, component.name.c_str());
-				
+
 			if (!scriptExists)
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.2f, 1.0f));
 
 			if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+			{
 				component.name = buffer;
+				m_Context->refreshScripts();
+			}
 		
+			// Fields
+			ref<ScriptInstance> scriptInstance = ScriptEngine::getEntityScriptInstance(entity.getUUID());
+
+			if (scriptInstance)
+			{
+				const auto& fields = scriptInstance->getScriptClass()->getFields();
+
+				for (const auto& [name, field] : fields)
+				{
+					if (field.type == ScriptFieldType::Float)
+					{
+						float data = scriptInstance->getFieldValue<float>(name);
+
+						if (ImGui::DragFloat(name.c_str(), &data, 0.01f))
+							scriptInstance->setFieldValue(name, data);						
+					}
+				}
+			}
 
 			if (!scriptExists)
 				ImGui::PopStyleColor();

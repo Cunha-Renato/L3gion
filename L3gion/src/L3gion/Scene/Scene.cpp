@@ -38,28 +38,43 @@ namespace L3gion
 
 	}
 
-	template<typename Component>
-	static void copyComponent(entt::registry& dest, const entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
+	template<typename... TComponent>
+	static void copyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
 	{
-		auto view = src.view<Component>();
-		for (auto e : view)
+		([&]()
 		{
-			UUID uuid = src.get<IDComponent>(e).id;
-			LG_CORE_ASSERT(enttMap.find(uuid) != enttMap.end(), " ");
-			entt::entity destEnttID = enttMap.at(uuid);
+			auto view = src.view<TComponent>();
+			for (auto srcEntity : view)
+			{
+				entt::entity dstEntity = enttMap.at(src.get<IDComponent>(srcEntity).id);
 
-			auto& component = src.get<Component>(e);
-			dest.emplace_or_replace<Component>(destEnttID, component);
-		}
+				auto& srcComponent = src.get<TComponent>(srcEntity);
+				dst.emplace_or_replace<TComponent>(dstEntity, srcComponent);
+			}
+		}(), ...);
 	}
 
-	template<typename Component>
-	static void copyComponentIfExists(Entity dest, Entity src)
+	template<typename... TComponent>
+	static void copyComponent(ComponentGroup<TComponent...>, entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
 	{
-		if (src.hasComponent<Component>())
-			dest.addOrReplaceComponent<Component>(src.getComponent<Component>());
+		copyComponent<TComponent...>(dst, src, enttMap);
 	}
 
+	template<typename... TComponent>
+	static void copyComponentIfExists(Entity dst, Entity src)
+	{
+		([&]()
+		{
+			if (src.hasComponent<TComponent>())
+				dst.addOrReplaceComponent<TComponent>(src.getComponent<TComponent>());
+		}(), ...);
+	}
+	template<typename... TComponent>
+	static void copyComponentIfExists(ComponentGroup<TComponent...>, Entity dst, Entity src)
+	{
+		copyComponentIfExists<TComponent...>(dst, src);
+	}
+	
 	ref<Scene> Scene::copy(ref<Scene> other)
 	{
 		ref<Scene> newScene = createRef<Scene>();
@@ -83,18 +98,21 @@ namespace L3gion
 		}
 
 		// Copy components
-		copyComponent<TransformComponent>(destRegistry, srcRegistry, enttMap);
-		copyComponent<SpriteRendererComponent>(destRegistry, srcRegistry, enttMap);
-		copyComponent<CircleRendererComponent>(destRegistry, srcRegistry, enttMap);
-		copyComponent<CameraComponent>(destRegistry, srcRegistry, enttMap);
-		copyComponent<ScriptComponent>(destRegistry, srcRegistry, enttMap);
-		copyComponent<NativeScriptComponent>(destRegistry, srcRegistry, enttMap);
-		copyComponent<RigidBody2DComponent>(destRegistry, srcRegistry, enttMap);
-		copyComponent<Collider2DComponent>(destRegistry, srcRegistry, enttMap);
+		copyComponent(AllComponents{}, destRegistry, srcRegistry, enttMap);
 	
 		return newScene;
 	}
 
+	void Scene::refreshScripts()
+	{
+		// Reload all entity Scripts
+		auto view = m_Registry.view<ScriptComponent>();
+		for (auto e : view)
+		{
+			Entity entity = { e, this };
+			ScriptEngine::loadEntity(entity);
+		}
+	}
 	Entity Scene::createEntity(const std::string& name)
 	{
 		return createEntityWithUUID(UUID(), name);
@@ -112,11 +130,23 @@ namespace L3gion
 
 		return entity;
 	}
+	Entity Scene::duplicateEntity(UUID entityID)
+	{
+		Entity entity = getEntityByUUID(entityID);
+		return duplicateEntity(entity);
+	}
+	Entity Scene::duplicateEntity(Entity entity)
+	{
+		Entity newEntity = createEntity(entity.getName());
+		copyComponentIfExists(AllComponents{}, newEntity, entity);
+
+		return newEntity;
+	}
 
 	void Scene::deleteEntity(Entity entity)
 	{
-		m_Registry.destroy(entity);
 		m_EntityMap.erase(entity.getUUID());
+		m_Registry.destroy(entity);
 	}
 
 	void Scene::onRuntimeStart()
@@ -126,6 +156,7 @@ namespace L3gion
 		ScriptEngine::onRuntimeStart(this);
 
 		// Instantiate all ScriptEntities
+		refreshScripts();
 		auto view = m_Registry.view<ScriptComponent>();
 		for (auto e : view)
 		{
@@ -266,7 +297,6 @@ namespace L3gion
 		}
 	}
 
-	
 	void Scene::renderEditorScene(EditorCamera& camera)
 	{
 		LG_PROFILE_FUNCTION();
@@ -312,8 +342,8 @@ namespace L3gion
 	void Scene::onUptdateRuntime(Timestep ts)
 	{
 		LG_PROFILE_FUNCTION();
+
 		//Update Scripts
-		
 		{
 			// C# Scripting
 			auto view = m_Registry.view<ScriptComponent>();
@@ -425,22 +455,6 @@ namespace L3gion
 			if (!camera.staticAspectRatio && camera.primary)
 				camera.camera.setViewportSize(width, height);
 		}
-	}
-	
-	void Scene::duplicateEntity(Entity entity)
-	{
-		std::string name = entity.getName();
-		Entity newEntity = createEntity(name);
-
-		// Copy components
-		copyComponentIfExists<TransformComponent>(newEntity, entity);
-		copyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
-		copyComponentIfExists<CircleRendererComponent>(newEntity, entity);
-		copyComponentIfExists<CameraComponent>(newEntity, entity);
-		copyComponentIfExists<ScriptComponent>(newEntity, entity);
-		copyComponentIfExists<NativeScriptComponent>(newEntity, entity);
-		copyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
-		copyComponentIfExists<Collider2DComponent>(newEntity, entity);
 	}
 
 	Entity Scene::getEntityByUUID(UUID id)

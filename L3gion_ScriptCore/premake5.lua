@@ -3,8 +3,8 @@ project "L3gion_ScriptCore"
 	language "C#"
 	dotnetframework "4.7.2"
 
-	targetdir ("%{wks.location}/L3gion_Editor/Resources/scripts")
-	objdir ("%{wks.location}/L3gion_Editor/Resources/scripts/Intermediates")
+	targetdir ("../L3gion_Editor/Resources/scripts")
+	objdir ("../L3gion_Editor/Resources/scripts/Intermediates")
 
 	files
 	{

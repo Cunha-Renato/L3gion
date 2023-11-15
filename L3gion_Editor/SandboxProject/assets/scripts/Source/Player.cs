@@ -1,27 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-
 using L3gion;
-using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 namespace Sandbox
 {
     public class Player : Entity
     {
+        private TransformComponent m_Transform;
+        private RigidBody2DComponent m_Rigidbody2D;
+
+        public float speed = 3.0f;
         void OnCreate()
         {
             Console.WriteLine($"Player created! - {ID}");
+            
+            m_Transform = GetComponent<TransformComponent>();
+            m_Rigidbody2D = GetComponent<RigidBody2DComponent>();
         }
 
         void OnUpdate(float ts)
         {
-            Console.WriteLine($"Player update: {ts}");
-
-            float speed = 1.0f;
+            //Console.WriteLine($"Player update: {ts}");
             Vec3 velocity = Vec3.Zero;
 
             if (Input.IsKeyDown(LgKey.W))
@@ -33,11 +31,13 @@ namespace Sandbox
             else if (Input.IsKeyDown(LgKey.D))
                 velocity.x = 1.0f;
 
-            velocity *= speed;   
+            velocity *= speed * ts;
 
-            Vec3 translation = m_Translation;
+            m_Rigidbody2D?.ApplyLinearImpulse(velocity.xy);
+
+            Vec3 translation = m_Transform.Translation;
             translation += velocity * ts;
-            m_Translation = translation;
+            m_Transform.Translation = translation;
         }
     }
 }

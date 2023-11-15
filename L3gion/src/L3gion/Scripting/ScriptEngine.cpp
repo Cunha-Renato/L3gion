@@ -7,11 +7,33 @@
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"
+#include "mono/metadata/tabledefs.h"
 
 #include <glm/glm.hpp>
 
 namespace L3gion
 {
+	static std::unordered_map<std::string, ScriptFieldType> s_ScriptFieldTypeMap = 
+	{
+		{ "System.Single",	ScriptFieldType::Float	},
+		{ "System.Double",	ScriptFieldType::Double },
+		{ "System.Boolean", ScriptFieldType::Bool	},
+		{ "System.Char",	ScriptFieldType::Char	},
+		{ "System.Int16",	ScriptFieldType::Short	},
+		{ "System.Int32",	ScriptFieldType::Int	},
+		{ "System.Int64",	ScriptFieldType::Long	},
+		{ "System.Byte",	ScriptFieldType::Byte	},
+		{ "System.UInt16",	ScriptFieldType::UShort },
+		{ "System.UInt32",	ScriptFieldType::UInt	},
+		{ "System.UInt64",	ScriptFieldType::ULong	},
+
+		{ "L3gion.Vec2",	ScriptFieldType::Vec2	},
+		{ "L3gion.Vec3",	ScriptFieldType::Vec3	},
+		{ "L3gion.Vec4",	ScriptFieldType::Vec4	},
+
+		{ "L3gion.Entity",	ScriptFieldType::Entity },
+	};
+
 	namespace Utils
 	{
 		static void printAssemblyTypes(MonoAssembly* assembly)
@@ -85,6 +107,46 @@ namespace L3gion
 
 			return assembly;
 		}
+	
+		ScriptFieldType monoTypeToScriptFieldType(MonoType* monoType)
+		{
+			std::string typeName = mono_type_get_name(monoType);
+
+			auto it = s_ScriptFieldTypeMap.find(typeName);
+
+			if (it == s_ScriptFieldTypeMap.end())
+			{
+				LG_CORE_ERROR("Unknown type: {}", typeName);
+				return ScriptFieldType::None;
+			}
+
+			return it->second;
+		}
+
+		const char* scriptFieldTypeToString(ScriptFieldType type)
+		{
+			switch (type)
+			{
+				case ScriptFieldType::Float:	return "Float";
+				case ScriptFieldType::Double:	return "Double";
+				case ScriptFieldType::Bool:		return "Bool";
+				case ScriptFieldType::Char:		return "Char";
+				case ScriptFieldType::Byte:		return "Byte";
+				case ScriptFieldType::Short:	return "Short";
+				case ScriptFieldType::Int:		return "Int";
+				case ScriptFieldType::Long:		return "Long";
+				case ScriptFieldType::UByte:	return "UByte";
+				case ScriptFieldType::UShort:	return "UShort";
+				case ScriptFieldType::UInt:		return "UInt";
+				case ScriptFieldType::ULong:	return "ULong";
+				case ScriptFieldType::Vec2:		return "Vec2";
+				case ScriptFieldType::Vec3:		return "Vec3";
+				case ScriptFieldType::Vec4:		return "Vec4";
+				case ScriptFieldType::Entity:	return "Entity";
+			}
+
+			return "<Invalid>";
+		}
 	}
 
 	struct ScriptEngineData
@@ -94,6 +156,9 @@ namespace L3gion
 
 		MonoAssembly* coreAssembly = nullptr;
 		MonoImage* coreAssemblyImage = nullptr;
+
+		MonoAssembly* appAssembly = nullptr;
+		MonoImage* appAssemblyImage = nullptr;
 
 		ScriptClass entityClass;
 
@@ -111,11 +176,13 @@ namespace L3gion
 		s_Data = new ScriptEngineData();
 		initMono();
 		loadAssembly("resources/scripts/L3gion_ScriptCore.dll");
-		loadAssemblyClasses(s_Data->coreAssembly);
+		loadAppAssembly("SandboxProject/assets/scripts/Binaries/Sandbox.dll");
+		loadAssemblyClasses();
 
+		ScriptGlue::registerComponents();
 		ScriptGlue::registerFunctions();
 
-		s_Data->entityClass = ScriptClass("L3gion", "Entity");
+		s_Data->entityClass = ScriptClass("L3gion", "Entity", true);
 	}
 	void ScriptEngine::shutdown()
 	{
@@ -156,6 +223,23 @@ namespace L3gion
 		s_Data->coreAssemblyImage = mono_assembly_get_image(s_Data->coreAssembly);
 		//printAssemblyTypes(s_Data->coreAssembly);
 	}
+	void ScriptEngine::loadAppAssembly(const std::filesystem::path filepath)
+	{
+		// Maybe not here!
+		s_Data->appAssembly = Utils::loadMonoAssembly(filepath);
+		auto a = s_Data->appAssembly;
+		s_Data->appAssemblyImage = mono_assembly_get_image(s_Data->appAssembly);
+	}
+
+	ref<ScriptInstance> ScriptEngine::getEntityScriptInstance(UUID entityID)
+	{
+		auto it = s_Data->entityInstances.find(entityID);
+
+		if (it == s_Data->entityInstances.end())
+			return nullptr;
+
+		return it->second;
+	}
 
 	void ScriptEngine::onRuntimeStart(Scene* scene)
 	{
@@ -165,18 +249,48 @@ namespace L3gion
 	{
 		s_Data->sceneContext = nullptr;
 
-		s_Data->entityInstances.clear();
+		//s_Data->entityInstances.clear();
 	}
 
+	void ScriptEngine::loadEntity(Entity entity)
+	{
+		const auto& sc = entity.getComponent<ScriptComponent>();
+		if (entityClassExists(sc.name))
+		{
+			auto it = s_Data->entityInstances.find(entity.getUUID());
+
+
+			if (it == s_Data->entityInstances.end())
+			{
+				ref<ScriptInstance> instance = createRef<ScriptInstance>(s_Data->entityClasses[sc.name]);
+				s_Data->entityInstances[entity.getUUID()] = instance;
+			}
+			else
+			{
+				const auto& scriptClass = it->second->getScriptClass();
+				std::string className = fmt::format("{}.{}", scriptClass->m_ClassNamespace, scriptClass->m_ClassName);
+				
+				if (className != sc.name)
+				{
+					ref<ScriptInstance> instance = createRef<ScriptInstance>(s_Data->entityClasses[sc.name]);
+					s_Data->entityInstances[entity.getUUID()] = instance;
+				}
+			}
+		}
+		else
+			s_Data->entityInstances.erase(entity.getUUID());
+	}
 	void ScriptEngine::onCreateEntity(Entity entity)
 	{
 		const auto& sc = entity.getComponent<ScriptComponent>();
 		if (entityClassExists(sc.name))
 		{
-			ref<ScriptInstance> instance = createRef<ScriptInstance>(s_Data->entityClasses[sc.name], entity);
-			s_Data->entityInstances[entity.getUUID()] = instance;
+			auto it = s_Data->entityInstances.find(entity.getUUID());
+
+			LG_CORE_ASSERT(it != s_Data->entityInstances.end(), "Instance not found!");
 			
-			instance->invokeOnCreate();
+			it->second->invokeConstructor(entity);
+			it->second->invokeOnCreate();
 		}
 	}
 	void ScriptEngine::onUpdateEntity(Entity entity, Timestep ts)
@@ -204,12 +318,11 @@ namespace L3gion
 		return s_Data->entityClasses;
 	}
 
-	void ScriptEngine::loadAssemblyClasses(MonoAssembly* assembly)
+	void ScriptEngine::loadAssemblyClasses()
 	{
 		s_Data->entityClasses.clear();
 
-		MonoImage* image = mono_assembly_get_image(assembly);
-		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(s_Data->appAssemblyImage, MONO_TABLE_TYPEDEF);
 		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
 		MonoClass* entityClass = mono_class_from_name(s_Data->coreAssemblyImage, "L3gion", "Entity");
 
@@ -218,8 +331,8 @@ namespace L3gion
 			uint32_t cols[MONO_TYPEDEF_SIZE];
 			mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
 
-			const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
-			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+			const char* nameSpace = mono_metadata_string_heap(s_Data->appAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE]);
+			const char* name = mono_metadata_string_heap(s_Data->appAssemblyImage, cols[MONO_TYPEDEF_NAME]);
 			
 			std::string fullName;
 			if (strlen(nameSpace) != 0)	
@@ -227,15 +340,36 @@ namespace L3gion
 			else
 				fullName = name;
 
-			MonoClass* monoClass = mono_class_from_name(s_Data->coreAssemblyImage, nameSpace, name);
+			MonoClass* monoClass = mono_class_from_name(s_Data->appAssemblyImage, nameSpace, name);
 
 			if (monoClass == entityClass)
 				continue;
 
 			bool isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
 
-			if (isEntity)
-				s_Data->entityClasses[fullName] = createRef<ScriptClass>(nameSpace, name);
+			if (!isEntity)
+				continue;
+			
+			ref<ScriptClass> scriptClass = createRef<ScriptClass>(nameSpace, name);
+			s_Data->entityClasses[fullName] = scriptClass;
+
+			LG_CORE_WARN("Class: {} has: ", name);
+			// Geting the field names and types from mono...
+			void* iterator = nullptr;
+			while (MonoClassField* field = mono_class_get_fields(monoClass, &iterator))
+			{
+				const char* fieldName = mono_field_get_name(field);
+				uint32_t flags = mono_field_get_flags(field);
+
+				if (flags & FIELD_ATTRIBUTE_PUBLIC)
+				{
+					MonoType* type = mono_field_get_type(field);
+					ScriptFieldType fieldType = Utils::monoTypeToScriptFieldType(type);
+					LG_CORE_WARN("	{} ({})", fieldName, Utils::scriptFieldTypeToString(fieldType));
+
+					scriptClass->m_Fields[fieldName] = { fieldType, fieldName, field };
+				}
+			}
 		}
 	}
 
@@ -246,12 +380,21 @@ namespace L3gion
 		return instance;
 	}
 
+	MonoImage* ScriptEngine::getCoreAssemblyImage()
+	{
+		return s_Data->coreAssemblyImage;
+	}
+
 // ---------------- ScriptClass ----------------
 
-	ScriptClass::ScriptClass(const std::string& classNamespace, const std::string& className)
+	ScriptClass::ScriptClass(const std::string& classNamespace, const std::string& className, bool isCore)
 		: m_ClassNamespace(classNamespace), m_ClassName(className)
 	{
-		m_MonoClass = mono_class_from_name(s_Data->coreAssemblyImage, m_ClassNamespace.c_str(), m_ClassName.c_str());
+		m_MonoClass = mono_class_from_name(
+			isCore ? s_Data->coreAssemblyImage : s_Data->appAssemblyImage, 
+			m_ClassNamespace.c_str(), 
+			m_ClassName.c_str()
+		);
 	}
 
 	MonoObject* ScriptClass::instantiate()
@@ -272,7 +415,7 @@ namespace L3gion
 
 // ---------------- ScriptInstance ----------------
 
-	ScriptInstance::ScriptInstance(ref<ScriptClass> scriptClass, Entity entity)
+	ScriptInstance::ScriptInstance(ref<ScriptClass> scriptClass)
 		: m_ScriptClass(scriptClass)
 	{
 		m_Instance = m_ScriptClass->instantiate();
@@ -280,22 +423,55 @@ namespace L3gion
 		m_Constructor = s_Data->entityClass.getMethod(".ctor", 1);
 		m_OnCreateMethod = m_ScriptClass->getMethod("OnCreate", 0);
 		m_OnUpdateMethod = m_ScriptClass->getMethod("OnUpdate", 1);
-
-		// Calling the Entity constructor with UUID
-		{
-			uint64_t entityUUID = entity.getUUID();
-			void* param = &entityUUID;
-			m_ScriptClass->invokeMethod(m_Instance, m_Constructor, &param);
-		}
 	}
 
+	void ScriptInstance::invokeConstructor(Entity entity)
+	{
+		uint64_t entityUUID = entity.getUUID();
+		void* param = &entityUUID;
+		m_ScriptClass->invokeMethod(m_Instance, m_Constructor, &param);
+	}
 	void ScriptInstance::invokeOnCreate()
 	{
-		m_ScriptClass->invokeMethod(m_Instance, m_OnCreateMethod);
+		if (m_OnCreateMethod)
+			m_ScriptClass->invokeMethod(m_Instance, m_OnCreateMethod);
 	}
 	void ScriptInstance::invokeOnUpdate(float ts)
 	{
-		void* param = &ts;
-		m_ScriptClass->invokeMethod(m_Instance, m_OnUpdateMethod, &param);
+		if (m_OnUpdateMethod)
+		{
+			void* param = &ts;
+			m_ScriptClass->invokeMethod(m_Instance, m_OnUpdateMethod, &param);
+		}
+	}
+
+	bool ScriptInstance::getFieldValueInternal(const std::string& name)
+	{
+		const auto& fields = m_ScriptClass->getFields();
+		auto it = fields.find(name);
+
+		if (it == fields.end())
+			return false;
+
+		if (s_FieldValues.find(name) == s_FieldValues.end())
+		{
+			const ScriptField& field = it->second;
+			mono_field_get_value(m_Instance, field.classField, &s_FieldValues[name][0]);
+		}
+		
+		return true;
+	}
+	bool ScriptInstance::setFieldValueInternal(const std::string& name, const void* value)
+	{
+		const auto& fields = m_ScriptClass->getFields();
+		auto it = fields.find(name);
+
+		if (it == fields.end())
+			return false;
+
+		const ScriptField& field = it->second;
+		mono_field_set_value(m_Instance, field.classField, (void*)value);
+
+		return true;
 	}
 }

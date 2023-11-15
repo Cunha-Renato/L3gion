@@ -36,7 +36,9 @@ namespace L3gion
 		void onUptdateEditor(Timestep ts, EditorCamera& editorCamera);
 		void onViewportResize(uint32_t width, uint32_t height);
 	
-		void duplicateEntity(Entity entity);
+		void refreshScripts();
+		Entity duplicateEntity(Entity entity);
+		Entity duplicateEntity(UUID entityID);
 
 		template<typename... Components>
 		auto getAllEntitiesWith()

@@ -146,4 +146,12 @@ namespace L3gion
 		Collider2DComponent() = default;
 		Collider2DComponent(const Collider2DComponent&) = default;
 	};
+
+	template<typename... TComponent>
+	struct ComponentGroup
+	{
+	};
+
+	using AllComponents = 
+		ComponentGroup<TransformComponent, SpriteRendererComponent, CircleRendererComponent, CameraComponent, ScriptComponent, NativeScriptComponent, RigidBody2DComponent, Collider2DComponent>;
 }

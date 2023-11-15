@@ -62,6 +62,7 @@ namespace L3gion
 
 		UUID getUUID() { return getComponent<IDComponent>().id; }
 		const std::string& getName() { return getComponent<TagComponent>().tag; }
+
 	private:
 		entt::entity m_EntityHandle = { entt::null };
 		Scene* m_Scene = nullptr;
