@@ -50,6 +50,7 @@ namespace L3gion
 		}
 
 	private:
+		void resetScriptFields();
 		void renderEditorScene(EditorCamera& camera);
 		
 		void initializePhysics();

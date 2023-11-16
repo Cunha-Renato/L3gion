@@ -3,7 +3,9 @@
 
 #include "ScriptGlue.h"
 #include "L3gion/Core/UUID.h"
+#include "L3gion/Core/Application.h"
 
+#include <FileWatch.h>
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"
@@ -160,28 +162,50 @@ namespace L3gion
 		MonoAssembly* appAssembly = nullptr;
 		MonoImage* appAssemblyImage = nullptr;
 
+		std::filesystem::path CoreAssemblyFilepath;
+		std::filesystem::path AppAssemblyFilepath;
+
 		ScriptClass entityClass;
 
 		std::unordered_map<std::string, ref<ScriptClass>> entityClasses;
 		std::vector<std::string> entityClassesName;
 		std::unordered_map<UUID, ref<ScriptInstance>> entityInstances;
 
+		scope<filewatch::FileWatch<std::string>> appAssemblyFileWatcher;
+		bool assemblyReloadPending = false;
+
 		// Runtime
-		Scene* sceneContext = nullptr;
+		ref<Scene> sceneContext = nullptr;
 	};
 
 	static ScriptEngineData* s_Data = nullptr;
 
+	static void onAppAssemblyFileSystemEvent(const std::string& path, const filewatch::Event change_type)
+	{
+		if (!s_Data->assemblyReloadPending && change_type == filewatch::Event::modified)
+		{
+			s_Data->assemblyReloadPending = true;
+
+			Application::get().submitToMainThread([]()
+			{
+				s_Data->appAssemblyFileWatcher.reset();
+				ScriptEngine::reloadAssembly();
+			});
+		}
+	}
+
 	void ScriptEngine::init()
 	{
 		s_Data = new ScriptEngineData();
+
 		initMono();
+		ScriptGlue::registerFunctions();
+
 		loadAssembly("resources/scripts/L3gion_ScriptCore.dll");
 		loadAppAssembly("SandboxProject/assets/scripts/Binaries/Sandbox.dll");
 		loadAssemblyClasses();
 
 		ScriptGlue::registerComponents();
-		ScriptGlue::registerFunctions();
 
 		s_Data->entityClass = ScriptClass("L3gion", "Entity", true);
 	}
@@ -205,10 +229,11 @@ namespace L3gion
 
 	void ScriptEngine::shutdownMono()
 	{
-		//mono_domain_unload(s_Data->appDomain);
+		mono_domain_set(mono_get_root_domain(), false);
+		mono_domain_unload(s_Data->appDomain);
 		s_Data->appDomain = nullptr;
 
-		//mono_jit_cleanup(s_Data->rootDomain);
+		mono_jit_cleanup(s_Data->rootDomain);
 		s_Data->rootDomain = nullptr;
 	}
 
@@ -220,18 +245,39 @@ namespace L3gion
 		mono_domain_set(s_Data->appDomain, true);
 
 		// Maybe not here!
+		s_Data->CoreAssemblyFilepath = filepath;
 		s_Data->coreAssembly = Utils::loadMonoAssembly(filepath);
 		s_Data->coreAssemblyImage = mono_assembly_get_image(s_Data->coreAssembly);
-		//printAssemblyTypes(s_Data->coreAssembly);
 	}
 	void ScriptEngine::loadAppAssembly(const std::filesystem::path filepath)
 	{
 		// Maybe not here!
+		s_Data->AppAssemblyFilepath = filepath;
 		s_Data->appAssembly = Utils::loadMonoAssembly(filepath);
 		auto a = s_Data->appAssembly;
 		s_Data->appAssemblyImage = mono_assembly_get_image(s_Data->appAssembly);
-	}
 
+		s_Data->appAssemblyFileWatcher = createScope<filewatch::FileWatch<std::string>>(filepath.string(), onAppAssemblyFileSystemEvent);
+		s_Data->assemblyReloadPending = false;
+	}
+	void ScriptEngine::reloadAssembly()
+	{
+		mono_domain_set(mono_get_root_domain(), false);
+
+		mono_domain_unload(s_Data->appDomain);
+
+		loadAssembly(s_Data->CoreAssemblyFilepath);
+		loadAppAssembly(s_Data->AppAssemblyFilepath);
+		loadAssemblyClasses();
+
+		ScriptGlue::registerFunctions();
+		ScriptGlue::registerComponents();
+
+		s_Data->entityClass = ScriptClass("L3gion", "Entity", true);
+
+		s_Data->entityInstances.clear();
+		s_Data->sceneContext->refreshScripts();
+	}
 	ref<ScriptInstance> ScriptEngine::getEntityScriptInstance(UUID entityID)
 	{
 		auto it = s_Data->entityInstances.find(entityID);
@@ -242,7 +288,7 @@ namespace L3gion
 		return it->second;
 	}
 
-	void ScriptEngine::onRuntimeStart(Scene* scene)
+	void ScriptEngine::setContext(ref<Scene> scene)
 	{
 		s_Data->sceneContext = scene;
 	}
@@ -304,7 +350,7 @@ namespace L3gion
 		instance->invokeOnUpdate((float)ts);
 	}
 
-	Scene* ScriptEngine::getSceneContext()
+	ref<Scene> ScriptEngine::getSceneContext()
 	{
 		return s_Data->sceneContext;
 	}
@@ -476,7 +522,6 @@ namespace L3gion
 		else if (!retainValue)
 			mono_field_get_value(m_Instance, field.classField, &m_Buffer);
 			
-		
 		return true;
 	}
 	bool ScriptInstance::setFieldValueInternal(const std::string& name, const void* value)

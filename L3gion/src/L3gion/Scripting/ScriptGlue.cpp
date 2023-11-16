@@ -19,7 +19,7 @@ namespace L3gion
 // ENTITY_COMPONENT
 	static UUID Entity_CreateEntity()
 	{
-		Scene* scene = ScriptEngine::getSceneContext();
+		Scene* scene = ScriptEngine::getSceneContext().get();
 		LG_CORE_ASSERT(scene, "Scene is NULL!");
 
 		auto entity = scene->createEntity("New Entity");
@@ -27,7 +27,7 @@ namespace L3gion
 	}
 	static void Entity_DuplicateEntity(UUID entityUUID, glm::vec3* worldPosition)
 	{
-		Scene* scene = ScriptEngine::getSceneContext();
+		Scene* scene = ScriptEngine::getSceneContext().get();
 		LG_CORE_ASSERT(scene, "Scene is NULL!");
 		Entity entity = scene->getEntityByUUID(entityUUID);
 		LG_CORE_ASSERT(entity, "Entity is NULL!");
@@ -47,7 +47,7 @@ namespace L3gion
 	{
 		char* nameCStr = mono_string_to_utf8(name);
 
-		Scene* scene = ScriptEngine::getSceneContext();
+		Scene* scene = ScriptEngine::getSceneContext().get();
 		LG_CORE_ASSERT(scene, "");
 		Entity entity = scene->getEntityByName(nameCStr);
 		mono_free(nameCStr);
@@ -59,7 +59,7 @@ namespace L3gion
 	}
 	static bool Entity_HasComponent(UUID entityUUID, MonoReflectionType* componentType)
 	{
-		Scene* scene = ScriptEngine::getSceneContext();
+		Scene* scene = ScriptEngine::getSceneContext().get();
 		LG_CORE_ASSERT(scene, "Scene is NULL!");
 		Entity entity = scene->getEntityByUUID(entityUUID);
 		LG_CORE_ASSERT(entity, "Entity is NULL!");
@@ -72,7 +72,7 @@ namespace L3gion
 // TRANSFORM_COMPONENT
 	static void TransformComponent_GetTranslation(UUID entityUUID, glm::vec3* outTranslation)
 	{
-		Scene* scene = ScriptEngine::getSceneContext();
+		Scene* scene = ScriptEngine::getSceneContext().get();
 		LG_CORE_ASSERT(scene, "Scene is NULL!");
 		Entity entity = scene->getEntityByUUID(entityUUID);
 		LG_CORE_ASSERT(entity, "Entity is NULL!");
@@ -81,7 +81,7 @@ namespace L3gion
 	}
 	static void TransformComponent_SetTranslation(UUID entityUUID, glm::vec3* translation)
 	{
-		Scene* scene = ScriptEngine::getSceneContext();
+		Scene* scene = ScriptEngine::getSceneContext().get();
 		LG_CORE_ASSERT(scene, "Scene is NULL!");
 		Entity entity = scene->getEntityByUUID(entityUUID);
 		LG_CORE_ASSERT(entity, "Entity is NULL!");
@@ -92,7 +92,7 @@ namespace L3gion
 // RIGIDBODY_2D_COMPONENT
 	static void RigidBody2DComponent_SetDynamic(UUID entityUUID, bool isDynamic)
 	{
-		Scene* scene = ScriptEngine::getSceneContext();
+		Scene* scene = ScriptEngine::getSceneContext().get();
 		LG_CORE_ASSERT(scene, "Scene is NULL!");
 		Entity entity = scene->getEntityByUUID(entityUUID);
 		LG_CORE_ASSERT(entity, "Entity is NULL!");
@@ -106,7 +106,7 @@ namespace L3gion
 	}
 	static bool RigidBody2DComponent_IsDynamic(UUID entityUUID)
 	{
-		Scene* scene = ScriptEngine::getSceneContext();
+		Scene* scene = ScriptEngine::getSceneContext().get();
 		LG_CORE_ASSERT(scene, "Scene is NULL!");
 		Entity entity = scene->getEntityByUUID(entityUUID);
 		LG_CORE_ASSERT(entity, "Entity is NULL!");
@@ -115,7 +115,7 @@ namespace L3gion
 	}
 	static void RigidBody2DComponent_SetFixedRotation(UUID entityUUID, bool fixedRotation)
 	{
-		Scene* scene = ScriptEngine::getSceneContext();
+		Scene* scene = ScriptEngine::getSceneContext().get();
 		LG_CORE_ASSERT(scene, "Scene is NULL!");
 		Entity entity = scene->getEntityByUUID(entityUUID);
 		LG_CORE_ASSERT(entity, "Entity is NULL!");
@@ -124,7 +124,7 @@ namespace L3gion
 	}
 	static bool RigidBody2DComponent_HasFixedRotation(UUID entityUUID)
 	{
-		Scene* scene = ScriptEngine::getSceneContext();
+		Scene* scene = ScriptEngine::getSceneContext().get();
 		LG_CORE_ASSERT(scene, "Scene is NULL!");
 		Entity entity = scene->getEntityByUUID(entityUUID);
 		LG_CORE_ASSERT(entity, "Entity is NULL!");
@@ -133,7 +133,7 @@ namespace L3gion
 	}
 	static void RigidBody2DComponent_SetTransform(UUID entityUUID, glm::vec2* translation, float angle)
 	{
-		Scene* scene = ScriptEngine::getSceneContext();
+		Scene* scene = ScriptEngine::getSceneContext().get();
 		LG_CORE_ASSERT(scene, "Scene is NULL!");
 		Entity entity = scene->getEntityByUUID(entityUUID);
 		LG_CORE_ASSERT(entity, "Entity is NULL!");
@@ -143,7 +143,7 @@ namespace L3gion
 	}
 	static void RigidBody2DComponent_ApplyLinearImpulse(UUID entityUUID, glm::vec2* impulse, glm::vec2* point, bool wake)
 	{
-		Scene* scene = ScriptEngine::getSceneContext();
+		Scene* scene = ScriptEngine::getSceneContext().get();
 		LG_CORE_ASSERT(scene, "Scene is NULL!");
 		Entity entity = scene->getEntityByUUID(entityUUID);
 		LG_CORE_ASSERT(entity, "Entity is NULL!");
@@ -155,7 +155,7 @@ namespace L3gion
 	}
 	static void RigidBody2DComponent_ApplyLinearImpulseToCenter(UUID entityUUID, glm::vec2* impulse, bool wake)
 	{
-		Scene* scene = ScriptEngine::getSceneContext();
+		Scene* scene = ScriptEngine::getSceneContext().get();
 		LG_CORE_ASSERT(scene, "Scene is NULL!");
 		Entity entity = scene->getEntityByUUID(entityUUID);
 		LG_CORE_ASSERT(entity, "Entity is NULL!");
@@ -200,6 +200,7 @@ namespace L3gion
 
 	void ScriptGlue::registerComponents()
 	{
+		s_EntityHasComponentFunctions.clear();
 		registerComponent(AllComponents{});
 	}
 

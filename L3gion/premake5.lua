@@ -33,6 +33,7 @@ project "L3gion"
 	{
 		"src",
 		"vendor/spdlog/include",
+		"%{IncludeDir.filewatch}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",

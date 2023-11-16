@@ -75,18 +75,34 @@ namespace L3gion
 		}
 	}
 
+	void Application::submitToMainThread(const std::function<void()>& func)
+	{
+		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+
+		m_MainThreadQueue.emplace_back(func);
+	}
+	void Application::executeMainThreadQueue()
+	{
+		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+
+		for (auto& func : m_MainThreadQueue)
+			func();
+
+		m_MainThreadQueue.clear();
+	}
+
 	void Application::run()
 	{
 		LG_PROFILE_FUNCTION();
 
 		while (m_Running)
-		{
-			LG_PROFILE_SCOPE("Run Loop");
-			
+		{	
 			double time = Utils::Time::getTime(); // Should be outside this class
 			
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
+
+			executeMainThreadQueue();
 
 			if (!m_Minimized)
 			{

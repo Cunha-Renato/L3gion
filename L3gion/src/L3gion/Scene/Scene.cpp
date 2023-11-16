@@ -113,6 +113,28 @@ namespace L3gion
 			ScriptEngine::loadEntity(entity);
 		}
 	}
+	void Scene::resetScriptFields()
+	{
+		auto view = m_Registry.view<ScriptComponent>();
+		for (auto e : view)
+		{
+			Entity entity = { e, this };
+			ref<ScriptInstance> scriptInstance = ScriptEngine::getEntityScriptInstance(entity.getUUID());
+			if (scriptInstance)
+			{
+				const auto& fields = scriptInstance->getScriptClass()->getFields();
+
+				for (const auto& [name, field] : fields)
+				{
+					if (field.type == ScriptFieldType::Float)
+					{
+						float data = scriptInstance->getFieldValue<float>(name, true);
+						scriptInstance->setFieldValue(name, data, true);
+					}
+				}
+			}
+		}
+	}
 	Entity Scene::createEntity(const std::string& name)
 	{
 		return createEntityWithUUID(UUID(), name);
@@ -154,8 +176,6 @@ namespace L3gion
 		m_IsRunning = true;
 		initializePhysics();
 
-		ScriptEngine::onRuntimeStart(this);
-
 		// Instantiate all ScriptEntities
 		refreshScripts();
 		auto view = m_Registry.view<ScriptComponent>();
@@ -170,6 +190,7 @@ namespace L3gion
 		m_IsRunning = false;
 		stopPhysics();
 
+		resetScriptFields();
 		ScriptEngine::onRuntimeStop();
 	}
 

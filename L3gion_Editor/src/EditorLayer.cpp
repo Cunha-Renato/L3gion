@@ -5,6 +5,7 @@
 #include <chrono>
 
 #include "L3gion/Core/Timer.h"
+#include "L3gion/Scripting/ScriptEngine.h"
 #include "L3gion/Scene/Components.h"
 #include "L3gion/Scene/SceneSerializer.h"
 #include "L3gion/Utils/PlatformUtils.h"
@@ -611,6 +612,7 @@ namespace L3gion
 		m_ActiveScene = createRef<Scene>();
 		m_EditorScene = m_ActiveScene;
 		m_SceneHierarchyPanel.setContext(m_ActiveScene);
+		ScriptEngine::setContext(m_ActiveScene);
 		m_EditorScenePath.clear();
 	}
 	void EditorLayer::openScene()
@@ -638,6 +640,7 @@ namespace L3gion
 			m_EditorScene = newScene;
 
 			m_SceneHierarchyPanel.setContext(m_EditorScene);
+			ScriptEngine::setContext(m_EditorScene);
 
 			m_ActiveScene = m_EditorScene;
 			m_EditorScenePath = path;
@@ -657,7 +660,7 @@ namespace L3gion
 	{
 		if (!m_EditorScenePath.empty())
 		{
-			serializeScene(m_ActiveScene, m_EditorScenePath);
+			serializeScene(m_EditorScene, m_EditorScenePath);
 		}
 		else
 			saveSceneAs();
@@ -681,6 +684,7 @@ namespace L3gion
 			m_ActiveScene->onRuntimeStart();
 
 			m_SceneHierarchyPanel.setContext(m_ActiveScene);
+			ScriptEngine::setContext(m_ActiveScene);
 
 			m_SceneState = SceneState::Play;
 		}
@@ -695,8 +699,10 @@ namespace L3gion
 			m_ActiveScene->onSimulationStop();
 
 		m_SceneState = SceneState::Edit;
+		m_SceneHierarchyPanel.setContext(m_EditorScene);
+		ScriptEngine::setContext(m_EditorScene);
+
 		m_ActiveScene = m_EditorScene;
-		m_SceneHierarchyPanel.setContext(m_ActiveScene);
 	}
 	void EditorLayer::onSimutalionScenePlay()
 	{
@@ -709,6 +715,7 @@ namespace L3gion
 			m_ActiveScene->onSimulationStart();
 
 			m_SceneHierarchyPanel.setContext(m_ActiveScene);
+			ScriptEngine::setContext(m_ActiveScene);
 
 			m_SceneState = SceneState::Simulate;
 		}

@@ -81,7 +81,10 @@ namespace L3gion
 			if (!success)
 				return T();
 
-			return retainValue ? *(T*)m_FieldValues.at(name) : *(T*)m_Buffer;
+			if (retainValue)
+				memcpy(m_Buffer, m_FieldValues.at(name), sizeof(m_Buffer));
+
+			return *(T*)m_Buffer;
 		}
 		template<typename T>
 		void setFieldValue(const std::string& name, const T& value, bool retainValue)
@@ -106,7 +109,7 @@ namespace L3gion
 		MonoMethod* m_OnUpdateMethod = nullptr;
 
 		std::map<std::string, char[8]> m_FieldValues;
-		char m_Buffer[8];
+		char m_Buffer[8] = {0};
 	};
 
 //------------------ SCRIPT_ENGINE ------------------
@@ -119,15 +122,16 @@ namespace L3gion
 
 		static void loadAssembly(const std::filesystem::path filepath);
 		static void loadAppAssembly(const std::filesystem::path filepath);
-		
-		static void onRuntimeStart(Scene* scene);
+		static void reloadAssembly();
+
+		static void setContext(ref<Scene> scene);
 		static void onRuntimeStop();
 
 		static bool entityClassExists(const std::string& fullName);
 		static void onCreateEntity(Entity entity);
 		static void onUpdateEntity(Entity entity, Timestep ts);
 
-		static Scene* getSceneContext();
+		static ref<Scene> getSceneContext();
 		static ref<ScriptInstance> getEntityScriptInstance(UUID entityID);
 
 		static std::unordered_map<std::string, ref<ScriptClass>> getEntityClasses();
