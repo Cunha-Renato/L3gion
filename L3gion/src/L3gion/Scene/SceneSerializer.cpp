@@ -2,6 +2,7 @@
 #include "L3gion/Scene/SceneSerializer.h"
 #include "L3gion/Scene/Entity.h"
 #include "L3gion/Scene/Components.h"
+#include "L3gion/Scripting/ScriptEngine.h"
 
 #include <yaml-cpp/yaml.h>
 #include <sstream>
@@ -77,10 +78,39 @@ namespace YAML
 			return true;
 		}
 	};
+	template<>
+	struct convert<L3gion::UUID>
+	{
+		static Node encode(const L3gion::UUID& uuid)
+		{
+			Node node;
+			node.push_back((uint64_t)uuid);
+			return node;
+		}
+
+		static bool decode(const Node& node, L3gion::UUID& uuid)
+		{
+			uuid = node.as<uint64_t>();
+			return true;
+		}
+	};
 }
 
 namespace L3gion
 {
+#define WRITE_SCRIPT_FIELD(FieldType, Type)           \
+			case ScriptFieldType::FieldType:          \
+				out << scriptInstance->getFieldValue<Type>(name, true);  \
+				break
+
+#define READ_SCRIPT_FIELD(FieldType, Type)             \
+	case ScriptFieldType::FieldType:                   \
+	{                                                  \
+		Type data = scriptField["data"].as<Type>();    \
+		scriptInstance->setFieldValue<Type>(name, data, true);                  \
+		break;                                         \
+	}
+
 	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
 	{
 		out << YAML::Flow;
@@ -196,6 +226,45 @@ namespace L3gion
 			auto& sc = entity.getComponent<ScriptComponent>();
 
 			out << YAML::Key << "script" << YAML::Value << sc.name;
+
+			// Fields
+			ref<ScriptInstance> scriptInstance = ScriptEngine::getEntityScriptInstance(entity.getUUID());
+			const auto& fields = scriptInstance->getScriptClass()->getFields();
+			if (fields.size() > 0)
+			{
+				out << YAML::Key << "scriptFields" << YAML::Value;
+				out << YAML::BeginSeq;
+				for (const auto& [name, field] : fields)
+				{
+					out << YAML::BeginMap;
+					out << YAML::Key << "name" << YAML::Value << name;
+					out << YAML::Key << "type" << YAML::Value << Utils::scriptFieldTypeToString(field.type);
+
+					out << YAML::Key << "data" << YAML::Value;
+					
+					switch (field.type)
+					{
+						WRITE_SCRIPT_FIELD(Float, float);
+						WRITE_SCRIPT_FIELD(Double, double);
+						WRITE_SCRIPT_FIELD(Bool, bool);
+						WRITE_SCRIPT_FIELD(Char, char);
+						WRITE_SCRIPT_FIELD(Byte, int8_t);
+						WRITE_SCRIPT_FIELD(Short, int16_t);
+						WRITE_SCRIPT_FIELD(Int, int32_t);
+						WRITE_SCRIPT_FIELD(Long, int64_t);
+						WRITE_SCRIPT_FIELD(UByte, uint8_t);
+						WRITE_SCRIPT_FIELD(UShort, uint16_t);
+						WRITE_SCRIPT_FIELD(UInt, uint32_t);
+						WRITE_SCRIPT_FIELD(ULong, uint64_t);
+						WRITE_SCRIPT_FIELD(Vec2, glm::vec2);
+						WRITE_SCRIPT_FIELD(Vec3, glm::vec3);
+						WRITE_SCRIPT_FIELD(Vec4, glm::vec4);
+						WRITE_SCRIPT_FIELD(Entity, UUID);
+					}
+					out << YAML::EndMap;
+				}
+				out << YAML::EndSeq;
+			}
 		});
 
 		serializeComponent<CameraComponent>(entity, out, "CameraComponent", [&]()
@@ -331,6 +400,43 @@ namespace L3gion
 				{
 					auto& sc = deserializedEntity.addComponent<ScriptComponent>();
 					sc.name = scriptComponent["script"].as<std::string>();
+					m_Scene->refreshScripts();
+
+					auto scriptFields = scriptComponent["scriptFields"];
+					if (scriptFields)
+					{
+						ref<ScriptInstance> scriptInstance = ScriptEngine::getEntityScriptInstance(deserializedEntity.getUUID());
+						if (scriptInstance)
+						{	
+							for (auto scriptField : scriptFields)
+							{
+								std::string name = scriptField["name"].as<std::string>();
+								std::string typeString = scriptField["type"].as<std::string>();
+
+								ScriptFieldType type = Utils::scriptFieldTypeFromString(typeString);
+								
+								switch (type)
+								{
+									READ_SCRIPT_FIELD(Float, float);
+									READ_SCRIPT_FIELD(Double, double);
+									READ_SCRIPT_FIELD(Bool, bool);
+									READ_SCRIPT_FIELD(Char, char);
+									READ_SCRIPT_FIELD(Byte, int8_t);
+									READ_SCRIPT_FIELD(Short, int16_t);
+									READ_SCRIPT_FIELD(Int, int32_t);
+									READ_SCRIPT_FIELD(Long, int64_t);
+									READ_SCRIPT_FIELD(UByte, uint8_t);
+									READ_SCRIPT_FIELD(UShort, uint16_t);
+									READ_SCRIPT_FIELD(UInt, uint32_t);
+									READ_SCRIPT_FIELD(ULong, uint64_t);
+									READ_SCRIPT_FIELD(Vec2, glm::vec2);
+									READ_SCRIPT_FIELD(Vec3, glm::vec3);
+									READ_SCRIPT_FIELD(Vec4, glm::vec4);
+									READ_SCRIPT_FIELD(Entity, UUID);
+								}
+							}
+						}
+					}
 				}
 
 				auto cameraComponent = entity["CameraComponent"];

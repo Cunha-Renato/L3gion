@@ -177,6 +177,7 @@ namespace L3gion
 		initializePhysics();
 
 		// Instantiate all ScriptEntities
+		resetScriptFields();
 		refreshScripts();
 		auto view = m_Registry.view<ScriptComponent>();
 		for (auto e : view)
@@ -196,11 +197,13 @@ namespace L3gion
 
 	void Scene::onSimulationStart()
 	{
+		resetScriptFields();
 		m_IsRunning = true;
 		initializePhysics();
 	}
 	void Scene::onSimulationStop()
 	{
+		resetScriptFields();
 		m_IsRunning = false;
 		stopPhysics();
 	}

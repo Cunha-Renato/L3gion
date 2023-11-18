@@ -1,6 +1,5 @@
 ﻿using System;
 using L3gion;
-using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 namespace Sandbox
 {

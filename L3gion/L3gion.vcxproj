@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="src\L3gion.h" />
     <ClInclude Include="src\L3gion\Core\Application.h" />
+    <ClInclude Include="src\L3gion\Core\Buffer.h" />
     <ClInclude Include="src\L3gion\Core\Core.h" />
     <ClInclude Include="src\L3gion\Core\EntryPoint.h" />
     <ClInclude Include="src\L3gion\Core\Input.h" />
@@ -652,6 +653,7 @@
     <ClCompile Include="src\L3gion\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\L3gion\Scripting\ScriptEngine.cpp" />
     <ClCompile Include="src\L3gion\Scripting\ScriptGlue.cpp" />
+    <ClCompile Include="src\L3gion\Utils\PlatformUtils.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLFrameBuffer.cpp" />

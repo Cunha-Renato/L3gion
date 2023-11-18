@@ -4,12 +4,16 @@
 #include "ScriptGlue.h"
 #include "L3gion/Core/UUID.h"
 #include "L3gion/Core/Application.h"
+#include "L3gion/Core/Buffer.h"
+#include "L3gion/Utils/PlatformUtils.h"
 
 #include <FileWatch.h>
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"
 #include "mono/metadata/tabledefs.h"
+#include "mono/metadata/threads.h"
+#include "mono/metadata/mono-debug.h"
 
 #include <glm/glm.hpp>
 
@@ -55,43 +59,14 @@ namespace L3gion
 				LG_CORE_INFO("{0}.{1}\n", nameSpace, name);
 			}
 		}
-		
-		static char* readBytes(const std::filesystem::path& filepath, uint32_t* outSize)
+				
+		static MonoAssembly* loadMonoAssembly(const std::filesystem::path& assemblyPath, bool loadPDB = false)
 		{
-			std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
-
-			if (!stream)
-			{
-				// Failed to open the file
-				return nullptr;
-			}
-
-			std::streampos end = stream.tellg();
-			stream.seekg(0, std::ios::beg);
-			uint64_t size = end - stream.tellg();
-
-			if (size == 0)
-			{
-				// File is empty
-				return nullptr;
-			}
-
-			char* buffer = new char[size];
-			stream.read((char*)buffer, size);
-			stream.close();
-
-			*outSize = (uint32_t)size;
-			return buffer;
-		}
-		
-		static MonoAssembly* loadMonoAssembly(const std::filesystem::path& assemblyPath)
-		{
-			uint32_t fileSize = 0;
-			char* fileData = readBytes(assemblyPath, &fileSize);
+			ScopedBuffer fileData = FileSystem::readFileBinary(assemblyPath);
 
 			// NOTE: We can't use this image for anything other than loading the assembly because this image doesn't have a reference to the assembly
 			MonoImageOpenStatus status;
-			MonoImage* image = mono_image_open_from_data_full(fileData, fileSize, 1, &status, 0);
+			MonoImage* image = mono_image_open_from_data_full(fileData.as<char>(), (uint32_t)fileData.size(), 1, &status, 0);
 
 			if (status != MONO_IMAGE_OK)
 			{
@@ -100,17 +75,29 @@ namespace L3gion
 				return nullptr;
 			}
 
+			if (loadPDB)
+			{
+				std::filesystem::path pdbPath = assemblyPath;
+				pdbPath.replace_extension(".pdb");
+
+				if (std::filesystem::exists(pdbPath))
+				{
+					ScopedBuffer pdbFileData = FileSystem::readFileBinary(pdbPath);
+
+					mono_debug_open_image_from_memory(image, (const mono_byte*)pdbFileData.data(), (int)pdbFileData.size());
+
+					LG_CORE_INFO("Loaded PDB {}", pdbPath.string());
+				}
+			}
+
 			std::string pathStr = assemblyPath.string();
 			MonoAssembly* assembly = mono_assembly_load_from_full(image, pathStr.c_str(), &status, 0);
 			mono_image_close(image);
 
-			// Don't forget to free the file data
-			delete[] fileData;
-
 			return assembly;
 		}
 	
-		ScriptFieldType monoTypeToScriptFieldType(MonoType* monoType)
+		static ScriptFieldType monoTypeToScriptFieldType(MonoType* monoType)
 		{
 			std::string typeName = mono_type_get_name(monoType);
 
@@ -123,31 +110,6 @@ namespace L3gion
 			}
 
 			return it->second;
-		}
-
-		const char* scriptFieldTypeToString(ScriptFieldType type)
-		{
-			switch (type)
-			{
-				case ScriptFieldType::Float:	return "Float";
-				case ScriptFieldType::Double:	return "Double";
-				case ScriptFieldType::Bool:		return "Bool";
-				case ScriptFieldType::Char:		return "Char";
-				case ScriptFieldType::Byte:		return "Byte";
-				case ScriptFieldType::Short:	return "Short";
-				case ScriptFieldType::Int:		return "Int";
-				case ScriptFieldType::Long:		return "Long";
-				case ScriptFieldType::UByte:	return "UByte";
-				case ScriptFieldType::UShort:	return "UShort";
-				case ScriptFieldType::UInt:		return "UInt";
-				case ScriptFieldType::ULong:	return "ULong";
-				case ScriptFieldType::Vec2:		return "Vec2";
-				case ScriptFieldType::Vec3:		return "Vec3";
-				case ScriptFieldType::Vec4:		return "Vec4";
-				case ScriptFieldType::Entity:	return "Entity";
-			}
-
-			return "<Invalid>";
 		}
 	}
 
@@ -173,6 +135,8 @@ namespace L3gion
 
 		scope<filewatch::FileWatch<std::string>> appAssemblyFileWatcher;
 		bool assemblyReloadPending = false;
+
+		bool enableDebugging = true;
 
 		// Runtime
 		ref<Scene> sceneContext = nullptr;
@@ -201,8 +165,18 @@ namespace L3gion
 		initMono();
 		ScriptGlue::registerFunctions();
 
-		loadAssembly("resources/scripts/L3gion_ScriptCore.dll");
-		loadAppAssembly("SandboxProject/assets/scripts/Binaries/Sandbox.dll");
+		bool status = loadAssembly("resources/scripts/L3gion_ScriptCore.dll");
+		if (!status)
+		{
+			LG_CORE_ERROR("[ScriptEngine]: Init()... Could not load L3gion_ScriptCore assembly");
+			return;
+		}
+		status = loadAppAssembly("SandboxProject/assets/scripts/Binaries/Sandbox.dll");
+		if (!status)
+		{
+			LG_CORE_ERROR("[ScriptEngine]: Init()... Could not load app assembly");
+			return;
+		}
 		loadAssemblyClasses();
 
 		ScriptGlue::registerComponents();
@@ -220,13 +194,26 @@ namespace L3gion
 	{
 		mono_set_assemblies_path("mono/lib");
 
+		if (s_Data->enableDebugging)
+		{
+			const char* argv[2] = 
+			{
+				"--debugger-agent=transport=dt_socket,address=127.0.0.1:2550,server=y,suspend=n,loglevel=3,logfile=MonoDebugger.log",
+				"--soft-breakpoints"
+			};
+
+			mono_jit_parse_options(2, (char**)argv);
+			mono_debug_init(MONO_DEBUG_FORMAT_MONO);
+		}
+
 		MonoDomain* rootDomain = mono_jit_init("L3gionJITRuntime");
 		LG_CORE_ASSERT(rootDomain, "In initMono(): No MonoDomain!");
 
 		// Store the root domain pointer
 		s_Data->rootDomain = rootDomain;
-	}
 
+		mono_thread_set_main(mono_thread_current());
+	}
 	void ScriptEngine::shutdownMono()
 	{
 		mono_domain_set(mono_get_root_domain(), false);
@@ -237,28 +224,34 @@ namespace L3gion
 		s_Data->rootDomain = nullptr;
 	}
 
-	void ScriptEngine::loadAssembly(const std::filesystem::path filepath)
+	bool ScriptEngine::loadAssembly(const std::filesystem::path filepath)
 	{
 		// Create an App Domain
 		char appName[] = "L3gionScriptRuntime";
 		s_Data->appDomain = mono_domain_create_appdomain(appName, nullptr);
 		mono_domain_set(s_Data->appDomain, true);
 
-		// Maybe not here!
 		s_Data->CoreAssemblyFilepath = filepath;
-		s_Data->coreAssembly = Utils::loadMonoAssembly(filepath);
+		s_Data->coreAssembly = Utils::loadMonoAssembly(filepath, s_Data->enableDebugging);
+		if (s_Data->coreAssembly == nullptr)
+			return false;
 		s_Data->coreAssemblyImage = mono_assembly_get_image(s_Data->coreAssembly);
+
+		return true;
 	}
-	void ScriptEngine::loadAppAssembly(const std::filesystem::path filepath)
+	bool ScriptEngine::loadAppAssembly(const std::filesystem::path filepath)
 	{
 		// Maybe not here!
 		s_Data->AppAssemblyFilepath = filepath;
-		s_Data->appAssembly = Utils::loadMonoAssembly(filepath);
-		auto a = s_Data->appAssembly;
+		s_Data->appAssembly = Utils::loadMonoAssembly(filepath, s_Data->enableDebugging);
+		if (s_Data->appAssembly == nullptr)
+			return false;
 		s_Data->appAssemblyImage = mono_assembly_get_image(s_Data->appAssembly);
 
 		s_Data->appAssemblyFileWatcher = createScope<filewatch::FileWatch<std::string>>(filepath.string(), onAppAssemblyFileSystemEvent);
 		s_Data->assemblyReloadPending = false;
+
+		return true;
 	}
 	void ScriptEngine::reloadAssembly()
 	{
@@ -344,10 +337,14 @@ namespace L3gion
 	{
 		UUID entityUUID = entity.getUUID();
 
-		LG_CORE_ASSERT(s_Data->entityInstances.find(entityUUID) != s_Data->entityInstances.end(), "Instance doesn't exists!");
+		if (s_Data->entityInstances.find(entityUUID) != s_Data->entityInstances.end())
+		{
+			auto& instance = s_Data->entityInstances[entityUUID];
+			instance->invokeOnUpdate((float)ts);
+		}
+		else
+		LG_CORE_ERROR("Could not find ScriptInstance for entity {}", entityUUID);
 
-		auto& instance = s_Data->entityInstances[entityUUID];
-		instance->invokeOnUpdate((float)ts);
 	}
 
 	ref<Scene> ScriptEngine::getSceneContext()
@@ -370,6 +367,13 @@ namespace L3gion
 	std::unordered_map<std::string, ref<ScriptClass>> ScriptEngine::getEntityClasses()
 	{
 		return s_Data->entityClasses;
+	}
+	ref<ScriptClass> ScriptEngine::getEntityClass(const std::string& name)
+	{
+		if (s_Data->entityClasses.find(name) == s_Data->entityClasses.end())
+			return nullptr;
+
+		return s_Data->entityClasses.at(name);
 	}
 
 	const std::vector<std::string>& ScriptEngine::getEntityClassesName()
@@ -472,7 +476,8 @@ namespace L3gion
 
 	MonoObject* ScriptClass::invokeMethod(MonoObject* instance, MonoMethod* method, void** params)
 	{
-		return mono_runtime_invoke(method, instance, params, nullptr);
+		MonoObject* exeption = nullptr;
+		return mono_runtime_invoke(method, instance, params, &exeption);
 	}
 
 // ---------------- ScriptInstance ----------------

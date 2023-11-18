@@ -97,6 +97,13 @@ Entities:
       scale: [0.5, 0.5, 1]
     ScriptComponent:
       script: Sandbox.Player
+      scriptFields:
+        - name: speed
+          type: Float
+          data: 11.3599997
+        - name: time
+          type: Float
+          data: 0
     CircleRendererComponent:
       color: [0, 0.727302432, 0.850806475, 1]
       thickness: 1
@@ -122,6 +129,13 @@ Entities:
       scale: [1, 1, 1]
     ScriptComponent:
       script: Sandbox.Camera
+      scriptFields:
+        - name: DistanceFromPlayer
+          type: Float
+          data: 60
+        - name: OtherEntity
+          type: Entity
+          data: 0
     CameraComponent:
       Camera:
         projectionType: 0

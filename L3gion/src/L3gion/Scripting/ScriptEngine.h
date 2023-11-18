@@ -31,6 +31,72 @@ namespace L3gion
 		Vec2, Vec3, Vec4,
 		Entity
 	};
+	
+	namespace Utils
+	{
+		static const char* scriptFieldTypeToString(ScriptFieldType type)
+		{
+			switch (type)
+			{
+				case ScriptFieldType::Float:	return "Float";
+				case ScriptFieldType::Double:	return "Double";
+				case ScriptFieldType::Bool:		return "Bool";
+				case ScriptFieldType::Char:		return "Char";
+				case ScriptFieldType::Byte:		return "Byte";
+				case ScriptFieldType::Short:	return "Short";
+				case ScriptFieldType::Int:		return "Int";
+				case ScriptFieldType::Long:		return "Long";
+				case ScriptFieldType::UByte:	return "UByte";
+				case ScriptFieldType::UShort:	return "UShort";
+				case ScriptFieldType::UInt:		return "UInt";
+				case ScriptFieldType::ULong:	return "ULong";
+				case ScriptFieldType::Vec2:		return "Vec2";
+				case ScriptFieldType::Vec3:		return "Vec3";
+				case ScriptFieldType::Vec4:		return "Vec4";
+				case ScriptFieldType::Entity:	return "Entity";
+			}
+
+			return "<Invalid>";
+		}
+
+		static ScriptFieldType scriptFieldTypeFromString(std::string type)
+		{
+			if (type == "Float")
+				return ScriptFieldType::Float;
+			else if (type == "Double")
+				return ScriptFieldType::Double;	
+			else if (type == "Bool")
+				return ScriptFieldType::Bool;
+			else if (type == "Char")
+				return ScriptFieldType::Char;
+			else if (type == "Byte")
+				return ScriptFieldType::Byte;
+			else if (type == "Short")
+				return ScriptFieldType::Short;
+			else if (type == "Int")
+				return ScriptFieldType::Int;
+			else if (type == "Long")
+				return ScriptFieldType::Long;
+			else if (type == "UByte")
+				return ScriptFieldType::UByte;
+			else if (type == "UShort")
+				return ScriptFieldType::UShort;
+			else if (type == "UInt")
+				return ScriptFieldType::UInt;
+			else if (type == "ULong")
+				return ScriptFieldType::ULong;
+			else if (type == "Vec2")
+				return ScriptFieldType::Vec2;
+			else if (type == "Vec3")
+				return ScriptFieldType::Vec3;
+			else if (type == "Vec4")
+				return ScriptFieldType::Vec4;
+			else if (type == "Entity")
+				return ScriptFieldType::Entity;
+			
+			return ScriptFieldType::None;
+		}
+	}
 
 	struct ScriptField
 	{
@@ -93,6 +159,8 @@ namespace L3gion
 				memcpy(m_FieldValues[name], &value, sizeof(T));
 		}
 
+		const std::map<std::string, char[8]>& getFieldsValue() { return m_FieldValues; }
+
 		MonoObject* getManagedObject() { return m_Instance; }
 		ref<ScriptClass> getScriptClass() { return m_ScriptClass; }
 
@@ -120,8 +188,8 @@ namespace L3gion
 		static void init();
 		static void shutdown();
 
-		static void loadAssembly(const std::filesystem::path filepath);
-		static void loadAppAssembly(const std::filesystem::path filepath);
+		static bool loadAssembly(const std::filesystem::path filepath);
+		static bool loadAppAssembly(const std::filesystem::path filepath);
 		static void reloadAssembly();
 
 		static void setContext(ref<Scene> scene);
@@ -135,6 +203,7 @@ namespace L3gion
 		static ref<ScriptInstance> getEntityScriptInstance(UUID entityID);
 
 		static std::unordered_map<std::string, ref<ScriptClass>> getEntityClasses();
+		static ref<ScriptClass> getEntityClass(const std::string& name);
 		static const std::vector<std::string>& getEntityClassesName();
 
 		static MonoImage* getCoreAssemblyImage();

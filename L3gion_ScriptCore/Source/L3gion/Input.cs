@@ -1,5 +1,4 @@
-﻿
-namespace L3gion
+﻿namespace L3gion
 {
     public class Input
     {
