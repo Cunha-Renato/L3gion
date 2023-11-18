@@ -32,7 +32,6 @@ namespace L3gion
 		}
 	};
 
-
 	struct ApplicationSpecs
 	{
 		std::string name = "L3gion App";
@@ -61,10 +60,14 @@ namespace L3gion
 
 		ApplicationSpecs getSpecs() const { return m_Specs; }
 
+		void submitToMainThread(const std::function<void()>& func);
+
 	private:
 		void run();
 		bool onWindowClose(WindowCloseEvent& e);
 		bool onWindowResize(WindowResizeEvent& e);
+
+		void executeMainThreadQueue();
 
 	private:
 		ApplicationSpecs m_Specs;
@@ -74,6 +77,9 @@ namespace L3gion
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
 		double m_LastFrameTime = 0.0f;
+
+		std::vector<std::function<void()>> m_MainThreadQueue;
+		std::mutex m_MainThreadQueueMutex;
 
 	private:
 		static Application* s_Instance;

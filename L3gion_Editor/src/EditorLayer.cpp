@@ -5,6 +5,7 @@
 #include <chrono>
 
 #include "L3gion/Core/Timer.h"
+#include "L3gion/Scripting/ScriptEngine.h"
 #include "L3gion/Scene/Components.h"
 #include "L3gion/Scene/SceneSerializer.h"
 #include "L3gion/Utils/PlatformUtils.h"
@@ -18,7 +19,6 @@ namespace L3gion
 		: Layer(name)
 	{
 	}
-
 
 	void EditorLayer::onAttach()
 	{
@@ -54,7 +54,6 @@ namespace L3gion
 
 		m_SceneHierarchyPanel.setContext(m_ActiveScene);
 	}
-
 	void EditorLayer::onDetach()
 	{
 		LG_PROFILE_FUNCTION();
@@ -188,7 +187,6 @@ namespace L3gion
 
 		Renderer2D::endScene();
 	}
-
 	void EditorLayer::onImGuiRender()
 	{
 		LG_PROFILE_FUNCTION();
@@ -329,7 +327,7 @@ namespace L3gion
 			}
 
 			// Snapping
-			bool snap = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL);
+			bool snap = Input::isKeyPressed(LgKey::LEFT_CONTROL);
 			float snapValue = 0.5f;
 			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
 				snapValue = 45.0f;
@@ -349,7 +347,7 @@ namespace L3gion
 				nullptr,
 				snap ? snapValues : nullptr);
 
-			if (ImGuizmo::IsUsing() && !Input::isKeyPressed(LgKeys::LG_KEY_LEFT_ALT))
+			if (ImGuizmo::IsUsing() && !Input::isKeyPressed(LgKey::LEFT_ALT))
 			{
 				glm::vec3 translation{ 0.0f }, rotation{ 0.0f }, scale{ 1.0f };
 				Math::decomposeTransform(transform, translation, rotation, scale);
@@ -496,8 +494,8 @@ namespace L3gion
 	{
 		if (m_SceneState != SceneState::Play)
 		{
-			bool control = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_CONTROL);
-			bool alt = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_ALT) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_ALT);
+			bool control = Input::isKeyPressed(LgKey::LEFT_CONTROL) || Input::isKeyPressed(LgKey::RIGHT_CONTROL);
+			bool alt = Input::isKeyPressed(LgKey::LEFT_ALT) || Input::isKeyPressed(LgKey::RIGHT_ALT);
 			if (e.getMouseButton() == LG_MOUSE_BUTTON_LEFT && !control && !alt)
 			{
 				auto [mx, my] = ImGui::GetMousePos();
@@ -529,12 +527,12 @@ namespace L3gion
 		if (e.getRepeatCount() > 0)
 			return false;
 
-		bool control = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_CONTROL) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_CONTROL);
-		bool shift = Input::isKeyPressed(LgKeys::LG_KEY_LEFT_SHIFT) || Input::isKeyPressed(LgKeys::LG_KEY_RIGHT_SHIFT);
+		bool control = Input::isKeyPressed(LgKey::LEFT_CONTROL) || Input::isKeyPressed(LgKey::RIGHT_CONTROL);
+		bool shift = Input::isKeyPressed(LgKey::LEFT_SHIFT) || Input::isKeyPressed(LgKey::RIGHT_SHIFT);
 
 		switch (e.getKeyCode())
 		{
-			case LgKeys::LG_KEY_I:
+			case LgKey::I:
 			{
 				if (LG_PROFILE_IS_ACTIVE())
 				{
@@ -546,13 +544,13 @@ namespace L3gion
 				}
 				break;
 			}
-			case LgKeys::LG_KEY_N:
+			case LgKey::N:
 			{
 				if (control)
 					newScene();
 				break;
 			}
-			case LgKeys::LG_KEY_O:
+			case LgKey::O:
 			{
 				if (control)
 					openScene();
@@ -560,7 +558,7 @@ namespace L3gion
 			}
 
 			// Commands
-			case LgKeys::LG_KEY_S:
+			case LgKey::S:
 			{
 				if (shift)
 					saveSceneAs();
@@ -568,35 +566,35 @@ namespace L3gion
 					saveScene();
 				break;
 			}
-			case LgKeys::LG_KEY_D:
+			case LgKey::D:
 			{
 				if (control)
 					onDuplicateEntity();
 				break;
 			}
-			case LgKeys::LG_KEY_DELETE:
+			case LgKey::DEL:
 			{
 				m_SceneHierarchyPanel.deleteMarkedEntity();
 				break;
 			}
 			
 			// Gizmos
-			case LgKeys::LG_KEY_Q:
+			case LgKey::Q:
 			{
 				m_GizmoType = -1;
 				break;
 			}
-			case LgKeys::LG_KEY_W:
+			case LgKey::W:
 			{
 				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 				break;
 			}
-			case LgKeys::LG_KEY_E:
+			case LgKey::E:
 			{
 				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 				break;
 			}
-			case LgKeys::LG_KEY_R:
+			case LgKey::R:
 			{
 				m_GizmoType = ImGuizmo::OPERATION::SCALE;
 				break;
@@ -614,6 +612,7 @@ namespace L3gion
 		m_ActiveScene = createRef<Scene>();
 		m_EditorScene = m_ActiveScene;
 		m_SceneHierarchyPanel.setContext(m_ActiveScene);
+		ScriptEngine::setContext(m_ActiveScene);
 		m_EditorScenePath.clear();
 	}
 	void EditorLayer::openScene()
@@ -641,6 +640,7 @@ namespace L3gion
 			m_EditorScene = newScene;
 
 			m_SceneHierarchyPanel.setContext(m_EditorScene);
+			ScriptEngine::setContext(m_EditorScene);
 
 			m_ActiveScene = m_EditorScene;
 			m_EditorScenePath = path;
@@ -660,7 +660,7 @@ namespace L3gion
 	{
 		if (!m_EditorScenePath.empty())
 		{
-			serializeScene(m_ActiveScene, m_EditorScenePath);
+			serializeScene(m_EditorScene, m_EditorScenePath);
 		}
 		else
 			saveSceneAs();
@@ -684,6 +684,7 @@ namespace L3gion
 			m_ActiveScene->onRuntimeStart();
 
 			m_SceneHierarchyPanel.setContext(m_ActiveScene);
+			ScriptEngine::setContext(m_ActiveScene);
 
 			m_SceneState = SceneState::Play;
 		}
@@ -698,8 +699,10 @@ namespace L3gion
 			m_ActiveScene->onSimulationStop();
 
 		m_SceneState = SceneState::Edit;
+		m_SceneHierarchyPanel.setContext(m_EditorScene);
+		ScriptEngine::setContext(m_EditorScene);
+
 		m_ActiveScene = m_EditorScene;
-		m_SceneHierarchyPanel.setContext(m_ActiveScene);
 	}
 	void EditorLayer::onSimutalionScenePlay()
 	{
@@ -712,6 +715,7 @@ namespace L3gion
 			m_ActiveScene->onSimulationStart();
 
 			m_SceneHierarchyPanel.setContext(m_ActiveScene);
+			ScriptEngine::setContext(m_ActiveScene);
 
 			m_SceneState = SceneState::Simulate;
 		}
@@ -719,7 +723,7 @@ namespace L3gion
 
 	void EditorLayer::onDuplicateEntity()
 	{
-		if (m_SceneState != SceneState::Play)
+		if (m_SceneState == SceneState::Play)
 			return;
 
 		Entity selected = m_SceneHierarchyPanel.getSelectedEntity();

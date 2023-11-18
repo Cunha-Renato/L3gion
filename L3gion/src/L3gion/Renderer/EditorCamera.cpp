@@ -62,7 +62,7 @@ namespace L3gion
 
 	void EditorCamera::onUpdate(Timestep ts)
 	{
-		if (Input::isKeyPressed(LgKeys::LG_KEY_LEFT_ALT))
+		if (Input::isKeyPressed(LgKey::LEFT_ALT))
 		{
 			const glm::vec2& mouse = Input::getMousePos();
 			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;

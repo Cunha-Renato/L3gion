@@ -34,12 +34,6 @@ namespace L3gion
 			LG_CORE_ASSERT(hasComponent<Component>(), "Entity doesn't have the component!");
 			return m_Scene->m_Registry.get<Component>(m_EntityHandle);
 		}
-
-		//template<typename... Components>
-		//auto getComponent()
-		//{
-		//	return m_Scene->m_Registry.get<Components...>(m_EntityHandle);
-		//}
 		
 		template<typename Component>
 		void removeComponent()
@@ -68,6 +62,7 @@ namespace L3gion
 
 		UUID getUUID() { return getComponent<IDComponent>().id; }
 		const std::string& getName() { return getComponent<TagComponent>().tag; }
+
 	private:
 		entt::entity m_EntityHandle = { entt::null };
 		Scene* m_Scene = nullptr;

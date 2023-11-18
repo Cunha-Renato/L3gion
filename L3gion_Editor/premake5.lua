@@ -18,6 +18,7 @@ project "L3gion_Editor"
 		"%{wks.location}/L3gion/vendor/spdlog/include",
 		"%{wks.location}/L3gion/src",
 		"%{wks.location}/L3gion/vendor",
+		"%{IncludeDir.filewatch}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.EnTT}",
 		"%{IncludeDir.yaml_cpp}",

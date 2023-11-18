@@ -33,12 +33,14 @@ project "L3gion"
 	{
 		"src",
 		"vendor/spdlog/include",
+		"%{IncludeDir.filewatch}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.EnTT}",
+		"%{IncludeDir.mono}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
@@ -52,7 +54,9 @@ project "L3gion"
 		"ImGui",
 		"opengl32.lib",
 		"yaml_cpp",
-		"box2d"
+		"box2d",
+
+		"%{Library.mono}",
 	}
 
 	filter "files:vendor/ImGuizmo/**.cpp"
@@ -64,6 +68,14 @@ project "L3gion"
 		defines
 		{
 			"LG_PLATFORM_WINDOWS"
+		}
+
+		links
+		{
+			"%{Library.WinSock}",
+			"%{Library.Winmm}",
+			"%{Library.WinVersion}",
+			"%{Library.Bcrypt}"
 		}
 
 	filter "configurations:Debug"

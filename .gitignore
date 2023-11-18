@@ -6,6 +6,7 @@ scripts/__pycache__
 .vscode/
 bin/
 bin_int/
+Intermediates/
 bin
 CMake
 
@@ -15,3 +16,5 @@ CMake
 # Files
 *.user
 *.obj
+**.vcxproj.user
+**.csproj

@@ -15,21 +15,21 @@ namespace L3gion
 	{
 		LG_PROFILE_FUNCTION();
 
-		if (Input::isKeyPressed(LgKeys::LG_KEY_A))
+		if (Input::isKeyPressed(LgKey::A))
 			m_CameraPosition.x -= m_CameraTranslationSpeed * (float)ts;
-		if (Input::isKeyPressed(LgKeys::LG_KEY_D))
+		if (Input::isKeyPressed(LgKey::D))
 			m_CameraPosition.x += m_CameraTranslationSpeed * (float)ts;
 
-		if (Input::isKeyPressed(LgKeys::LG_KEY_W))
+		if (Input::isKeyPressed(LgKey::W))
 			m_CameraPosition.y += m_CameraTranslationSpeed * (float)ts;
-		if (Input::isKeyPressed(LgKeys::LG_KEY_S))
+		if (Input::isKeyPressed(LgKey::S))
 			m_CameraPosition.y -= m_CameraTranslationSpeed * (float)ts;
 
 		if (m_Rotation)
 		{
-			if (Input::isKeyPressed(LgKeys::LG_KEY_Q))
+			if (Input::isKeyPressed(LgKey::Q))
 				m_CameraRotation += m_CameraRotationSpeed * (float)ts;
-			if (Input::isKeyPressed(LgKeys::LG_KEY_E))
+			if (Input::isKeyPressed(LgKey::E))
 				m_CameraRotation -= m_CameraRotationSpeed * (float)ts;
 		
 			m_Camera.setRotation(m_CameraRotation);

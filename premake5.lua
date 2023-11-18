@@ -27,6 +27,15 @@ group "Dependencies"
 
 group ""
 
-include "L3gion"
-include "L3gion_Editor"
-include "Sandbox"
+group "Core"
+	include "L3gion"
+	include "L3gion_ScriptCore"
+group ""
+
+group "Tools"
+	include "L3gion_Editor"
+group ""
+
+group "Misc"
+	include "Sandbox"
+group ""

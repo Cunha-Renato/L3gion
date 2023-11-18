@@ -3,6 +3,7 @@
 #include "SceneHierarchyPanel.h"
 
 #include "L3gion/Scene/Components.h"
+#include "L3gion/Scripting/ScriptEngine.h"
 
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h>
@@ -18,6 +19,7 @@ namespace L3gion
 	void SceneHierarchyPanel::setContext(const ref<Scene>& scene)
 	{
 		m_Context = scene;
+		m_Context->refreshScripts();
 		m_SelectionContext = {};
 	}
 
@@ -212,6 +214,19 @@ namespace L3gion
 		}
 	}
 	
+	template<typename T>
+	void SceneHierarchyPanel::menuComponent(Entity entity, const std::string& displayName)
+	{
+		if (!entity.hasComponent<T>())
+		{
+			if (ImGui::MenuItem(displayName.c_str()))
+			{
+				m_SelectionContext.addComponent<T>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+	}
+
 	void SceneHierarchyPanel::drawComponents(Entity entity)
 	{
 		ImGui::PushItemWidth(220.0f);
@@ -234,49 +249,12 @@ namespace L3gion
 
 		if (ImGui::BeginPopup("NewComponent"))
 		{
-			if (!entity.hasComponent<CameraComponent>())
-			{
-				if (ImGui::MenuItem("Camera"))
-				{
-					m_SelectionContext.addComponent<CameraComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!entity.hasComponent<SpriteRendererComponent>())
-			{
-				if (ImGui::MenuItem("Sprite Renderer"))
-				{
-					m_SelectionContext.addComponent<SpriteRendererComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!entity.hasComponent<CircleRendererComponent>())
-			{
-				if (ImGui::MenuItem("Circle Renderer"))
-				{
-					m_SelectionContext.addComponent<CircleRendererComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!entity.hasComponent<RigidBody2DComponent>())
-			{
-				if (ImGui::MenuItem("Rigidbody 2D"))
-				{
-					m_SelectionContext.addComponent<RigidBody2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-			if (!entity.hasComponent<Collider2DComponent>())
-			{
-				if (ImGui::MenuItem("Collider2D"))
-				{
-					m_SelectionContext.addComponent<Collider2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
+			menuComponent<ScriptComponent>(entity, "Script");
+			menuComponent<CameraComponent>(entity, "Camera");
+			menuComponent<SpriteRendererComponent>(entity, "Sprite Renderer");
+			menuComponent<CircleRendererComponent>(entity, "Circle Renderer");
+			menuComponent<RigidBody2DComponent>(entity, "RigidBody 2D");
+			menuComponent<Collider2DComponent>(entity, "Collider 2D");
 
 			ImGui::EndPopup();
 		}
@@ -297,6 +275,57 @@ namespace L3gion
 			tc.rotation = glm::radians(rotation);
 			drawVec3Control("Scale", tc.scale, 1.0f);
 			ImGui::Spacing();
+		});
+
+		drawComponent<ScriptComponent>(entity, "Script", [&](auto& component) mutable
+		{
+			bool scriptExists = ScriptEngine::entityClassExists(component.name);
+
+			const auto& classesNameStr = ScriptEngine::getEntityClassesName();
+			std::string currentNameStr = scriptExists ? component.name : "None";
+
+			if (ImGui::BeginCombo("Class", currentNameStr.c_str()))
+			{
+				for (auto& name : classesNameStr)
+				{
+					bool isSelected = currentNameStr == name;
+
+					if (ImGui::Selectable(name.c_str(), isSelected))
+					{
+						currentNameStr = name;
+						if (component.name != name)
+						{
+							component.name = name;
+							m_Context->refreshScripts();
+						}
+						else
+							component.name = name;
+					}
+
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+		
+			// Fields
+			ref<ScriptInstance> scriptInstance = ScriptEngine::getEntityScriptInstance(entity.getUUID());
+			if (scriptInstance)
+			{
+				const auto& fields = scriptInstance->getScriptClass()->getFields();
+
+				for (const auto& [name, field] : fields)
+				{
+					if (field.type == ScriptFieldType::Float)
+					{
+						float data = scriptInstance->getFieldValue<float>(name, !m_Context->isRunning());
+
+						if (ImGui::DragFloat(name.c_str(), &data, 0.01f))
+							scriptInstance->setFieldValue(name, data, !m_Context->isRunning());						
+					}
+				}
+			}
 		});
 
 		drawComponent<CameraComponent>(entity, "Camera", [](auto& cameraComponent)

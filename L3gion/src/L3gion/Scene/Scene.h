@@ -17,6 +17,8 @@ namespace L3gion
 		Scene();
 		~Scene();
 
+		bool isRunning() { return m_IsRunning; }
+
 		static ref<Scene> copy(ref<Scene> other);
 
 		Entity createEntity(const std::string& name = std::string());
@@ -28,6 +30,8 @@ namespace L3gion
 		void onSimulationStart();
 		void onSimulationStop();
 
+		Entity getEntityByUUID(UUID id);
+		Entity getEntityByName(const std::string_view& name);
 		Entity getPrimaryCameraEntity();
 
 		void onUptdateRuntime(Timestep ts);
@@ -35,7 +39,9 @@ namespace L3gion
 		void onUptdateEditor(Timestep ts, EditorCamera& editorCamera);
 		void onViewportResize(uint32_t width, uint32_t height);
 	
-		void duplicateEntity(Entity entity);
+		void refreshScripts();
+		Entity duplicateEntity(Entity entity);
+		Entity duplicateEntity(UUID entityID);
 
 		template<typename... Components>
 		auto getAllEntitiesWith()
@@ -44,6 +50,7 @@ namespace L3gion
 		}
 
 	private:
+		void resetScriptFields();
 		void renderEditorScene(EditorCamera& camera);
 		
 		void initializePhysics();
@@ -56,7 +63,11 @@ namespace L3gion
 		Renderer2D::QuadSpecs m_QuadSpecs;
 		Renderer2D::CircleSpecs m_CircleSpecs;
 
+		bool m_IsRunning = false;
+
 		b2World* m_World = nullptr;
+
+		std::unordered_map<UUID, entt::entity> m_EntityMap;
 
 		friend class Entity;
 		friend class SceneSerializer;

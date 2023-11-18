@@ -3,6 +3,7 @@
 
 #include "L3gion/Utils/GenaralUtils.h"
 #include "L3gion/Renderer/Renderer.h"
+#include "L3gion/Scripting/ScriptEngine.h"
 #include "L3gion/Events/MouseEvent.h"
 #include "L3gion/Core/Input.h"
 
@@ -26,6 +27,7 @@ namespace L3gion
 		m_Window->setEventCallback(BIND_EVENT_FN(Application::onEvent));
 
 		Renderer::init();
+		ScriptEngine::init();
 
 		m_ImGuiLayer = new ImGuiLayer;
 		pushOverlay(m_ImGuiLayer);
@@ -36,7 +38,8 @@ namespace L3gion
 	Application::~Application()
 	{
 		LG_PROFILE_FUNCTION();
-
+		
+		ScriptEngine::shutdown();
 		Renderer::shutdown();
 	}
 
@@ -72,18 +75,34 @@ namespace L3gion
 		}
 	}
 
+	void Application::submitToMainThread(const std::function<void()>& func)
+	{
+		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+
+		m_MainThreadQueue.emplace_back(func);
+	}
+	void Application::executeMainThreadQueue()
+	{
+		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+
+		for (auto& func : m_MainThreadQueue)
+			func();
+
+		m_MainThreadQueue.clear();
+	}
+
 	void Application::run()
 	{
 		LG_PROFILE_FUNCTION();
 
 		while (m_Running)
-		{
-			LG_PROFILE_SCOPE("Run Loop");
-			
+		{	
 			double time = Utils::Time::getTime(); // Should be outside this class
 			
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
+
+			executeMainThreadQueue();
 
 			if (!m_Minimized)
 			{
