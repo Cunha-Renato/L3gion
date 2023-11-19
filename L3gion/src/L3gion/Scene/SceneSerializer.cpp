@@ -3,6 +3,7 @@
 #include "L3gion/Scene/Entity.h"
 #include "L3gion/Scene/Components.h"
 #include "L3gion/Scripting/ScriptEngine.h"
+#include "L3gion/Project/Project.h"
 
 #include <yaml-cpp/yaml.h>
 #include <sstream>
@@ -465,7 +466,11 @@ namespace L3gion
 					auto& spriteComponent = deserializedEntity.addComponent<SpriteRendererComponent>();
 					spriteComponent.color = src["color"].as<glm::vec4>();
 					if (src["texturePath"])
-						spriteComponent.texture = SubTexture2D::create(src["texturePath"].as<std::string>());
+					{
+						std::string texturePath = src["texturePath"].as<std::string>();
+						spriteComponent.texture = SubTexture2D::create(texturePath);
+					}
+
 					spriteComponent.tilingFactor = src["tilingFactor"].as<uint32_t>();
 				}
 				

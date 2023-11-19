@@ -53,6 +53,12 @@ namespace L3gion
 		m_EditorCamera = EditorCamera(30.0f, 16.0f/9.0f, 0.01f, 1000.0f);
 
 		m_SceneHierarchyPanel.setContext(m_ActiveScene);
+
+		if (!m_ContentBrowserPanel && !Project::getActive())
+		{
+			openProject();
+			m_ContentBrowserPanel = createRef<ContentBrowserPanel>();
+		}
 	}
 	void EditorLayer::onDetach()
 	{
@@ -242,7 +248,9 @@ namespace L3gion
 // End of ImGui dockspace code -------------------------------------------------------
 
 		m_SceneHierarchyPanel.onImGuiRender();
-		m_ContentBrowserPanel.onImGuiRender();
+
+		if (m_ContentBrowserPanel)
+			m_ContentBrowserPanel->onImGuiRender();
 
 		UI_Viewport([&]()
 		{
@@ -468,15 +476,36 @@ namespace L3gion
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("New", "CTRL+N"))
-					newScene();
-				if (ImGui::MenuItem("Open...", "CTRL+O"))
-					openScene();
-				if (ImGui::MenuItem("Save", "CTRL+S"))
-					saveScene();
-				if (ImGui::MenuItem("Save as...", "CTRL+SHIFT+S"))
-					saveSceneAs();
 				if (ImGui::MenuItem("Exit")) Application::get().close();
+					ImGui::EndMenu();
+			}
+
+			if (Project::getActive())
+			{
+				if (ImGui::BeginMenu("Scene"))
+				{
+					if (ImGui::MenuItem("New"))
+						newScene();
+					if (ImGui::MenuItem("Save"))
+						saveScene();
+					if (ImGui::MenuItem("Save as..."))
+						saveSceneAs();
+
+					ImGui::EndMenu();
+				}
+			}
+
+			if (ImGui::BeginMenu("Project"))
+			{
+				if (ImGui::MenuItem("New", "CTRL + N"))
+					newProject();
+				if (ImGui::MenuItem("Open...", "CTRL + O"))
+					openProject();
+				if (ImGui::MenuItem("Save", "CTRL + S"))
+					saveProject();
+				if (ImGui::MenuItem("Save as..."))
+					saveProjectAs();
+
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenuBar();
@@ -547,13 +576,13 @@ namespace L3gion
 			case LgKey::N:
 			{
 				if (control)
-					newScene();
+					newProject();
 				break;
 			}
 			case LgKey::O:
 			{
 				if (control)
-					openScene();
+					openProject();
 				break;
 			}
 
@@ -561,9 +590,9 @@ namespace L3gion
 			case LgKey::S:
 			{
 				if (shift)
-					saveSceneAs();
+					saveProjectAs();
 				else if (control)
-					saveScene();
+					saveProject();
 				break;
 			}
 			case LgKey::D:
@@ -606,6 +635,46 @@ namespace L3gion
 		return false;
 	}
 
+	void EditorLayer::newProject()
+	{
+		std::string filepath = FileDialogs::saveFile("L3gion Project (*.lgproj)\0*.lgproj\0");
+		if (!filepath.empty())
+		{
+			if (Project::getActive())
+				saveProject();
+
+			Project::newProject();
+			Project::saveProject(filepath);
+		}
+	}
+	void EditorLayer::openProject()
+	{
+		std::string filepath = FileDialogs::openFile("L3gion Project (*.lgproj)\0*.lgproj\0");
+		if (!filepath.empty())
+			openProject(filepath);
+	}
+	void EditorLayer::openProject(const std::filesystem::path& path)
+	{
+		if (Project::getActive())
+			saveScene();
+		Project::openProject(path);
+	}
+	void EditorLayer::saveProjectAs()
+	{
+		std::string filepath = FileDialogs::saveFile("L3gion Project (*.lgproj)\0*.lgproj\0");
+		if (!filepath.empty())
+			Project::saveProject(std::filesystem::path(filepath).parent_path());
+
+		saveScene();
+	}
+	void EditorLayer::saveProject()
+	{
+		if (Project::getActive())
+			Project::saveProject(Project::getRootDir());
+
+		saveScene();
+	}
+
 	void EditorLayer::newScene()
 	{
 		onSceneStop();
@@ -646,7 +715,6 @@ namespace L3gion
 			m_EditorScenePath = path;
 		}
 	}
-	
 	void EditorLayer::saveSceneAs()
 	{
 		std::string filepath = FileDialogs::saveFile("L3gion Scene (*.lg)\0*.lg\0");
@@ -665,7 +733,8 @@ namespace L3gion
 		else
 			saveSceneAs();
 
-		m_ContentBrowserPanel.refresh();
+		if (m_ContentBrowserPanel)
+			m_ContentBrowserPanel->refresh();
 	}
 	void EditorLayer::serializeScene(ref<Scene> scene, const std::filesystem::path& path)
 	{

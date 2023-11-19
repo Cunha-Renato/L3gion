@@ -9,6 +9,7 @@ Entities:
       scale: [60.8056221, 1, 1]
     SpriteRendererComponent:
       color: [1, 1, 1, 1]
+      texturePath: SandboxProject\assets\textures\Checkerboard.png
       tilingFactor: 1
     RigidBody2DComponent:
       type: Static
@@ -31,6 +32,7 @@ Entities:
       scale: [60.7814827, 0.999623775, 1]
     SpriteRendererComponent:
       color: [1, 1, 1, 1]
+      texturePath: SandboxProject\assets\textures\Checkerboard.png
       tilingFactor: 1
     RigidBody2DComponent:
       type: Static
@@ -75,6 +77,7 @@ Entities:
       scale: [60.7620926, 0.999320805, 1]
     SpriteRendererComponent:
       color: [1, 1, 1, 1]
+      texturePath: SandboxProject\assets\textures\Checkerboard.png
       tilingFactor: 1
     RigidBody2DComponent:
       type: Static
@@ -100,7 +103,7 @@ Entities:
       scriptFields:
         - name: speed
           type: Float
-          data: 11.3599997
+          data: 11
         - name: time
           type: Float
           data: 0

@@ -78,6 +78,9 @@
     <ClInclude Include="src\L3gion\Core\Application.h">
       <Filter>src\L3gion\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\Core\Buffer.h">
+      <Filter>src\L3gion\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\L3gion\Core\Core.h">
       <Filter>src\L3gion\Core</Filter>
     </ClInclude>
@@ -1494,7 +1497,8 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Core\Buffer.h" />
+    <ClInclude Include="src\L3gion\Project\Project.h" />
+    <ClInclude Include="src\L3gion\Project\ProjectSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Core\Application.cpp">
@@ -1584,6 +1588,9 @@
     <ClCompile Include="src\L3gion\Scripting\ScriptGlue.cpp">
       <Filter>src\L3gion\Scripting</Filter>
     </ClCompile>
+    <ClCompile Include="src\L3gion\Utils\PlatformUtils.cpp">
+      <Filter>src\L3gion\Utils</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1626,6 +1633,7 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\L3gion\Utils\PlatformUtils.cpp" />
+    <ClCompile Include="src\L3gion\Project\Project.cpp" />
+    <ClCompile Include="src\L3gion\Project\ProjectSerializer.cpp" />
   </ItemGroup>
 </Project>

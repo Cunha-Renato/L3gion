@@ -28,6 +28,12 @@ namespace L3gion
 		bool onKeyPressed(KeyPressedEvent& e);
 		bool onMouseButtonPressed(MouseButtonPressedEvent& e);
 			
+		void newProject();
+		void openProject();
+		void openProject(const std::filesystem::path& path);
+		void saveProjectAs();
+		void saveProject();
+
 		void newScene();
 		void openScene();
 		void openScene(const std::filesystem::path& path);
@@ -70,7 +76,7 @@ namespace L3gion
 		glm::vec2 m_ViewportBounds[2];
 
 		SceneHierarchyPanel m_SceneHierarchyPanel;
-		ContentBrowserPanel m_ContentBrowserPanel;
+		ref<ContentBrowserPanel> m_ContentBrowserPanel = nullptr;
 
 		enum class SceneState
 		{
