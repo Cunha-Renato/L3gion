@@ -1,4 +1,6 @@
-﻿namespace L3gion
+﻿using System;
+
+namespace L3gion
 {
     public abstract class Component
     {
@@ -22,6 +24,15 @@
     }
     public class RigidBody2DComponent : Component
     {
+        public Vec2 LinearVelocity
+        {
+            get
+            {
+                InternalCalls.RigidBody2DComponent_GetLinearVelocity(Entity.ID, out Vec2 value);
+                return value;
+            }
+        }
+
         public bool Dynamic
         {
             get

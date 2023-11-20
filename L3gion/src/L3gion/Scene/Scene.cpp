@@ -159,7 +159,8 @@ namespace L3gion
 	}
 	Entity Scene::duplicateEntity(Entity entity)
 	{
-		Entity newEntity = createEntity(entity.getName());
+		std::string name = entity.getName();
+		Entity newEntity = createEntity(name);
 		copyComponentIfExists(AllComponents{}, newEntity, entity);
 
 		return newEntity;

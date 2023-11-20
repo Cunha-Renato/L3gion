@@ -3,6 +3,7 @@
 #include "L3gion/Scene/Entity.h"
 #include "L3gion/Scene/Components.h"
 #include "L3gion/Scripting/ScriptEngine.h"
+#include "L3gion/Project/Project.h"
 
 #include <yaml-cpp/yaml.h>
 #include <sstream>
@@ -292,7 +293,10 @@ namespace L3gion
 			auto& spr = entity.getComponent<SpriteRendererComponent>();
 			out << YAML::Key << "color" << YAML::Value << spr.color;
 			if (spr.texture)
-				out << YAML::Key << "texturePath" << YAML::Value << spr.texture->getPath();
+			{
+				std::filesystem::path texturePath = std::filesystem::relative(spr.texture->getPath(), Project::getRootDir() / Project::getAssetsDir());
+				out << YAML::Key << "texturePath" << YAML::Value << texturePath.string();
+			}
 			out << YAML::Key << "tilingFactor" << YAML::Value << spr.tilingFactor;
 		});
 
@@ -465,7 +469,12 @@ namespace L3gion
 					auto& spriteComponent = deserializedEntity.addComponent<SpriteRendererComponent>();
 					spriteComponent.color = src["color"].as<glm::vec4>();
 					if (src["texturePath"])
-						spriteComponent.texture = SubTexture2D::create(src["texturePath"].as<std::string>());
+					{
+						std::filesystem::path texturePath = src["texturePath"].as<std::string>();
+						texturePath = Project::getRootDir()/Project::getAssetsDir()/texturePath;
+						spriteComponent.texture = SubTexture2D::create(texturePath.string());
+					}
+
 					spriteComponent.tilingFactor = src["tilingFactor"].as<uint32_t>();
 				}
 				

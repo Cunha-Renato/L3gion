@@ -21,6 +21,7 @@
 
 #include "L3gion/Scene/Scene.h"
 #include "L3gion/Scene/Entity.h"
+#include "L3gion/Project/Project.h"
 
 #include "L3gion/ImGui/ImGuiLayer.h"
 

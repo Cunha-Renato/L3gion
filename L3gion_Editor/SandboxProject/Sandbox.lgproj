@@ -1,0 +1,5 @@
+Project:
+  name: Sandbox
+  path: SandboxProject
+  assetsDir: assets
+  scriptModulePath: scripts/Binaries/Sandbox.dll

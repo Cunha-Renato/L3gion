@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <filewatch/FileWatch.h>
 
 namespace L3gion
 {
@@ -23,6 +24,15 @@ namespace L3gion
 		DirectoryTree(Directory& root, uint32_t maxDepth = 500)
 		{
 			cleanAndCreate(root.childs, &root, maxDepth);
+		}
+		
+		static void setRefresh(const std::string& path, const filewatch::Event change_type)
+		{
+			isRefresh = true;
+		}
+		void setFileToBeWatched(const std::filesystem::path& path)
+		{
+			m_FileWach = createScope<filewatch::FileWatch<std::string>>(path.string(), setRefresh);
 		}
 
 		void cleanAndCreate(std::vector<Directory>& target, Directory* relativeTo, uint32_t maxDepth = 500)
@@ -47,12 +57,14 @@ namespace L3gion
 			LG_CORE_ASSERT(false, "No Directory found!");
 		}
 
+		inline static bool isRefresh = false;
+
 	private:
 		void createDirectoryTree(std::vector<Directory>& target, Directory* relativeTo, uint32_t maxDepth = 500)
 		{
 			if (target.capacity() <= 1)
 				target.reserve(maxDepth);
-
+		
 			target.clear();
 
 			for (auto& directoryEntry : std::filesystem::directory_iterator(relativeTo->path))
@@ -86,5 +98,7 @@ namespace L3gion
 
 	private:
 		std::unordered_map<std::filesystem::path, Directory*> m_DirectoriesPaths;
+	
+		scope<filewatch::FileWatch<std::string>> m_FileWach = nullptr;
 	};
 }

@@ -3,6 +3,7 @@
 #include "L3gion/Core/Timer.h"
 
 #include "L3gion/Core/Input.h"
+#include "L3gion/Project/Project.h"
 
 #include <ImGui/imgui.h>
 
@@ -41,26 +42,24 @@ namespace L3gion
 		m_FolderIcon = SubTexture2D::create("resources/icons/ContentBrowserPanel/FolderIcon.png");
 		m_FileIcon = SubTexture2D::create("resources/icons/ContentBrowserPanel/FileIcon.png");
 
-		m_RootDir.path = "assets";
+		m_RootDir.path = Project::getRootDir() / Project::getAssetsDir().string();
 		m_RootDir.isDir = true;
-		m_RootDir.relativePathStr = "assets";
+		m_RootDir.relativePathStr = Project::getAssetsDir().string();
 
 		m_CurrentDirPath = m_RootDir.path;
 		m_SelectedDirPath = m_RootDir.path;
 
+		tree.setFileToBeWatched(m_RootDir.path);
+
 		refresh();
 	}
 
-	static Timer timer;
-
 	void ContentBrowserPanel::onImGuiRender()
 	{
-		int timeElapsed = (int)timer.elapsedMillis();
-
-		if (timeElapsed % 3000 == 0 && timeElapsed > 0)
+		if (tree.isRefresh)
 		{
+			tree.isRefresh = false;
 			refresh();
-			timer.reset();
 		}
 
 		ImGui::Begin("Content Browser");
@@ -134,8 +133,7 @@ namespace L3gion
 						m_PayloadPath = dir.path;
 						ImGui::SetDragDropPayload(
 							"CONTENT_BROWSER_ITEM",
-							(const void*)&m_PayloadPath, sizeof(m_PayloadPath),
-							ImGuiCond_Once
+							(const void*)&m_PayloadPath, sizeof(m_PayloadPath)
 						);
 
 						ImGui::EndDragDropSource();
@@ -155,9 +153,6 @@ namespace L3gion
 			
 				ImGui::EndTable();
 			}
-
-			//ImGui::SliderFloat("Thumbnail Size", &thumbNailSize, 16, 512);
-			//ImGui::SliderFloat("Padding Size", &padding, 0, 32);
 
 			ImGui::EndTable();
 		}
