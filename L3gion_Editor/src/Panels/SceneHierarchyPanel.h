@@ -20,8 +20,6 @@ namespace L3gion
 		void setSelectedEntity(const Entity& entity) { m_SelectionContext = entity; }
 		Entity getSelectedEntity() const { return m_SelectionContext; }
 
-		void deleteMarkedEntity() { m_DeleteMarkedEntity = true; }
-
 	private:
 
 		template<typename T>
@@ -32,7 +30,5 @@ namespace L3gion
 	private:
 		ref<Scene> m_Context;
 		Entity m_SelectionContext;
-	
-		bool m_DeleteMarkedEntity = false;
 	};
 }

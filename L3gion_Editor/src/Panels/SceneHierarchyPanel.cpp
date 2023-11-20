@@ -49,8 +49,6 @@ namespace L3gion
 		ImGui::Begin("Components");
 		if (m_SelectionContext)
 			drawComponents(m_SelectionContext);
-		
-		m_DeleteMarkedEntity = false;
 
 		ImGui::End();
 	}
@@ -84,13 +82,6 @@ namespace L3gion
 				deleteEntity = true;
 
 			ImGui::EndPopup();
-		}
-
-		if (m_DeleteMarkedEntity && m_SelectionContext == entity)
-		{
-			deleteEntity = true;
-
-			m_DeleteMarkedEntity = false;
 		}
 
 		if (opened)

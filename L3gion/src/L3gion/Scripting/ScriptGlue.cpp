@@ -141,6 +141,19 @@ namespace L3gion
 		auto& rb2d = entity.getComponent<RigidBody2DComponent>();
 		((b2Body*)rb2d.runtimeBody)->SetTransform({ translation->x, translation->y }, angle);
 	}
+	static void RigidBody2DComponent_GetLinearVelocity(UUID entityUUID, glm::vec2* outLinearVelocity)
+	{
+		Scene* scene = ScriptEngine::getSceneContext().get();
+		LG_CORE_ASSERT(scene, "Scene is NULL!");
+		Entity entity = scene->getEntityByUUID(entityUUID);
+		LG_CORE_ASSERT(entity, "Entity is NULL!");
+
+		auto& rb2d = entity.getComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.runtimeBody; // Abstract this latter
+
+		auto const& linearVelocity = body->GetLinearVelocity();
+		*outLinearVelocity = glm::vec2(linearVelocity.x, linearVelocity.y);
+	}
 	static void RigidBody2DComponent_ApplyLinearImpulse(UUID entityUUID, glm::vec2* impulse, glm::vec2* point, bool wake)
 	{
 		Scene* scene = ScriptEngine::getSceneContext().get();
@@ -221,6 +234,7 @@ namespace L3gion
 		LG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetFixedRotation);
 		LG_ADD_INTERNAL_CALL(RigidBody2DComponent_HasFixedRotation);
 		LG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetTransform);
+		LG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetLinearVelocity);
 		LG_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulse);
 		LG_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulseToCenter);
 

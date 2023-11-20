@@ -6,6 +6,7 @@
 #include "L3gion/Core/Application.h"
 #include "L3gion/Core/Buffer.h"
 #include "L3gion/Utils/PlatformUtils.h"
+#include "L3gion/Project/Project.h"
 
 #include <FileWatch.h>
 #include "mono/jit/jit.h"
@@ -171,7 +172,8 @@ namespace L3gion
 			LG_CORE_ERROR("[ScriptEngine]: Init()... Could not load L3gion_ScriptCore assembly");
 			return;
 		}
-		status = loadAppAssembly("SandboxProject/assets/scripts/Binaries/Sandbox.dll");
+		auto path = Project::getRootDir() / Project::getAssetsDir() / Project::getScriptModulePath();
+		status = loadAppAssembly(path);
 		if (!status)
 		{
 			LG_CORE_ERROR("[ScriptEngine]: Init()... Could not load app assembly");

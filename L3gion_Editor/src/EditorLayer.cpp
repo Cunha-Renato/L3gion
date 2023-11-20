@@ -1,9 +1,5 @@
 #include "EditorLayer.h"
 
-#include <glm/gtc/type_ptr.hpp>
-#include <ImGui/imgui.h>
-#include <chrono>
-
 #include "L3gion/Core/Timer.h"
 #include "L3gion/Scripting/ScriptEngine.h"
 #include "L3gion/Scene/Components.h"
@@ -11,6 +7,10 @@
 #include "L3gion/Utils/PlatformUtils.h"
 #include "L3gion/Maths/Math.h"
 
+#include <glm/gtc/type_ptr.hpp>
+#include <ImGui/imgui.h>
+#include <ImGui/imgui_internal.h>
+#include <chrono>
 #include "ImGuizmo.h"
 
 namespace L3gion
@@ -56,7 +56,7 @@ namespace L3gion
 
 		if (!m_ContentBrowserPanel && !Project::getActive())
 		{
-			openProject();
+			while(!openProject());
 			m_ContentBrowserPanel = createRef<ContentBrowserPanel>();
 		}
 	}
@@ -409,14 +409,23 @@ namespace L3gion
 		}
 
 		ImGui::Begin("Statistics:", 0, ImGuiWindowFlags_NoNav);
-		ImGui::Text("Frametime: %.2fms", m_Timestep);
-		ImGui::Text("Average Frametime: %.2fms", avft);
-		ImGui::Text("Highest Frametime: %.2fms", highestFrametime);
-		ImGui::Text("FPS: %d", fps);
-		ImGui::Text("Average FPS: %d", avfps);
-		ImGui::Text("Lowest FPS: %d", lowestFps);
-		ImGui::Text("Profiling: %d", LG_PROFILE_IS_ACTIVE());
+		{
+			ImGui::Text("Frametime: %.2fms", m_Timestep);
+			ImGui::Text("Average Frametime: %.2fms", avft);
+			ImGui::Text("Highest Frametime: %.2fms", highestFrametime);
+			ImGui::Text("FPS: %d", fps);
+			ImGui::Text("Average FPS: %d", avfps);
+			ImGui::Text("Lowest FPS: %d", lowestFps);
+			ImGui::Text("Profiling: %d", LG_PROFILE_IS_ACTIVE());
+		}
 		ImGui::Separator();
+		
+		{
+			ImGui::Text("ImGui:");
+			ImGui::Text("ImGui Active ID: %u", GImGui->ActiveId);
+		}
+		ImGui::Separator();
+
 		ImGui::Text("Renderer2D:");
 		ImGui::Text("Draw Calls: %d", Renderer2D::getStats().drawCalls);
 		ImGui::Text("Quad Count: %d", Renderer2D::getStats().quadCount);
@@ -603,7 +612,12 @@ namespace L3gion
 			}
 			case LgKey::DEL:
 			{
-				m_SceneHierarchyPanel.deleteMarkedEntity();
+				Entity selectedEntity = m_SceneHierarchyPanel.getSelectedEntity();
+				if (selectedEntity && !GImGui->ActiveId &&  m_ViewPortHovered)
+				{
+					m_SceneHierarchyPanel.setSelectedEntity({});
+					m_ActiveScene->deleteEntity(selectedEntity);
+				}
 				break;
 			}
 			
@@ -647,25 +661,30 @@ namespace L3gion
 			Project::saveProject(filepath);
 		}
 	}
-	void EditorLayer::openProject()
+	bool EditorLayer::openProject()
 	{
 		std::string filepath = FileDialogs::openFile("L3gion Project (*.lgproj)\0*.lgproj\0");
-		if (!filepath.empty())
-			openProject(filepath);
+		if (filepath.empty())
+			return false;
+		
+		openProject(filepath);
+
+		return true;
 	}
 	void EditorLayer::openProject(const std::filesystem::path& path)
 	{
 		if (Project::getActive())
 			saveScene();
 		Project::openProject(path);
+		ScriptEngine::init();
 	}
 	void EditorLayer::saveProjectAs()
 	{
 		std::string filepath = FileDialogs::saveFile("L3gion Project (*.lgproj)\0*.lgproj\0");
 		if (!filepath.empty())
-			Project::saveProject(std::filesystem::path(filepath).parent_path());
+			Project::saveProject(std::filesystem::path(filepath));
 
-		saveScene();
+		//saveScene();
 	}
 	void EditorLayer::saveProject()
 	{

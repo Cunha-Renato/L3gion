@@ -42,6 +42,9 @@ namespace L3gion
         internal extern static void RigidBody2DComponent_SetTransform(ulong entityID, ref Vec2 tranlation, float angle);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_GetLinearVelocity(ulong entityID, out Vec2 outLinearVelocity);
+        
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_ApplyLinearImpulse(ulong entityID, ref Vec2 impulse, ref Vec2 point, bool wake);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]

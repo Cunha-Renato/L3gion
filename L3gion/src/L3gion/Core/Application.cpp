@@ -27,7 +27,6 @@ namespace L3gion
 		m_Window->setEventCallback(BIND_EVENT_FN(Application::onEvent));
 
 		Renderer::init();
-		ScriptEngine::init();
 
 		m_ImGuiLayer = new ImGuiLayer;
 		pushOverlay(m_ImGuiLayer);

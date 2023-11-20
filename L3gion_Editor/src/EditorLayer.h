@@ -29,7 +29,7 @@ namespace L3gion
 		bool onMouseButtonPressed(MouseButtonPressedEvent& e);
 			
 		void newProject();
-		void openProject();
+		bool openProject();
 		void openProject(const std::filesystem::path& path);
 		void saveProjectAs();
 		void saveProject();

@@ -64,7 +64,7 @@ namespace L3gion
 		{
 			if (target.capacity() <= 1)
 				target.reserve(maxDepth);
-
+		
 			target.clear();
 
 			for (auto& directoryEntry : std::filesystem::directory_iterator(relativeTo->path))

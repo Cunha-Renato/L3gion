@@ -26,7 +26,7 @@ namespace L3gion
 	bool Project::saveProject(const std::filesystem::path& path)
 	{
 		auto& activePath = s_ActiveProject->getProjectSpecs().path;
-		activePath = std::filesystem::relative(path, std::filesystem::current_path());
+		activePath = std::filesystem::relative(path.parent_path(), std::filesystem::current_path());
 		ProjectSerializer serializer(s_ActiveProject);
 		return serializer.serialize(path);
 	}

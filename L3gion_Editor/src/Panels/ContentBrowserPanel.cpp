@@ -133,8 +133,7 @@ namespace L3gion
 						m_PayloadPath = dir.path;
 						ImGui::SetDragDropPayload(
 							"CONTENT_BROWSER_ITEM",
-							(const void*)&m_PayloadPath, sizeof(m_PayloadPath),
-							ImGuiCond_Once
+							(const void*)&m_PayloadPath, sizeof(m_PayloadPath)
 						);
 
 						ImGui::EndDragDropSource();
@@ -154,9 +153,6 @@ namespace L3gion
 			
 				ImGui::EndTable();
 			}
-
-			//ImGui::SliderFloat("Thumbnail Size", &thumbNailSize, 16, 512);
-			//ImGui::SliderFloat("Padding Size", &padding, 0, 32);
 
 			ImGui::EndTable();
 		}
