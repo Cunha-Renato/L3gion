@@ -9,9 +9,11 @@ namespace L3gion
 	class OpenGLTexture2D : public Texture2D
 	{
 	public:
-		OpenGLTexture2D(uint32_t width, uint32_t height);
+		OpenGLTexture2D(const TextureSpecs& specs);
 		OpenGLTexture2D(const std::string& path);
 		virtual ~OpenGLTexture2D();
+
+		virtual const TextureSpecs& getSpecs() const { return m_Specs; }
 
 		virtual uint32_t getWidth() const override { return m_Width; }
 		virtual uint32_t getHeight() const override { return m_Height; }
@@ -27,6 +29,8 @@ namespace L3gion
 			return m_RendererID == other.getRendererID();
 		}
 	private:
+		TextureSpecs m_Specs;
+
 		std::string m_Path;
 		uint32_t m_Width, m_Height;
 		uint32_t m_RendererID;

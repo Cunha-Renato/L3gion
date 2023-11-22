@@ -25,6 +25,14 @@ namespace L3gion
 
 		return createRef<SubTexture2D>(texture, min, max);
 	}
+	ref<SubTexture2D> SubTexture2D::create(const TextureSpecs& specs)
+	{
+		glm::vec2 min = { 0.0f, 0.0f };
+		glm::vec2 max = { 1.0f, 1.0f };
+
+		auto texture = Texture2D::create(specs);
+		return createRef<SubTexture2D>(texture, min, max);
+	}
 
 	ref<SubTexture2D> SubTexture2D::create(const ref<Texture2D>& texture, const glm::vec2& coords, glm::vec2 cellSize, const glm::vec2& spriteSize)
 	{

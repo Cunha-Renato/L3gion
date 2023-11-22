@@ -22,6 +22,12 @@
     <Filter Include="..\L3gion\vendor\box2d">
       <UniqueIdentifier>{87BAF767-73B4-20BA-5C21-B7CA48BA8626}</UniqueIdentifier>
     </Filter>
+    <Filter Include="..\L3gion\vendor\msdf-atlas-gen">
+      <UniqueIdentifier>{3B3AB3E0-A71D-C220-B020-F05C1C838871}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\L3gion\vendor\msdf-atlas-gen\msdfgen">
+      <UniqueIdentifier>{AEBD2928-1A4D-EB12-2349-CC2A8F57261F}</UniqueIdentifier>
+    </Filter>
     <Filter Include="..\L3gion\vendor\yaml_cpp">
       <UniqueIdentifier>{3D138ACD-A9D5-BD57-F285-4CE45E879635}</UniqueIdentifier>
     </Filter>
@@ -59,6 +65,12 @@
     </None>
     <None Include="..\..\L3gion\vendor\box2d\premake5.lua">
       <Filter>..\L3gion\vendor\box2d</Filter>
+    </None>
+    <None Include="..\..\L3gion\vendor\msdf-atlas-gen\msdfgen\premake5.lua">
+      <Filter>..\L3gion\vendor\msdf-atlas-gen\msdfgen</Filter>
+    </None>
+    <None Include="..\..\L3gion\vendor\msdf-atlas-gen\premake5.lua">
+      <Filter>..\L3gion\vendor\msdf-atlas-gen</Filter>
     </None>
     <None Include="..\..\L3gion\vendor\yaml_cpp\premake5.lua">
       <Filter>..\L3gion\vendor\yaml_cpp</Filter>

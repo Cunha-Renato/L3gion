@@ -22,6 +22,9 @@
     <Filter Include="src\L3gion\Maths">
       <UniqueIdentifier>{546622E4-405F-4136-6991-26BB55E92042}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\L3gion\Project">
+      <UniqueIdentifier>{2E249284-1A08-53DA-8368-4D2D6F6B3D5C}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\L3gion\Renderer">
       <UniqueIdentifier>{8EC0E303-FA21-C111-838F-07C4EFEFF7D0}</UniqueIdentifier>
     </Filter>
@@ -138,6 +141,12 @@
     <ClInclude Include="src\L3gion\Maths\Math.h">
       <Filter>src\L3gion\Maths</Filter>
     </ClInclude>
+    <ClInclude Include="src\L3gion\Project\Project.h">
+      <Filter>src\L3gion\Project</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Project\ProjectSerializer.h">
+      <Filter>src\L3gion\Project</Filter>
+    </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\Buffer.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
@@ -148,6 +157,9 @@
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\EditorCamera.h">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\L3gion\Renderer\Font.h">
       <Filter>src\L3gion\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\L3gion\Renderer\FrameBuffer.h">
@@ -1497,8 +1509,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\L3gion\Project\Project.h" />
-    <ClInclude Include="src\L3gion\Project\ProjectSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\L3gion\Core\Application.cpp">
@@ -1525,6 +1535,12 @@
     <ClCompile Include="src\L3gion\Maths\Math.cpp">
       <Filter>src\L3gion\Maths</Filter>
     </ClCompile>
+    <ClCompile Include="src\L3gion\Project\Project.cpp">
+      <Filter>src\L3gion\Project</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Project\ProjectSerializer.cpp">
+      <Filter>src\L3gion\Project</Filter>
+    </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\Buffer.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
@@ -1535,6 +1551,9 @@
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\EditorCamera.cpp">
+      <Filter>src\L3gion\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\L3gion\Renderer\Font.cpp">
       <Filter>src\L3gion\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\L3gion\Renderer\FrameBuffer.cpp">
@@ -1633,7 +1652,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\L3gion\Project\Project.cpp" />
-    <ClCompile Include="src\L3gion\Project\ProjectSerializer.cpp" />
   </ItemGroup>
 </Project>

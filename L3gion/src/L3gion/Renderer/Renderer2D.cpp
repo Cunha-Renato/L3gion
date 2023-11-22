@@ -190,7 +190,7 @@ namespace L3gion
 
 		// End Circles
 
-		s_Data.whiteTexture = Texture2D::create(1, 1);
+		s_Data.whiteTexture = Texture2D::create(TextureSpecs());
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.whiteTexture->setData(&whiteTextureData, sizeof(uint32_t));
 

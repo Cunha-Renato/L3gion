@@ -5,10 +5,28 @@
 
 namespace L3gion
 {
+	enum class ImageFormat
+	{
+		None = 0,
+		R8,
+		RGB8,
+		RGBA8,
+		RGBA32F,
+	};
+	struct TextureSpecs
+	{
+		uint32_t width = 1;
+		uint32_t height = 1;
+		ImageFormat format = ImageFormat::RGBA8;
+		bool generateMips = true;
+	};
+
 	class Texture
 	{
 	public:
 		virtual ~Texture() = default;
+
+		virtual const TextureSpecs& getSpecs() const = 0;
 
 		virtual uint32_t getWidth() const = 0;
 		virtual uint32_t getHeight() const = 0;
@@ -25,7 +43,7 @@ namespace L3gion
 	class Texture2D : public Texture
 	{
 	public:
-		static ref<Texture2D> create(uint32_t width, uint32_t height);
+		static ref<Texture2D> create(const TextureSpecs& specs);
 		static ref<Texture2D> create(const std::string& path);
 	};
 }

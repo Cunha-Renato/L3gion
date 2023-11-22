@@ -6,13 +6,39 @@
 
 namespace L3gion
 {
-	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
-		: m_Width(width), m_Height(height)
+	namespace Utils
+	{
+		static GLenum lgImageFormatToGLDataFormat(const ImageFormat& format)
+		{
+			switch (format)
+			{
+				case ImageFormat::RGB8: return GL_RGB;
+				case ImageFormat::RGBA8: return GL_RGBA;
+			}
+
+			LG_CORE_ASSERT(false, "Image Format not supported!");
+			return 0;
+		}
+		static GLenum lgImageFormatToGLInternalFormat(const ImageFormat& format)
+		{
+			switch (format)
+			{
+			case ImageFormat::RGB8: return GL_RGB8;
+			case ImageFormat::RGBA8: return GL_RGBA8;
+			}
+
+			LG_CORE_ASSERT(false, "Image Format not supported!");
+			return 0;
+		}
+	}
+
+	OpenGLTexture2D::OpenGLTexture2D(const TextureSpecs& specs)
+		: m_Specs(specs), m_Width(specs.width), m_Height(specs.height)
 	{
 		LG_PROFILE_FUNCTION();
 
-		m_InternalFormat = GL_RGBA8;
-		m_DataFormat = GL_RGBA;
+		m_InternalFormat = Utils::lgImageFormatToGLInternalFormat(specs.format);
+		m_DataFormat = Utils::lgImageFormatToGLDataFormat(specs.format);
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);

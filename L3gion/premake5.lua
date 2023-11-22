@@ -44,7 +44,9 @@ project "L3gion"
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
-		"%{IncludeDir.box2d}"
+		"%{IncludeDir.box2d}",
+		"%{IncludeDir.msdfgen}",
+		"%{IncludeDir.msdf_atlas_gen}"
 	}
 
 	links
@@ -55,6 +57,7 @@ project "L3gion"
 		"opengl32.lib",
 		"yaml_cpp",
 		"box2d",
+		"msdf-atlas-gen",
 
 		"%{Library.mono}",
 	}

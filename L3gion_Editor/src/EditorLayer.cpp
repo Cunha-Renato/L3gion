@@ -7,6 +7,8 @@
 #include "L3gion/Utils/PlatformUtils.h"
 #include "L3gion/Maths/Math.h"
 
+#include "L3gion/Renderer/Font.h"
+
 #include <glm/gtc/type_ptr.hpp>
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h>
@@ -15,9 +17,11 @@
 
 namespace L3gion
 {
+	static Font* s_Font;
 	EditorLayer::EditorLayer(const std::string& name)
 		: Layer(name)
 	{
+		s_Font = new Font("resources/fonts/Roboto/Roboto-Bold.ttf");
 	}
 
 	void EditorLayer::onAttach()
@@ -439,6 +443,9 @@ namespace L3gion
 	{
 		ImGui::Begin("Editor Settings");
 		ImGui::Checkbox("Show Colliders", &m_ShowColliders);
+		
+		ImGui::Image((ImTextureID)s_Font->getAtlasTexture()->getID(), {512, 512}, {0, 1}, {1, 0});
+
 		ImGui::End();
 	}
 	void EditorLayer::UI_Toolbar()

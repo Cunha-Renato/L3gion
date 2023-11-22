@@ -19,3 +19,6 @@
 [submodule "L3gion/vendor/box2d"]
 	path = L3gion/vendor/box2d
 	url = https://github.com/Cunha-Renato/box2d
+[submodule "L3gion/vendor/msdf-atlas-gen"]
+	path = L3gion/vendor/msdf-atlas-gen
+	url = https://github.com/Cunha-Renato/msdf-atlas-gen

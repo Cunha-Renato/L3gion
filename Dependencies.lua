@@ -16,6 +16,8 @@ IncludeDir["ImGuizmo"] = "%{wks.location}/L3gion/vendor/ImGuizmo"
 IncludeDir["VulkanSDK"] = "%{wks.location}/L3gion/vendor/VulkanSDK/include"
 IncludeDir["box2d"] = "%{wks.location}/L3gion/vendor/box2d/include"
 IncludeDir["mono"] = "%{wks.location}/L3gion/vendor/mono/include"
+IncludeDir["msdfgen"] = "%{wks.location}/L3gion/vendor/msdf-atlas-gen/msdfgen"
+IncludeDir["msdf_atlas_gen"] = "%{wks.location}/L3gion/vendor/msdf-atlas-gen/msdf-atlas-gen"
 
 LibraryDir = {}
 

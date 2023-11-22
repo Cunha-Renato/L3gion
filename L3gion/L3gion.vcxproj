@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>lgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;LG_PLATFORM_WINDOWS;LG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\filewatch;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\EnTT\include;vendor\mono\include;vendor\yaml_cpp\include;vendor\ImGuizmo;vendor\VulkanSDK\include;vendor\box2d\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\filewatch;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\EnTT\include;vendor\mono\include;vendor\yaml_cpp\include;vendor\ImGuizmo;vendor\VulkanSDK\include;vendor\box2d\include;vendor\msdf-atlas-gen\msdfgen;vendor\msdf-atlas-gen\msdf-atlas-gen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -100,7 +100,7 @@
       <PrecompiledHeaderFile>lgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;LG_PLATFORM_WINDOWS;LG_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\filewatch;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\EnTT\include;vendor\mono\include;vendor\yaml_cpp\include;vendor\ImGuizmo;vendor\VulkanSDK\include;vendor\box2d\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\filewatch;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\EnTT\include;vendor\mono\include;vendor\yaml_cpp\include;vendor\ImGuizmo;vendor\VulkanSDK\include;vendor\box2d\include;vendor\msdf-atlas-gen\msdfgen;vendor\msdf-atlas-gen\msdf-atlas-gen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -126,7 +126,7 @@
       <PrecompiledHeaderFile>lgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;LG_PLATFORM_WINDOWS;LG_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\filewatch;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\EnTT\include;vendor\mono\include;vendor\yaml_cpp\include;vendor\ImGuizmo;vendor\VulkanSDK\include;vendor\box2d\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\filewatch;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\EnTT\include;vendor\mono\include;vendor\yaml_cpp\include;vendor\ImGuizmo;vendor\VulkanSDK\include;vendor\box2d\include;vendor\msdf-atlas-gen\msdfgen;vendor\msdf-atlas-gen\msdf-atlas-gen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -147,8 +147,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\L3gion\Project\ProjectSerializer.h" />
-    <ClInclude Include="src\L3gion\Project\Project.h" />
     <ClInclude Include="src\L3gion.h" />
     <ClInclude Include="src\L3gion\Core\Application.h" />
     <ClInclude Include="src\L3gion\Core\Buffer.h" />
@@ -171,10 +169,13 @@
     <ClInclude Include="src\L3gion\Events\MouseEvent.h" />
     <ClInclude Include="src\L3gion\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\L3gion\Maths\Math.h" />
+    <ClInclude Include="src\L3gion\Project\Project.h" />
+    <ClInclude Include="src\L3gion\Project\ProjectSerializer.h" />
     <ClInclude Include="src\L3gion\Renderer\Buffer.h" />
     <ClInclude Include="src\L3gion\Renderer\Camera.h" />
     <ClInclude Include="src\L3gion\Renderer\CameraController.h" />
     <ClInclude Include="src\L3gion\Renderer\EditorCamera.h" />
+    <ClInclude Include="src\L3gion\Renderer\Font.h" />
     <ClInclude Include="src\L3gion\Renderer\FrameBuffer.h" />
     <ClInclude Include="src\L3gion\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\L3gion\Renderer\RenderCommand.h" />
@@ -626,8 +627,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\L3gion\Project\ProjectSerializer.cpp" />
-    <ClCompile Include="src\L3gion\Project\Project.cpp" />
     <ClCompile Include="src\L3gion\Core\Application.cpp" />
     <ClCompile Include="src\L3gion\Core\Layer.cpp" />
     <ClCompile Include="src\L3gion\Core\LayerStack.cpp" />
@@ -636,10 +635,13 @@
     <ClCompile Include="src\L3gion\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\L3gion\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\L3gion\Maths\Math.cpp" />
+    <ClCompile Include="src\L3gion\Project\Project.cpp" />
+    <ClCompile Include="src\L3gion\Project\ProjectSerializer.cpp" />
     <ClCompile Include="src\L3gion\Renderer\Buffer.cpp" />
     <ClCompile Include="src\L3gion\Renderer\Camera.cpp" />
     <ClCompile Include="src\L3gion\Renderer\CameraController.cpp" />
     <ClCompile Include="src\L3gion\Renderer\EditorCamera.cpp" />
+    <ClCompile Include="src\L3gion\Renderer\Font.cpp" />
     <ClCompile Include="src\L3gion\Renderer\FrameBuffer.cpp" />
     <ClCompile Include="src\L3gion\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="src\L3gion\Renderer\RenderCommand.cpp" />
@@ -692,6 +694,9 @@
     </ProjectReference>
     <ProjectReference Include="vendor\box2d\box2d.vcxproj">
       <Project>{E4442B0F-5059-53C0-19DB-F61F85AE4FF1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\msdf-atlas-gen\msdf-atlas-gen.vcxproj">
+      <Project>{38BD587B-248B-4C81-0D1F-BDA7F98B28E6}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

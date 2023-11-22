@@ -17,6 +17,7 @@ namespace L3gion
 
 		static ref<SubTexture2D> create(const std::string& path);
 		static ref<SubTexture2D> create(const ref<Texture2D>& texture);
+		static ref<SubTexture2D> create(const TextureSpecs& specs);
 		// Coords is the offset in units (spriteSize) where every sprite has width and height of cellSize.
 		static ref<SubTexture2D> create(const ref<Texture2D>& texture, const glm::vec2& coords, glm::vec2 cellSize, const glm::vec2& spriteSize = { 1.0f, 1.0f });
 
