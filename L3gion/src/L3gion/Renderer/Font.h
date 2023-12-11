@@ -15,6 +15,7 @@ namespace L3gion
 		~Font();
 	
 		ref<SubTexture2D> getAtlasTexture() const { return m_AtlasTexture; }
+		const MSDFData* getMSDFData() const { return m_Data; }
 	private:
 		MSDFData* m_Data;
 		ref<SubTexture2D> m_AtlasTexture;

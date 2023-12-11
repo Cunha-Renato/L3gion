@@ -4,6 +4,7 @@
 #include "L3gion/Renderer/Texture.h"
 #include "L3gion/Renderer/SubTexture.h"
 #include "L3gion/Renderer/EditorCamera.h"
+#include "L3gion/Renderer/Font.h"
 
 namespace L3gion
 {
@@ -16,7 +17,6 @@ namespace L3gion
 		static void beginScene(const Camera& camera, const glm::mat4& transform);
 		static void beginScene(const EditorCamera& editorCamera);
 		static void endScene();
-		static void flush();
 
 		// Primitives
 		struct QuadSpecs
@@ -64,6 +64,15 @@ namespace L3gion
 			glm::vec4 color = glm::vec4(1.0f);
 		};
 
+		struct TextSpecs
+		{
+			std::string text;
+			ref<Font> font;
+			glm::vec4 fColor = glm::vec4(1.0f);
+			glm::vec4 bColor = glm::vec4(0.0f);
+			glm::mat4 transform = glm::mat4(1.0f);
+		};
+
 		static void draw(const QuadSpecs& specs) { drawQuad(specs); }
 		static void draw(const CircleSpecs& specs) { drawCircle(specs); }
 		static void draw(const LineSpecs& specs) { drawLine(specs); }
@@ -73,6 +82,7 @@ namespace L3gion
 		static void drawCircle(const CircleSpecs& specs);
 		static void drawLine(const LineSpecs& specs);
 		static void drawRect(const RectSpecs& specs);
+		static void drawText(const TextSpecs& text);
 
 		static float getLineThickness();
 		static void setLineThickness(float thickness);
@@ -89,6 +99,9 @@ namespace L3gion
 
 		static Statistics getStats();
 		static void resetStats();
+
+	private:
+		static void flush();
 
 	private:
 		static void flushAndReset();

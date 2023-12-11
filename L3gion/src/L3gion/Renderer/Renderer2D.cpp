@@ -5,6 +5,7 @@
 #include "L3gion/Renderer/Shader.h"
 #include "L3gion/Renderer/UniformBuffer.h"
 #include "L3gion/Renderer/RenderCommand.h"
+#include "L3gion/Renderer/MSDFData.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -407,6 +408,53 @@ namespace L3gion
 		line.p0 = ps[3];
 		line.p1 = ps[0];
 		drawLine(line);
+	}
+
+	void Renderer2D::drawText(const TextSpecs& specs)
+	{
+		const auto& fontGeometry = specs.font->getMSDFData()->fontGeometry;
+		const auto& metrics = fontGeometry.getMetrics();
+		ref<SubTexture2D> fontAtlas = specs.font->getAtlasTexture();
+
+		double x = 0.0;
+		double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
+		double y = 0.0;
+		
+		char character = 'L';
+		auto glyph = fontGeometry.getGlyph(character);
+
+		if (!glyph)
+			glyph = fontGeometry.getGlyph('?');
+		if (!glyph)
+			return; // TODO: continue
+
+		double al, ab, ar, at;
+		glyph->getQuadAtlasBounds(al, ab, ar, at);
+		glm::vec2 texCoordMin((float)al, (float)ab);
+		glm::vec2 texCoordMax((float)ar, (float)at);
+
+		double pl, pb, pr, pt;
+		glyph->getQuadPlaneBounds(pl, pb, pr, pt);
+		glm::vec2 quadMin((float)pl, (float)pb);
+		glm::vec2 quadMax((float)pr, (float)pt);
+
+		quadMin *= fsScale, quadMax *= fsScale;
+		quadMin += glm::vec2(x, y);
+		quadMax += glm::vec2(x, y);
+
+		float texelWidth = 1.0f / fontAtlas->getTexture()->getWidth();
+		float texelHeight = 1.0f / fontAtlas->getTexture()->getHeight();
+		texCoordMin *= glm::vec2(texelWidth, texelHeight);
+		texCoordMax *= glm::vec2(texelWidth, texelHeight);
+
+		// Render
+
+		double advance = glyph->getAdvance();
+		char nextCharacter = 'L';
+		fontGeometry.getAdvance(advance, character, nextCharacter);
+	
+		float kerningOffset = 0.0f;
+		x += fsScale * advance + kerningOffset;
 	}
 
 	float Renderer2D::getLineThickness()
